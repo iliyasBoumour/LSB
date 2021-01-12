@@ -209,7 +209,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="20dp"
                     android:layout_marginTop="20dp"
-                    android:text="you have already an account ? sign in"
+                    android:text="@string/have_an_account_sign_in"
                     android:textAlignment="center"
                     app:layout_constraintTop_toBottomOf="@+id/signGoogle"
                     app:layout_constraintBottom_toBottomOf="parent" />

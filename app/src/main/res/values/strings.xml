@@ -13,4 +13,11 @@
     <string name="new_account">New Account</string>
     <string name="username">username</string>
     <string name="or_sign_up_with">Or sign up with :</string>
+    <string name="have_an_account_sign_in">you have already an account ? sign in</string>
+    <string name="email_empty">Email must not be empty</string>
+    <string name="username_empty">username must not be empty</string>
+    <string name="password_empty">Password must not be empty</string>
+    <string name="short_password">password should have more than 8 characters</string>
+    <string name="invalid_password">\"password should contains at least a number and a special character \"</string>
+    <string name="email_invalid">email invalid</string>
 </resources>
