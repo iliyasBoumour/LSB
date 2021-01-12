@@ -2,10 +2,12 @@ package com.inpt.lsb;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.widget.Button;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.material.textfield.TextInputLayout;
@@ -16,6 +18,7 @@ public class SignInActivity extends AppCompatActivity {
 
     private TextInputLayout textEmailInput, textPasswordInput;
     private Button loginButton;
+    private TextView signupText;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -24,8 +27,13 @@ public class SignInActivity extends AppCompatActivity {
         textEmailInput = findViewById(R.id.textEmailInput);
         textPasswordInput = findViewById(R.id.textPasswordInput);
         loginButton = findViewById(R.id.loginButton);
+        signupText=findViewById(R.id.signupText);
 
         loginButton.setOnClickListener(e -> onLoginClicked());
+        signupText.setOnClickListener(e->{
+            startActivity(new Intent(this, SignUpActivity.class));
+            finish();
+        });
 
         textEmailInput.getEditText().addTextChangedListener(createTextWatcher(textEmailInput));
         textPasswordInput.getEditText().addTextChangedListener(createTextWatcher(textPasswordInput));

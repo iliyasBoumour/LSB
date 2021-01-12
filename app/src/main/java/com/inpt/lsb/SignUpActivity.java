@@ -2,6 +2,7 @@ package com.inpt.lsb;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -17,7 +18,7 @@ public class SignUpActivity extends AppCompatActivity {
 
     private TextInputLayout emailInput,passwordInput,usernameInput;
     private Button signUpButton;
-    private TextView sinInText;
+    private TextView signInText;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -27,6 +28,11 @@ public class SignUpActivity extends AppCompatActivity {
         emailInput = findViewById(R.id.textEmailInput);
         passwordInput = findViewById(R.id.textPasswordInput);
         signUpButton = findViewById(R.id.registerButton);
+        signInText=findViewById(R.id.signInText);
+        signInText.setOnClickListener(e-> {
+            startActivity(new Intent(this, SignInActivity.class));
+            finish();
+        });
 //        mAuth = FirebaseAuth.getInstance();
 
         signUpButton.setOnClickListener(e -> onSignUpClicked());
