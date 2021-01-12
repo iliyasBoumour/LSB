@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "547274796408",
+    "project_id": "slbdatabase",
+    "storage_bucket": "slbdatabase.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:547274796408:android:d8cd2f74c205ff9728ec8d",
+        "android_client_info": {
+          "package_name": "com.inpt.lsb"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "547274796408-rgta5r6kh2o0j5jthi5n7bafdnd3d7ha.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBH6J9TmhNe3XD03z93y2EB29w15vCIF1Y"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "547274796408-rgta5r6kh2o0j5jthi5n7bafdnd3d7ha.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

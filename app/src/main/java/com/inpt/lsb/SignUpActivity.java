@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Patterns;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -46,12 +47,13 @@ public class SignUpActivity extends AppCompatActivity {
         String username= usernameInput.getEditText().getText().toString();
         String email= emailInput.getEditText().getText().toString();
         String password= passwordInput.getEditText().getText().toString();
-        if(email.isEmpty()){
+        if (username.isEmpty()){
+            usernameInput.setError(getString(R.string.username_empty));
+        }else if(email.isEmpty()){
             emailInput.setError(getString(R.string.email_empty));
+//            s.EMAIL_ADDRESS
         }else if (!Pattern.compile("^[A-Z0-9._%+-]+@[A-Z0-9.-]+\\.[A-Z]{2,6}$", Pattern.CASE_INSENSITIVE).matcher(email).find()) {
             emailInput.setError(getString(R.string.email_invalid));
-        }else if (username.isEmpty()){
-            usernameInput.setError(getString(R.string.username_empty));
 
         }else if(password.isEmpty()){
             passwordInput.setError(getString(R.string.password_empty));
