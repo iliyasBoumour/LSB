@@ -22,7 +22,6 @@ public class LandingActivity extends AppCompatActivity implements View.OnClickLi
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_landing);
-        getWindow().addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
         signIn=findViewById(R.id.signInButton);
         signUp=findViewById(R.id.signUpButton);
         logo=findViewById(R.id.logo);
