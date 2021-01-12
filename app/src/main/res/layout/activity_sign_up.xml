@@ -11,7 +11,9 @@
 
         <include layout="@layout/slogan_layout"/>
 
+
         <com.google.android.material.card.MaterialCardView
+            android:id="@+id/materialCardView"
             style="@style/CustomCardCorners"
             android:layout_width="match_parent"
             android:layout_height="0dp"
@@ -54,8 +56,8 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="20dp"
-                    android:layout_marginRight="20dp"
                     android:layout_marginTop="20dp"
+                    android:layout_marginRight="20dp"
                     android:hint="@string/username"
                     app:boxBackgroundColor="@android:color/transparent"
                     app:endIconMode="clear_text"
@@ -69,7 +71,7 @@
                         android:id="@+id/usernameInput"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:inputType="textEmailAddress" />
+                        android:inputType="text" />
 
                 </com.google.android.material.textfield.TextInputLayout>
 
@@ -78,8 +80,8 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="20dp"
-                    android:layout_marginRight="20dp"
                     android:layout_marginTop="20dp"
+                    android:layout_marginRight="20dp"
                     android:hint="@string/email"
                     app:boxBackgroundColor="@android:color/transparent"
                     app:endIconMode="clear_text"
@@ -102,8 +104,8 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="20dp"
-                    android:layout_marginRight="20dp"
                     android:layout_marginTop="20dp"
+                    android:layout_marginRight="20dp"
                     android:hint="@string/password"
                     app:boxBackgroundColor="@android:color/transparent"
                     app:endIconMode="password_toggle"
@@ -135,54 +137,64 @@
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/textPasswordInput" />
 
-                <TextView
-                    android:id="@+id/signWith"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="20dp"
-                    android:text="@string/or_sign_up_with"
-                    android:textAlignment="center"
-                    app:layout_constraintBottom_toTopOf="@+id/signGoogle"
-                    app:layout_constraintTop_toBottomOf="@+id/registerButton" />
+<!--                <TextView-->
+<!--                    android:id="@+id/signWith"-->
+<!--                    android:layout_width="match_parent"-->
+<!--                    android:layout_height="wrap_content"-->
+<!--                    android:layout_marginTop="20dp"-->
+<!--                    android:text="@string/or_sign_up_with"-->
+<!--                    android:textAlignment="center"-->
+<!--                    app:layout_constraintBottom_toTopOf="@+id/signGoogle"-->
+<!--                    app:layout_constraintTop_toBottomOf="@+id/registerButton" />-->
 
-                <ImageView
-                    android:id="@+id/signGoogle"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginRight="30dp"
-                    android:layout_marginTop="20dp"
-                    app:layout_constraintEnd_toStartOf="@+id/signFb"
-                    app:layout_constraintHorizontal_bias="0.5"
-                    app:layout_constraintHorizontal_chainStyle="packed"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/signWith"
-                    app:srcCompat="@drawable/google" />
+<!--                <ImageView-->
+<!--                    android:id="@+id/signGoogle"-->
+<!--                    android:layout_width="wrap_content"-->
+<!--                    android:layout_height="wrap_content"-->
+<!--                    android:layout_marginTop="20dp"-->
+<!--                    android:layout_marginRight="30dp"-->
+<!--                    app:layout_constraintEnd_toStartOf="@+id/signFb"-->
+<!--                    app:layout_constraintHorizontal_bias="0.5"-->
+<!--                    app:layout_constraintHorizontal_chainStyle="packed"-->
+<!--                    app:layout_constraintStart_toStartOf="parent"-->
+<!--                    app:layout_constraintTop_toBottomOf="@+id/signWith"-->
+<!--                    app:srcCompat="@drawable/google" />-->
 
-                <ImageView
-                    android:id="@+id/signFb"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="20dp"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toEndOf="@+id/signGoogle"
-                    app:layout_constraintTop_toBottomOf="@+id/signWith"
-                    app:srcCompat="@drawable/facebook" />
+<!--                <ImageView-->
+<!--                    android:id="@+id/signFb"-->
+<!--                    android:layout_width="wrap_content"-->
+<!--                    android:layout_height="wrap_content"-->
+<!--                    android:layout_marginTop="20dp"-->
+<!--                    app:layout_constraintEnd_toEndOf="parent"-->
+<!--                    app:layout_constraintStart_toEndOf="@+id/signGoogle"-->
+<!--                    app:layout_constraintTop_toBottomOf="@+id/signWith"-->
+<!--                    app:srcCompat="@drawable/facebook" />-->
 
                 <TextView
                     android:id="@+id/signInText"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginBottom="20dp"
                     android:layout_marginTop="20dp"
+                    android:layout_marginBottom="20dp"
                     android:text="@string/have_an_account_sign_in"
                     android:textAlignment="center"
-                    app:layout_constraintTop_toBottomOf="@+id/signGoogle"
-                    app:layout_constraintBottom_toBottomOf="parent" />
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/registerButton" />
+<!--                signGoogle-->
 
             </androidx.constraintlayout.widget.ConstraintLayout>
 
         </com.google.android.material.card.MaterialCardView>
 
+        <ProgressBar
+            android:id="@+id/progressBar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
