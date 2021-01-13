@@ -1,5 +1,7 @@
 <resources>
     <string name="app_name">LSB</string>
+    <string name="facebook_app_id">1383050378716490</string>
+    <string name="fb_login_protocol_scheme">fb1383050378716490</string>
     <string name="sign_in">Sign In</string>
     <string name="sign_up">Sign Up</string>
     <string name="slogan">Let’s make it easy with BangBos</string>
@@ -13,4 +15,32 @@
     <string name="new_account">New Account</string>
     <string name="username">username</string>
     <string name="or_sign_up_with">Or sign up with :</string>
+    <string name="have_an_account_sign_in">you have already an account ? sign in</string>
+    <string name="email_empty">Email must not be empty</string>
+    <string name="username_empty">username must not be empty</string>
+    <string name="password_empty">Password must not be empty</string>
+    <string name="short_password">password should have more than 8 characters</string>
+    <string name="invalid_password">password should contains at least a number and a special character</string>
+    <string name="email_invalid">invalid email</string>
+    <string name="Login_Failed">Login Failed</string>
+    <string name="successfully_signed_up">successfully signed up !</string>
+    <string name="please_sign_in">Great, please sign in !</string>
+    <string name="email_badly_formatted">The email address is badly formatted.</string>
+    <string name="email_already_in_use">The email address is already in use by another account.</string>
+    <string name="error_creating_account">error creating new account.</string>
+    <string name="please_wait">Please wait …</string>
+    <string name="connect_to_internet">please connect to the internet !</string>
+    <string name="retry">Retry</string>
+    <string name="user_does_not_exist">user does not exist, please sign up first !</string>
+    <string name="wrong_password">wrong password</string>
+    <string name="error_logged_in">error logged in</string>
+    <string name="Error_recovering_password">Error recovering password</string>
+    <string name="error_sending_email">Error sending email</string>
+    <string name="error_sign_google">Authentication with google Failed.</string>
+    <string name="recover_password">recover password</string>
+    <string name="Recover">Recover</string>
+    <string name="Cancel">Cancel</string>
+    <string name="Email_sent">Email sent !</string>
+    <string name="email_was_sent">\"an email was sent to : \"</string>
+    <string name="error_sign_fb" >Authentication with facebook Failed.</string>
 </resources>

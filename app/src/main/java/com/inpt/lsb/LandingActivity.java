@@ -1,16 +1,18 @@
 package com.inpt.lsb;
 
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
-import android.view.WindowManager;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
+
+import androidx.appcompat.app.AppCompatActivity;
+
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 
 public class LandingActivity extends AppCompatActivity implements View.OnClickListener {
 
@@ -22,7 +24,6 @@ public class LandingActivity extends AppCompatActivity implements View.OnClickLi
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_landing);
-        getWindow().addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
         signIn=findViewById(R.id.signInButton);
         signUp=findViewById(R.id.signUpButton);
         logo=findViewById(R.id.logo);
@@ -44,11 +45,13 @@ public class LandingActivity extends AppCompatActivity implements View.OnClickLi
     @Override
     public void onClick(View v) {
         Intent intent;
+
         if (v.getId()==R.id.signInButton){
             intent = new Intent(this, SignInActivity.class);
-        }else {
+        } else {
             intent = new Intent(this, SignUpActivity.class);
         }
         startActivity(intent);
     }
+
 }
