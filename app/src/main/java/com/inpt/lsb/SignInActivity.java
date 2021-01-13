@@ -135,7 +135,7 @@ public class SignInActivity extends AppCompatActivity {
                             // Sign in success, update UI with the signed-in user's information
                             Log.d(TAG, "signInWithCredential:success");
 //                            FirebaseUser user = mAuth.getCurrentUser();
-                            startActivity(new Intent(SignInActivity.this,MainActivity.class));
+                            startActivity(new Intent(SignInActivity.this,DashboardActivity.class));
                             finishAffinity();
                         } else {
                             // If sign in fails, display a message to the user.
@@ -178,7 +178,7 @@ public class SignInActivity extends AppCompatActivity {
                         if (task.isSuccessful()) {
                             // Sign in success, update UI with the signed-in user's information
 //                            FirebaseUser user = mAuth.getCurrentUser();
-                            startActivity(new Intent(SignInActivity.this,MainActivity.class));
+                            startActivity(new Intent(SignInActivity.this,DashboardActivity.class));
                             finishAffinity();
                         } else {
                             // If sign in fails, display a message to the user.
@@ -270,7 +270,7 @@ public class SignInActivity extends AppCompatActivity {
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         progressDialog.dismiss();
                         if (task.isSuccessful()) {
-                            startActivity(new Intent(SignInActivity.this, MainActivity.class));
+                            startActivity(new Intent(SignInActivity.this, DashboardActivity.class));
                             finishAffinity();
                         } else {
                             AlertDialog.Builder alertDialog = new AlertDialog.Builder(SignInActivity.this).setTitle(R.string.Login_Failed);

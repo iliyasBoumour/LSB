@@ -4,11 +4,16 @@
     android:layout_height="match_parent">
    <include layout="@layout/header"
        android:id="@+id/header"/>
-
+<Button
+    android:id="@+id/logout"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:text="log out"
+    android:layout_below="@id/header"/>
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/homeRecyclerView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@id/header"/>
+        android:layout_below="@id/logout"/>
 
 </RelativeLayout>

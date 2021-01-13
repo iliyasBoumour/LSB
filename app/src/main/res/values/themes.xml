@@ -3,7 +3,7 @@
     <style name="Theme.LSB" parent="Theme.MaterialComponents.Light.NoActionBar">
 
 
-        <item name="android:windowFullscreen">true</item>
+<!--        <item name="android:windowFullscreen">true</item>-->
 
         <!-- Primary brand color. -->
         <item name="colorPrimary">@color/orange</item>
