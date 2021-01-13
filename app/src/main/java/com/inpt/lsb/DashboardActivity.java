@@ -6,6 +6,7 @@ import androidx.fragment.app.FragmentManager;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.MenuItem;
 import android.widget.Button;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
@@ -26,12 +27,35 @@ public class DashboardActivity extends AppCompatActivity {
             return;
         }
         setContentView(R.layout.dashboard);
-        /*bottomNavigationView = findViewById(R.id.bottomNavView);
-        bottomNavigationView.setBackground(null);*/
+        bottomNavigationView = findViewById(R.id.bottomNavView);
+        bottomNavigationView.getMenu().getItem(0).setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem item) {
+                fragment = new HomeFragment();
+                fragmentManager.beginTransaction()
+                        .replace(R.id.homeFragment, fragment)
+                        .commit();
+
+                return false;
+            }
+        });
+        bottomNavigationView = findViewById(R.id.bottomNavView);
+        bottomNavigationView.getMenu().getItem(3).setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem item) {
+                fragment = new ProfileFragment();
+                fragmentManager.beginTransaction()
+                        .replace(R.id.homeFragment, fragment)
+                        .commit();
+
+                return false;
+            }
+        });
+
         fragmentManager = getSupportFragmentManager();
         fragment = fragmentManager.findFragmentById(R.id.homeFragment);
         if(fragment == null) {
-            fragment = new HomeFragment();
+            fragment = new ProfileFragment();
             fragmentManager.beginTransaction()
                     .add(R.id.homeFragment, fragment)
                     .commit();
