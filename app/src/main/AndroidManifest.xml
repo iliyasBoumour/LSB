@@ -11,8 +11,8 @@
         android:theme="@style/Theme.LSB">
         <activity android:name=".SignUpActivity"></activity>
         <activity android:name=".SignInActivity" />
-        <activity android:name=".MainActivity" />
-        <activity android:name=".LandingActivity">
+        <activity android:name=".LandingActivity" />
+        <activity android:name=".DashboardActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
