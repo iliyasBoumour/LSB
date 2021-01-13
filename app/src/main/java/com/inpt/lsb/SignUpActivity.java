@@ -7,6 +7,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
@@ -100,7 +101,6 @@ public class SignUpActivity extends AppCompatActivity {
                         progressDialog.dismiss();
 
                         if (task.isSuccessful()) {
-//                            FirebaseUser user = mAuth.getCurrentUser();
                             new AlertDialog.Builder(SignUpActivity.this).setTitle(R.string.successfully_signed_up).setMessage(R.string.please_sign_in).setPositiveButton("OK", (dialog, which) -> {
                                 dialog.dismiss();
                                 startActivity(new Intent(SignUpActivity.this, SignInActivity.class));
@@ -112,10 +112,10 @@ public class SignUpActivity extends AppCompatActivity {
                                 String errorCode = ((FirebaseAuthException) task.getException()).getErrorCode();
                                 switch (errorCode) {
                                     case "ERROR_INVALID_EMAIL":
-                                            emailInput.setError(getString(R.string.email_badly_formatted));
+                                        emailInput.setError(getString(R.string.email_badly_formatted));
                                         break;
                                     case "ERROR_EMAIL_ALREADY_IN_USE":
-                                            emailInput.setError(getString(R.string.email_already_in_use));
+                                        emailInput.setError(getString(R.string.email_already_in_use));
                                         break;
                                     default:
                                         alertDialog.setMessage(R.string.error_creating_account).setPositiveButton("OK", (dialog, which) -> {
@@ -123,7 +123,7 @@ public class SignUpActivity extends AppCompatActivity {
                                         }).show();
                                         break;
                                 }
-                            }catch (ClassCastException e){
+                            } catch (ClassCastException e) {
                                 showErrorSnackbar();
                             }
 
@@ -140,8 +140,12 @@ public class SignUpActivity extends AppCompatActivity {
         snackbar.setAction(R.string.retry, v -> {
             onSignUpClicked();
             snackbar.dismiss();
-        });
-        snackbar.show();
+        }).show();
+        Handler handler = new Handler();
+        handler.postDelayed(() -> {
+            snackbar.dismiss();
+        }, 2000);
+
     }
 
     private TextWatcher createTextWatcher(TextInputLayout textInput) {
