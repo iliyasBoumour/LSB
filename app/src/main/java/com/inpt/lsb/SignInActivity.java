@@ -25,6 +25,7 @@ import com.facebook.AccessToken;
 import com.facebook.CallbackManager;
 import com.facebook.FacebookCallback;
 import com.facebook.FacebookException;
+import com.facebook.login.LoginManager;
 import com.facebook.login.LoginResult;
 import com.facebook.login.widget.LoginButton;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
@@ -45,6 +46,8 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseAuthException;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
+
+import java.util.Arrays;
 import java.util.regex.Pattern;
 import com.facebook.FacebookSdk;
 import com.facebook.appevents.AppEventsLogger;
@@ -59,8 +62,8 @@ public class SignInActivity extends AppCompatActivity {
     private TextView signupText,forgetPassword;
     private FirebaseAuth mAuth;
     private ProgressDialog progressDialog;
-    private ImageView signGoogle;
-    private LoginButton signFb;
+    private ImageView signGoogle,signFb;
+//    private LoginButton signFb;
     private GoogleSignInClient mGoogleSignInClient;
     private CallbackManager callbackManager;
 
@@ -90,7 +93,7 @@ public class SignInActivity extends AppCompatActivity {
         // Configure Fb Sign In
         FacebookSdk.sdkInitialize(getApplicationContext());
         callbackManager=CallbackManager.Factory.create();
-        signFb.registerCallback(callbackManager, new FacebookCallback<LoginResult>() {
+        LoginManager.getInstance().registerCallback(callbackManager, new FacebookCallback<LoginResult>() {
             @Override
             public void onSuccess(LoginResult loginResult) {
                 handleFacebookAccessToken(loginResult.getAccessToken());
@@ -106,7 +109,7 @@ public class SignInActivity extends AppCompatActivity {
                 new AlertDialog.Builder(SignInActivity.this).setMessage(R.string.error_sign_fb).setPositiveButton("OK", (dialog, which) -> dialog.dismiss()).show();
             }
         });
-        signFb.setReadPermissions("email", "public_profile");
+        signFb.setOnClickListener(e->LoginManager.getInstance().logInWithReadPermissions(this, Arrays.asList("email", "public_profile")));
 
         signGoogle.setOnClickListener(e-> loginWithGoogle());
         forgetPassword.setOnClickListener(e->enterEmailDialog());
