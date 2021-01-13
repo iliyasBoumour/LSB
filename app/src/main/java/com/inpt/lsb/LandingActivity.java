@@ -58,7 +58,6 @@ public class LandingActivity extends AppCompatActivity implements View.OnClickLi
             intent = new Intent(this, SignUpActivity.class);
         }
         startActivity(intent);
-        finish();
     }
 
 }

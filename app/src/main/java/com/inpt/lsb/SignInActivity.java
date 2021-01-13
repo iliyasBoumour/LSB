@@ -101,12 +101,10 @@ public class SignInActivity extends AppCompatActivity {
             try {
                 // Google Sign In was successful, authenticate with Firebase
                 GoogleSignInAccount account = task.getResult(ApiException.class);
-                Log.d(TAG, "firebaseAuthWithGoogle:" + account.getId());
                 firebaseAuthWithGoogle(account.getIdToken());
             } catch (ApiException e) {
                 // Google Sign In failed, update UI appropriately
                 new AlertDialog.Builder(SignInActivity.this).setMessage(R.string.error_sign_google).setPositiveButton("OK", (dialog, which) -> dialog.dismiss()).show();
-                Log.w(TAG, "Google sign in failed"+e.getMessage());
             }
         }
     }
@@ -121,6 +119,7 @@ public class SignInActivity extends AppCompatActivity {
                             // Sign in success, update UI with the signed-in user's information
 //                            FirebaseUser user = mAuth.getCurrentUser();
                             startActivity(new Intent(SignInActivity.this,MainActivity.class));
+                            finishAffinity();
                         } else {
                             // If sign in fails, display a message to the user.
                             new AlertDialog.Builder(SignInActivity.this).setMessage(R.string.error_sign_google).setPositiveButton("OK", (dialog, which) -> dialog.dismiss()).show();
@@ -140,12 +139,12 @@ public class SignInActivity extends AppCompatActivity {
         linearLayout.addView(emailEt);
 //create the alert dialog
         AlertDialog.Builder alertDialog = new AlertDialog.Builder(this)
-                .setTitle("recover password")
-                .setPositiveButton("Recover",((dialogInterface, i) -> {
+                .setTitle(R.string.recover_password)
+                .setPositiveButton(R.string.Recover,((dialogInterface, i) -> {
                     String email=emailEt.getText().toString().trim();
                     recoverPassword(email);
                 }))
-                .setNegativeButton("Cancel",((dialogInterface, i) -> {
+                .setNegativeButton(R.string.Cancel,((dialogInterface, i) -> {
                     dialogInterface.dismiss();
                 }));
 //        show the alert dialog with an edit text
@@ -166,7 +165,7 @@ public class SignInActivity extends AppCompatActivity {
                     public void onComplete(@NonNull Task<Void> task) {
                         progressDialog.dismiss();
                         if (task.isSuccessful()){
-                            alertDialog.setTitle("Email sent !").setMessage("an email was sent to : "+email).setPositiveButton("OK", (dialog, which) -> dialog.dismiss()).show();
+                            alertDialog.setTitle(R.string.Email_sent).setMessage(getString(R.string.email_was_sent)+email).setPositiveButton("OK", (dialog, which) -> dialog.dismiss()).show();
                         }else{
                             alertDialog.setTitle(R.string.Error_recovering_password);
                             try {
@@ -197,7 +196,7 @@ public class SignInActivity extends AppCompatActivity {
         }else if (!Pattern.compile("^[A-Z0-9._%+-]+@[A-Z0-9.-]+\\.[A-Z]{2,6}$", Pattern.CASE_INSENSITIVE).matcher(email).find()) {
             textEmailInput.setError(getString(R.string.email_invalid));
         }else if(password.isEmpty()){
-            textPasswordInput.setError("Password must not be empty");
+            textPasswordInput.setError(getString(R.string.password_empty));
         }else {
             login(email,password);
         }
@@ -212,7 +211,7 @@ public class SignInActivity extends AppCompatActivity {
                         progressDialog.dismiss();
                         if (task.isSuccessful()) {
                             startActivity(new Intent(SignInActivity.this, MainActivity.class));
-                            finish();
+                            finishAffinity();
                         } else {
                             AlertDialog.Builder alertDialog = new AlertDialog.Builder(SignInActivity.this).setTitle(R.string.Login_Failed);
                             try {
