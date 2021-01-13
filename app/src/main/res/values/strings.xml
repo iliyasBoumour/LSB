@@ -1,5 +1,7 @@
 <resources>
     <string name="app_name">LSB</string>
+    <string name="facebook_app_id">1383050378716490</string>
+    <string name="fb_login_protocol_scheme">fb1383050378716490</string>
     <string name="sign_in">Sign In</string>
     <string name="sign_up">Sign Up</string>
     <string name="slogan">Let’s make it easy with BangBos</string>
@@ -40,4 +42,5 @@
     <string name="Cancel">Cancel</string>
     <string name="Email_sent">Email sent !</string>
     <string name="email_was_sent">\"an email was sent to : \"</string>
+    <string name="error_sign_fb" >Authentication with facebook Failed.</string>
 </resources>

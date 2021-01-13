@@ -138,7 +138,17 @@
                     app:layout_constraintTop_toBottomOf="@+id/signWith"
                     app:srcCompat="@drawable/google" />
 
-                <ImageView
+<!--                <ImageView-->
+<!--                    android:id="@+id/signFb"-->
+<!--                    android:layout_width="wrap_content"-->
+<!--                    android:layout_height="wrap_content"-->
+<!--                    app:layout_constraintBottom_toTopOf="@+id/signupText"-->
+<!--                    app:layout_constraintEnd_toEndOf="parent"-->
+<!--                    app:layout_constraintHorizontal_bias="0.5"-->
+<!--                    app:layout_constraintStart_toEndOf="@+id/signGoogle"-->
+<!--                    app:layout_constraintTop_toBottomOf="@+id/signWith"-->
+<!--                    app:srcCompat="@drawable/facebook" />-->
+                <com.facebook.login.widget.LoginButton
                     android:id="@+id/signFb"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -146,8 +156,7 @@
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintHorizontal_bias="0.5"
                     app:layout_constraintStart_toEndOf="@+id/signGoogle"
-                    app:layout_constraintTop_toBottomOf="@+id/signWith"
-                    app:srcCompat="@drawable/facebook" />
+                    app:layout_constraintTop_toBottomOf="@+id/signWith" />
 
                 <TextView
                     android:id="@+id/signupText"

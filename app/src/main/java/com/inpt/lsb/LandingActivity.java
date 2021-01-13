@@ -23,12 +23,6 @@ public class LandingActivity extends AppCompatActivity implements View.OnClickLi
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
-        if (currentUser!=null) {
-            startActivity(new Intent(this,MainActivity.class));
-            finish();
-            return;
-        }
         setContentView(R.layout.activity_landing);
         signIn=findViewById(R.id.signInButton);
         signUp=findViewById(R.id.signUpButton);
