@@ -19,6 +19,7 @@
             android:layout_height="0dp"
             android:layout_marginTop="30dp"
             android:elevation="30dp"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/slogan">
@@ -137,38 +138,38 @@
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/textPasswordInput" />
 
-<!--                <TextView-->
-<!--                    android:id="@+id/signWith"-->
-<!--                    android:layout_width="match_parent"-->
-<!--                    android:layout_height="wrap_content"-->
-<!--                    android:layout_marginTop="20dp"-->
-<!--                    android:text="@string/or_sign_up_with"-->
-<!--                    android:textAlignment="center"-->
-<!--                    app:layout_constraintBottom_toTopOf="@+id/signGoogle"-->
-<!--                    app:layout_constraintTop_toBottomOf="@+id/registerButton" />-->
+                <!--                <TextView-->
+                <!--                    android:id="@+id/signWith"-->
+                <!--                    android:layout_width="match_parent"-->
+                <!--                    android:layout_height="wrap_content"-->
+                <!--                    android:layout_marginTop="20dp"-->
+                <!--                    android:text="@string/or_sign_up_with"-->
+                <!--                    android:textAlignment="center"-->
+                <!--                    app:layout_constraintBottom_toTopOf="@+id/signGoogle"-->
+                <!--                    app:layout_constraintTop_toBottomOf="@+id/registerButton" />-->
 
-<!--                <ImageView-->
-<!--                    android:id="@+id/signGoogle"-->
-<!--                    android:layout_width="wrap_content"-->
-<!--                    android:layout_height="wrap_content"-->
-<!--                    android:layout_marginTop="20dp"-->
-<!--                    android:layout_marginRight="30dp"-->
-<!--                    app:layout_constraintEnd_toStartOf="@+id/signFb"-->
-<!--                    app:layout_constraintHorizontal_bias="0.5"-->
-<!--                    app:layout_constraintHorizontal_chainStyle="packed"-->
-<!--                    app:layout_constraintStart_toStartOf="parent"-->
-<!--                    app:layout_constraintTop_toBottomOf="@+id/signWith"-->
-<!--                    app:srcCompat="@drawable/google" />-->
+                <!--                <ImageView-->
+                <!--                    android:id="@+id/signGoogle"-->
+                <!--                    android:layout_width="wrap_content"-->
+                <!--                    android:layout_height="wrap_content"-->
+                <!--                    android:layout_marginTop="20dp"-->
+                <!--                    android:layout_marginRight="30dp"-->
+                <!--                    app:layout_constraintEnd_toStartOf="@+id/signFb"-->
+                <!--                    app:layout_constraintHorizontal_bias="0.5"-->
+                <!--                    app:layout_constraintHorizontal_chainStyle="packed"-->
+                <!--                    app:layout_constraintStart_toStartOf="parent"-->
+                <!--                    app:layout_constraintTop_toBottomOf="@+id/signWith"-->
+                <!--                    app:srcCompat="@drawable/google" />-->
 
-<!--                <ImageView-->
-<!--                    android:id="@+id/signFb"-->
-<!--                    android:layout_width="wrap_content"-->
-<!--                    android:layout_height="wrap_content"-->
-<!--                    android:layout_marginTop="20dp"-->
-<!--                    app:layout_constraintEnd_toEndOf="parent"-->
-<!--                    app:layout_constraintStart_toEndOf="@+id/signGoogle"-->
-<!--                    app:layout_constraintTop_toBottomOf="@+id/signWith"-->
-<!--                    app:srcCompat="@drawable/facebook" />-->
+                <!--                <ImageView-->
+                <!--                    android:id="@+id/signFb"-->
+                <!--                    android:layout_width="wrap_content"-->
+                <!--                    android:layout_height="wrap_content"-->
+                <!--                    android:layout_marginTop="20dp"-->
+                <!--                    app:layout_constraintEnd_toEndOf="parent"-->
+                <!--                    app:layout_constraintStart_toEndOf="@+id/signGoogle"-->
+                <!--                    app:layout_constraintTop_toBottomOf="@+id/signWith"-->
+                <!--                    app:srcCompat="@drawable/facebook" />-->
 
                 <TextView
                     android:id="@+id/signInText"
@@ -180,7 +181,7 @@
                     android:textAlignment="center"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/registerButton" />
-<!--                signGoogle-->
+                <!--                signGoogle-->
 
             </androidx.constraintlayout.widget.ConstraintLayout>
 

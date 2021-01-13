@@ -14,45 +14,48 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
+import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.inpt.adapters.HomeAdapter;
+import com.inpt.adapters.ProfileAdapter;
 
 import java.util.ArrayList;
 import java.util.List;
 
 
-public class HomeFragment extends Fragment {
+public class ProfileFragment extends Fragment {
     private RecyclerView recyclerView;
-    private HomeAdapter homeAdapter;
+    private ProfileAdapter profileAdapter;
     private List<Integer> posts;
 
-    public HomeFragment() {
+    public ProfileFragment() {
 
     }
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.home_fragment, container, false);
+        View view = inflater.inflate(R.layout.profile_fragment, container, false);
         /*Button logout=view.findViewById(R.id.logout);
         logout.setOnClickListener(E->{
             FirebaseAuth.getInstance().signOut();
             startActivity(new Intent(getActivity(),LandingActivity.class));
             ((Activity)getActivity()).finish();
         });*/
-        recyclerView = view.findViewById(R.id.homeRecyclerView);
+        recyclerView = view.findViewById(R.id.ProfilerecyclerView);
         posts = new ArrayList<>();
         for(int i = 0; i < 10; i++) {
             posts.add(i);
         }
         recyclerView.setHasFixedSize(true);
-        recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
-        homeAdapter = new HomeAdapter(getActivity(), posts);
-        recyclerView.setAdapter(homeAdapter);
+        GridLayoutManager gridLayoutManager = new GridLayoutManager(getActivity(),2, GridLayoutManager.VERTICAL,false);
+        recyclerView.setLayoutManager(gridLayoutManager);
+        profileAdapter = new ProfileAdapter(getActivity(), posts);
+        recyclerView.setAdapter(profileAdapter);
         return view;
     }
 }
