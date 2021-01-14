@@ -31,7 +31,7 @@ public class DashboardActivity extends AppCompatActivity {
         fragmentManager = getSupportFragmentManager();
         fragment = fragmentManager.findFragmentById(R.id.homeFragment);
         if(fragment == null) {
-            fragment = new HomeFragment();
+            fragment = new SearchFragment();
             fragmentManager.beginTransaction()
                     .add(R.id.homeFragment, fragment)
                     .commit();
