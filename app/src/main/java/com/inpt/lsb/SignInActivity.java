@@ -348,9 +348,6 @@ public class SignInActivity extends AppCompatActivity {
 //    get the user logged In
     private void signInSucces(){
         FirebaseUser user = mAuth.getCurrentUser();
-        CurrentUserInfo currentUserInfo = CurrentUserInfo.getInstance();
-        currentUserInfo.setUserId(user.getUid());
-        currentUserInfo.setUserName("Hamza");
         startActivity(new Intent(SignInActivity.this,DashboardActivity.class));
         finishAffinity();
     }
