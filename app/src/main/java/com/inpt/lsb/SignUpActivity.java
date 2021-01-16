@@ -106,6 +106,7 @@ public class SignUpActivity extends AppCompatActivity {
                                 startActivity(new Intent(SignUpActivity.this, SignInActivity.class));
                                 finish();
                             }).show();
+
                         } else {
                             AlertDialog.Builder alertDialog = new AlertDialog.Builder(SignUpActivity.this).setTitle(R.string.Login_Failed);
                             try {

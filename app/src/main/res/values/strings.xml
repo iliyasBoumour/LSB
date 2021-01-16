@@ -42,5 +42,5 @@
     <string name="Cancel">Cancel</string>
     <string name="Email_sent">Email sent !</string>
     <string name="email_was_sent">\"an email was sent to : \"</string>
-    <string name="error_sign_fb" >Authentication with facebook Failed.</string>
+    <string name="error_sign_fb">Authentication with facebook Failed.</string>
 </resources>
