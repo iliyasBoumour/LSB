@@ -4,6 +4,7 @@ package com.inpt.lsb;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,6 +20,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.auth.FirebaseAuth;
+import com.inpt.Util.CurrentUserInfo;
 import com.inpt.adapters.HomeAdapter;
 
 import java.util.ArrayList;
@@ -29,9 +31,20 @@ public class HomeFragment extends Fragment {
     private RecyclerView recyclerView;
     private HomeAdapter homeAdapter;
     private List<Integer> posts;
+    private String currentUserId;
+    private String currentUserName;
 
     public HomeFragment() {
 
+    }
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        currentUserId = CurrentUserInfo.getInstance().getUserId();
+        currentUserName = CurrentUserInfo.getInstance().getUserName();
+        Log.d("HOME", "onCreate: " + currentUserId);
+        Log.d("HOME", "onCreate: " + currentUserName);
     }
 
     @Nullable

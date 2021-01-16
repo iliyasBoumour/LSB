@@ -37,6 +37,10 @@ public class DashboardActivity extends AppCompatActivity implements View.OnClick
             startActivity(new Intent(this,LandingActivity.class));
             finish();
             return;
+        } else {
+            CurrentUserInfo currentUserInfo = CurrentUserInfo.getInstance();
+            currentUserInfo.setUserId(currentUser.getUid());
+            currentUserInfo.setUserName("Hamza");
         }
         setContentView(R.layout.dashboard);
         bottomNavigationView = findViewById(R.id.bottomNavView);
@@ -45,9 +49,8 @@ public class DashboardActivity extends AppCompatActivity implements View.OnClick
         floatingActionButton.setOnClickListener(this);
         currentUserId = CurrentUserInfo.getInstance().getUserId();
         currentUserName = CurrentUserInfo.getInstance().getUserName();
-        Log.d("UserId", "onCreate: " + currentUserId);
-        Log.d("UserName", "onCreate: " + currentUserName);
         fragmentManager = getSupportFragmentManager();
+
         fragment = fragmentManager.findFragmentById(R.id.homeFragment);
         if(fragment == null) {
             fragment = new HomeFragment();

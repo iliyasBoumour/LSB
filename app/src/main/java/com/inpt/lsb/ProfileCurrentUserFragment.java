@@ -2,6 +2,7 @@ package com.inpt.lsb;
 
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,6 +13,7 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.inpt.Util.CurrentUserInfo;
 import com.inpt.adapters.ProfileAdapter;
 
 import java.util.ArrayList;
@@ -22,9 +24,20 @@ public class ProfileCurrentUserFragment extends Fragment {
     private RecyclerView recyclerView;
     private ProfileAdapter profileAdapter;
     private List<Integer> posts;
+    private String currentUserId;
+    private String currentUserName;
 
     public ProfileCurrentUserFragment() {
 
+    }
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        currentUserId = CurrentUserInfo.getInstance().getUserId();
+        currentUserName = CurrentUserInfo.getInstance().getUserName();
+        Log.d("HOME", "onCreate: " + currentUserId);
+        Log.d("HOME", "onCreate: " + currentUserName);
     }
 
     @Nullable
