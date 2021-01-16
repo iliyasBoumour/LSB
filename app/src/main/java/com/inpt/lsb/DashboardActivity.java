@@ -1,5 +1,6 @@
 package com.inpt.lsb;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
@@ -14,12 +15,13 @@ import android.view.View;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
 import com.inpt.Util.CurrentUserInfo;
 
-public class DashboardActivity extends AppCompatActivity implements View.OnClickListener {
+public class DashboardActivity extends AppCompatActivity implements View.OnClickListener, BottomNavigationView.OnNavigationItemSelectedListener {
     private static final int GALLERY_CODE = 1 ;
     private BottomNavigationView bottomNavigationView;
     private FloatingActionButton floatingActionButton;
@@ -37,46 +39,22 @@ public class DashboardActivity extends AppCompatActivity implements View.OnClick
             return;
         }
         setContentView(R.layout.dashboard);
+        bottomNavigationView = findViewById(R.id.bottomNavView);
         floatingActionButton = findViewById(R.id.add_post_btn);
+        bottomNavigationView.setOnNavigationItemSelectedListener(this);
         floatingActionButton.setOnClickListener(this);
         currentUserId = CurrentUserInfo.getInstance().getUserId();
         currentUserName = CurrentUserInfo.getInstance().getUserName();
         Log.d("UserId", "onCreate: " + currentUserId);
         Log.d("UserName", "onCreate: " + currentUserName);
-        bottomNavigationView = findViewById(R.id.bottomNavView);
-        bottomNavigationView.getMenu().getItem(0).setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
-            @Override
-            public boolean onMenuItemClick(MenuItem item) {
-                fragment = new HomeFragment();
-                fragmentManager.beginTransaction()
-                        .replace(R.id.homeFragment, fragment)
-                        .commit();
-
-                return false;
-            }
-        });
-        bottomNavigationView = findViewById(R.id.bottomNavView);
-        bottomNavigationView.getMenu().getItem(3).setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
-            @Override
-            public boolean onMenuItemClick(MenuItem item) {
-                fragment = new ProfileCurrentUserFragment();
-                fragmentManager.beginTransaction()
-                        .replace(R.id.homeFragment, fragment)
-                        .commit();
-
-                return false;
-            }
-        });
-
         fragmentManager = getSupportFragmentManager();
         fragment = fragmentManager.findFragmentById(R.id.homeFragment);
         if(fragment == null) {
-            fragment = new ProfileCurrentUserFragment();
+            fragment = new HomeFragment();
             fragmentManager.beginTransaction()
                     .add(R.id.homeFragment, fragment)
                     .commit();
         }
-
     }
 
     @Override
@@ -101,5 +79,25 @@ public class DashboardActivity extends AppCompatActivity implements View.OnClick
                 startActivity(intent);
             }
         }
+    }
+
+    // MENU
+    @Override
+    public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+        switch(item.getItemId()) {
+            case R.id.menuHome:
+                fragment = new HomeFragment();
+                fragmentManager.beginTransaction()
+                        .replace(R.id.homeFragment, fragment)
+                        .commit();
+                break;
+            case R.id.menuProfil:
+                fragment = new ProfileCurrentUserFragment();
+                fragmentManager.beginTransaction()
+                        .replace(R.id.homeFragment, fragment)
+                        .commit();
+            break;
+        }
+        return false;
     }
 }
