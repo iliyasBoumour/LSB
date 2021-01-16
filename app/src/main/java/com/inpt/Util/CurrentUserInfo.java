@@ -2,7 +2,7 @@ package com.inpt.Util;
 
 import android.app.Application;
 
-class CurrentUserInfo extends Application {
+public class CurrentUserInfo extends Application {
     private String userId;
     private String userName;
     private String pdpUrl;

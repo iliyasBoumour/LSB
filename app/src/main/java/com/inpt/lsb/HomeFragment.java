@@ -38,12 +38,6 @@ public class HomeFragment extends Fragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.home_fragment, container, false);
-        /*Button logout=view.findViewById(R.id.logout);
-        logout.setOnClickListener(E->{
-            FirebaseAuth.getInstance().signOut();
-            startActivity(new Intent(getActivity(),LandingActivity.class));
-            ((Activity)getActivity()).finish();
-        });*/
         recyclerView = view.findViewById(R.id.homeRecyclerView);
         posts = new ArrayList<>();
         for(int i = 0; i < 10; i++) {

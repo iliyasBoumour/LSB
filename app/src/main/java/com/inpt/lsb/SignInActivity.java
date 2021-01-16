@@ -2,6 +2,7 @@ package com.inpt.lsb;
 
 import android.app.ProgressDialog;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.text.Editable;
@@ -41,6 +42,9 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseAuthException;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
+import com.google.firebase.auth.UserProfileChangeRequest;
+import com.inpt.Util.CurrentUserInfo;
+
 import java.util.Arrays;
 import java.util.regex.Pattern;
 
@@ -344,6 +348,9 @@ public class SignInActivity extends AppCompatActivity {
 //    get the user logged In
     private void signInSucces(){
         FirebaseUser user = mAuth.getCurrentUser();
+        CurrentUserInfo currentUserInfo = CurrentUserInfo.getInstance();
+        currentUserInfo.setUserId(user.getUid());
+        currentUserInfo.setUserName("Hamza");
         startActivity(new Intent(SignInActivity.this,DashboardActivity.class));
         finishAffinity();
     }

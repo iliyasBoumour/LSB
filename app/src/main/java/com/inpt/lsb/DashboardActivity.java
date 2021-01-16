@@ -8,6 +8,7 @@ import androidx.fragment.app.FragmentManager;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 
@@ -16,24 +17,32 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
+import com.inpt.Util.CurrentUserInfo;
+
 public class DashboardActivity extends AppCompatActivity implements View.OnClickListener {
     private static final int GALLERY_CODE = 1 ;
     private BottomNavigationView bottomNavigationView;
     private FloatingActionButton floatingActionButton;
     FragmentManager fragmentManager;
     Fragment fragment;
+    private String currentUserId;
+    private String currentUserName;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.dashboard);
-        floatingActionButton = findViewById(R.id.add_post_btn);
-        floatingActionButton.setOnClickListener(this);
         FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
         if (currentUser==null) {
             startActivity(new Intent(this,LandingActivity.class));
             finish();
             return;
         }
+        setContentView(R.layout.dashboard);
+        floatingActionButton = findViewById(R.id.add_post_btn);
+        floatingActionButton.setOnClickListener(this);
+        currentUserId = CurrentUserInfo.getInstance().getUserId();
+        currentUserName = CurrentUserInfo.getInstance().getUserName();
+        Log.d("UserId", "onCreate: " + currentUserId);
+        Log.d("UserName", "onCreate: " + currentUserName);
         bottomNavigationView = findViewById(R.id.bottomNavView);
         bottomNavigationView.getMenu().getItem(0).setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
             @Override
