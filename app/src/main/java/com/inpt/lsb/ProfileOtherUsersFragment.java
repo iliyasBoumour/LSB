@@ -12,6 +12,7 @@ import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.inpt.adapters.ProfileAdapter;
+import com.inpt.models.Post;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -22,7 +23,7 @@ import java.util.List;
 public class ProfileOtherUsersFragment extends Fragment {
     private RecyclerView recyclerView;
     private ProfileAdapter profileAdapter;
-    private List<Integer> posts;
+    private List<Post> posts;
 
     public ProfileOtherUsersFragment() {
 
@@ -34,13 +35,10 @@ public class ProfileOtherUsersFragment extends Fragment {
         View view = inflater.inflate(R.layout.profile_other_users_fragment, container, false);
         recyclerView = view.findViewById(R.id.ProfilerecyclerView);
         posts = new ArrayList<>();
-        for(int i = 0; i < 10; i++) {
-            posts.add(i);
-        }
         recyclerView.setHasFixedSize(true);
         GridLayoutManager gridLayoutManager = new GridLayoutManager(getActivity(),2, GridLayoutManager.VERTICAL,false);
         recyclerView.setLayoutManager(gridLayoutManager);
-        profileAdapter = new ProfileAdapter(getActivity(), posts);
+        profileAdapter = new ProfileAdapter(getActivity(), posts, (getActivity()).getSupportFragmentManager());
         recyclerView.setAdapter(profileAdapter);
         return view;
     }

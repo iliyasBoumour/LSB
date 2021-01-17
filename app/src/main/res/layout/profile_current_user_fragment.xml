@@ -42,18 +42,18 @@
         android:id="@+id/edite_btn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:paddingVertical="5dp"
-        android:paddingHorizontal="35dp"
-        app:strokeColor="@color/orange"
+        android:layout_below="@id/userName"
+        android:layout_centerHorizontal="true"
         android:layout_marginTop="10dp"
-        app:cornerRadius="20dp"
-        app:strokeWidth="1dp"
-        android:text="Edite Profile"
+        android:backgroundTint="#fff"
+        android:paddingHorizontal="35dp"
+        android:paddingVertical="5dp"
+        android:text="Edit Profile"
         android:textColor="@color/orange"
         android:textSize="15sp"
-        android:backgroundTint="#fff"
-        android:layout_centerHorizontal="true"
-        android:layout_below="@id/userName"/>
+        app:cornerRadius="20dp"
+        app:strokeColor="@color/orange"
+        app:strokeWidth="1dp" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/ProfilerecyclerView"

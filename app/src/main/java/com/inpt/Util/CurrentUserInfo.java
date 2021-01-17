@@ -2,11 +2,20 @@ package com.inpt.Util;
 
 import android.app.Application;
 
+import com.facebook.drawee.backends.pipeline.Fresco;
+
 public class CurrentUserInfo extends Application {
     private String userId;
     private String userName;
     private String pdpUrl;
     private static CurrentUserInfo instance;
+
+
+    @Override
+    public void onCreate() {
+        super.onCreate();
+        Fresco.initialize(this);
+    }
 
     public CurrentUserInfo() {
 

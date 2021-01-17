@@ -23,6 +23,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
+import com.inpt.Util.CurrentUserInfo;
 import com.inpt.models.Post;
 
 import java.util.Date;
@@ -32,7 +33,7 @@ public class AddPostActivity extends AppCompatActivity implements View.OnClickLi
     private Button add_btn;
     private EditText caption_field;
     private Uri imageUri;
-    private String currentUserId = "xwnks1234K";
+    private String currentUserId;
     private ProgressBar progressBar;
 
     //Firebase
@@ -43,6 +44,7 @@ public class AddPostActivity extends AppCompatActivity implements View.OnClickLi
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_post);
+        currentUserId = CurrentUserInfo.getInstance().getUserId();
         storageReference = FirebaseStorage.getInstance().getReference();
         progressBar = findViewById(R.id.progressBar2);
         progressBar.setVisibility(View.INVISIBLE);
