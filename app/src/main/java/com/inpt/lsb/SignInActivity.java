@@ -31,6 +31,7 @@ import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.textfield.TextInputLayout;
@@ -41,7 +42,11 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseAuthException;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
+import com.google.firebase.firestore.FirebaseFirestore;
+
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.regex.Pattern;
 
 
@@ -56,6 +61,7 @@ public class SignInActivity extends AppCompatActivity {
     private ImageView signGoogle,signFb;
     private GoogleSignInClient mGoogleSignInClient;
     private CallbackManager callbackManager;
+    FirebaseFirestore db = FirebaseFirestore.getInstance();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -128,10 +134,17 @@ public class SignInActivity extends AppCompatActivity {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if (task.isSuccessful()) {
+                            if (task.getResult().getAdditionalUserInfo().isNewUser()){
+                                addNew();
+                            }
                             signInSucces();
                         } else {
                             // If sign in fails, display a message to the user.
+                            if (((FirebaseAuthException) task.getException()).getErrorCode().equals("ERROR_ACCOUNT_EXISTS_WITH_DIFFERENT_CREDENTIAL")){
+                            showDialog(getString(R.string.account_exists));
+                            }else {
                             showDialog(getString(R.string.error_sign_fb));
+                            }
                         }
                     }
                 });
@@ -172,6 +185,9 @@ public class SignInActivity extends AppCompatActivity {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if (task.isSuccessful()) {
+                            if (task.getResult().getAdditionalUserInfo().isNewUser()){
+                                addNew();
+                            }
                             signInSucces();
                         } else {
                             // If sign in fails, display a message to the user.
@@ -343,9 +359,19 @@ public class SignInActivity extends AppCompatActivity {
 
 //    get the user logged In
     private void signInSucces(){
-        FirebaseUser user = mAuth.getCurrentUser();
         startActivity(new Intent(SignInActivity.this,DashboardActivity.class));
         finishAffinity();
+    }
+
+    private void addNew(){
+        FirebaseUser user = mAuth.getCurrentUser();
+        Map<String, Object> newUser = new HashMap<>();
+        newUser.put("username", user.getDisplayName());
+        newUser.put("email", user.getEmail());
+        db.collection("users")
+                .document(user.getUid())
+                .set(newUser);
+        Log.i("eeeee","new");
     }
 
 }
