@@ -101,6 +101,19 @@ public class DashboardActivity extends AppCompatActivity implements View.OnClick
                         .replace(R.id.homeFragment, fragment)
                         .commit();
             break;
+            case R.id.menuNotification:
+                Log.d("NOTIF", "onNavigationItemSelected: ");
+                fragment = new NotificationsFragment();
+                fragmentManager.beginTransaction()
+                        .replace(R.id.homeFragment, fragment)
+                        .commit();
+                break;
+            case R.id.menuSearch:
+                Log.d("SEARCH", "onNavigationItemSelected: ");
+                fragment = new SearchFragment();
+                fragmentManager.beginTransaction()
+                        .replace(R.id.homeFragment, fragment)
+                        .commit();
         }
         return false;
     }

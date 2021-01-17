@@ -43,6 +43,7 @@
                     app:layout_constraintTop_toTopOf="parent" />
 
                 <ImageView
+                    android:id="@+id/pdp"
                     android:layout_width="60dp"
                     android:layout_height="60dp"
                     android:layout_marginRight="20dp"
