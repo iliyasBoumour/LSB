@@ -1,28 +1,22 @@
 package com.inpt.adapters;
+
 import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
 import android.text.format.DateUtils;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.facebook.drawee.backends.pipeline.Fresco;
 import com.facebook.drawee.view.SimpleDraweeView;
-import com.google.android.material.behavior.HideBottomViewOnScrollBehavior;
-import com.inpt.lsb.DashboardActivity;
-import com.inpt.lsb.HomeFragment;
 import com.inpt.lsb.PostFragment;
 import com.inpt.lsb.R;
 import com.inpt.models.Post;
-import com.squareup.picasso.Picasso;
 
 import java.util.List;
 

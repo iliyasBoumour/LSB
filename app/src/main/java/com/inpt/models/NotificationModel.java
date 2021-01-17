@@ -1,26 +1,26 @@
 package com.inpt.models;
 
-import java.util.Date;
+import com.google.firebase.Timestamp;
 
 public class NotificationModel {
     private String pdp;
     private String notification;
-    private Date date;
+    private Timestamp date;
     private String image;
 
-    public NotificationModel(String pdp, String notification, Date date, String image) {
+    public NotificationModel(String pdp, String notification, Timestamp date, String image) {
         this.pdp = pdp;
         this.notification = notification;
         this.date = date;
         this.image = image;
     }
-    public NotificationModel(String pdp, String notification, Date date) {
+    public NotificationModel(String pdp, String notification, Timestamp date) {
         this.pdp = pdp;
         this.notification = notification;
         this.date = date;
         this.image = "";
     }
-    public NotificationModel(String notification, Date date) {
+    public NotificationModel(String notification, Timestamp date) {
         this.notification = notification;
         this.date = date;
         this.image = "";
@@ -42,11 +42,11 @@ public class NotificationModel {
         this.notification = notification;
     }
 
-    public Date getDate() {
+    public Timestamp getDate() {
         return date;
     }
 
-    public void setDate(Date date) {
+    public void setDate(Timestamp date) {
         this.date = date;
     }
 

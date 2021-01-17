@@ -1,25 +1,21 @@
 package com.inpt.lsb;
 
+import android.content.Intent;
+import android.net.Uri;
+import android.os.Bundle;
+import android.view.MenuItem;
+import android.view.View;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 
-import android.content.Intent;
-import android.net.Uri;
-import android.os.Bundle;
-import android.util.Log;
-import android.view.MenuItem;
-import android.view.View;
-
-import com.facebook.drawee.backends.pipeline.Fresco;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-
 import com.inpt.Util.CurrentUserInfo;
 
 public class DashboardActivity extends AppCompatActivity implements View.OnClickListener, BottomNavigationView.OnNavigationItemSelectedListener {
@@ -91,30 +87,20 @@ public class DashboardActivity extends AppCompatActivity implements View.OnClick
         switch(item.getItemId()) {
             case R.id.menuHome:
                 fragment = new HomeFragment();
-                fragmentManager.beginTransaction()
-                        .replace(R.id.homeFragment, fragment)
-                        .commit();
                 break;
             case R.id.menuProfil:
                 fragment = new ProfileCurrentUserFragment();
-                fragmentManager.beginTransaction()
-                        .replace(R.id.homeFragment, fragment)
-                        .commit();
             break;
             case R.id.menuNotification:
-                Log.d("NOTIF", "onNavigationItemSelected: ");
                 fragment = new NotificationsFragment();
-                fragmentManager.beginTransaction()
-                        .replace(R.id.homeFragment, fragment)
-                        .commit();
                 break;
             case R.id.menuSearch:
-                Log.d("SEARCH", "onNavigationItemSelected: ");
                 fragment = new SearchFragment();
-                fragmentManager.beginTransaction()
-                        .replace(R.id.homeFragment, fragment)
-                        .commit();
         }
+
+        fragmentManager.beginTransaction()
+                .replace(R.id.homeFragment, fragment)
+                .commit();
         return false;
     }
 }

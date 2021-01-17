@@ -1,15 +1,15 @@
 package com.inpt.lsb;
 
 import android.os.Bundle;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
 
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-
+import com.google.firebase.Timestamp;
 import com.inpt.adapters.NotificationAdapter;
 import com.inpt.models.NotificationModel;
 
@@ -34,8 +34,8 @@ public class NotificationsFragment extends Fragment {
 
         notifRecView = view.findViewById(R.id.notifRecyclerView);
         List<NotificationModel> notifs=new ArrayList<>();
-        notifs.add(new NotificationModel("weeeeeee1",new Date()));
-        notifs.add(new NotificationModel("weeeeeee2",new Date()));
+        notifs.add(new NotificationModel("weeeeeee1",new Timestamp(new Date())));
+        notifs.add(new NotificationModel("weeeeeee2",new Timestamp(new Date())));
 
         notifRecView.setLayoutManager(new LinearLayoutManager(getActivity()));
         notificationAdapter=new NotificationAdapter(getActivity());
