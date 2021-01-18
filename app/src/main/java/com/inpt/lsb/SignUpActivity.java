@@ -1,38 +1,25 @@
 package com.inpt.lsb;
 
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.app.AppCompatActivity;
-
-import android.Manifest;
 import android.app.ProgressDialog;
-import android.content.ActivityNotFoundException;
-import android.content.ContentResolver;
-import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
-import android.provider.MediaStore;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Log;
-import android.util.Patterns;
 import android.view.View;
-import android.webkit.MimeTypeMap;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
+
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.app.AppCompatActivity;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.resource.bitmap.CircleCrop;
-import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.snackbar.Snackbar;
@@ -40,17 +27,9 @@ import com.google.android.material.textfield.TextInputLayout;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseAuthException;
-import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.storage.FirebaseStorage;
-import com.google.firebase.storage.OnProgressListener;
-import com.google.firebase.storage.StorageReference;
-import com.google.firebase.storage.StorageTask;
-import com.google.firebase.storage.UploadTask;
+import com.inpt.Util.UploadImage;
 
-import java.io.ByteArrayOutputStream;
-import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.regex.Pattern;
@@ -64,9 +43,9 @@ public class SignUpActivity extends AppCompatActivity {
     private FirebaseAuth mAuth;
     private ProgressDialog progressDialog;
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
-    private StorageReference mStorageRef;
     private Uri imageUri;
-    private StorageTask uploadTask;
+    private UploadImage uploadImage;
+    private static final String TAG="eeeeeeeeee";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -81,7 +60,7 @@ public class SignUpActivity extends AppCompatActivity {
         signInText = findViewById(R.id.signInText);
         pdp=findViewById(R.id.pdp);
         mAuth = FirebaseAuth.getInstance();
-        mStorageRef = FirebaseStorage.getInstance().getReference("pdps");
+        uploadImage=new UploadImage("pdps",this);
         progressDialog = new ProgressDialog(this);
         progressDialog.setMessage(getString(R.string.please_wait));
 
@@ -91,7 +70,7 @@ public class SignUpActivity extends AppCompatActivity {
             finish();
         });
         signUpButton.setOnClickListener(e -> onSignUpClicked());
-        pdp.setOnClickListener(e->selectImage());
+        pdp.setOnClickListener(e->uploadImage.verifyPermissions());
 
 //        watch inputs
         emailInput.getEditText().addTextChangedListener(createTextWatcher(emailInput));
@@ -99,39 +78,9 @@ public class SignUpActivity extends AppCompatActivity {
         passwordInput.getEditText().addTextChangedListener(createTextWatcher(passwordInput));
     }
 
-    private void selectImage() {
-        try {
-                final CharSequence[] options = {"Take Photo", "Choose From Gallery","Cancel"};
-                AlertDialog.Builder builder = new AlertDialog.Builder(this);
-                builder.setTitle("Select Option");
-                builder.setItems(options, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int item) {
-                        if (options[item].equals("Take Photo")) {
-                            dialog.dismiss();
-                            Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                            startActivityForResult(intent, 0);
-                        } else if (options[item].equals("Choose From Gallery")) {
-                            dialog.dismiss();
-                            Intent pickPhoto = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-                            startActivityForResult(pickPhoto, 1);
-                        } else if (options[item].equals("Cancel")) {
-                            dialog.dismiss();
-                        }
-                    }
-                });
-                builder.show();
-        } catch (Exception e) {
-            Toast.makeText(this, "Camera Permission error", Toast.LENGTH_SHORT).show();
-            e.printStackTrace();
-        }
-    }
-
-    public Uri getImageUri(Context inContext, Bitmap inImage) {
-        ByteArrayOutputStream bytes = new ByteArrayOutputStream();
-        inImage.compress(Bitmap.CompressFormat.JPEG, 100, bytes);
-        String path = MediaStore.Images.Media.insertImage(inContext.getContentResolver(), inImage, "Title", null);
-        return Uri.parse(path);
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        uploadImage.verifyPermissions();
     }
 
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -144,7 +93,7 @@ public class SignUpActivity extends AppCompatActivity {
                 if(resultCode == RESULT_OK){
                     Bundle extras = data.getExtras();
                     Bitmap selectedImage = (Bitmap) extras.get("data");
-                    imageUri = getImageUri(getApplicationContext(), selectedImage);
+                    imageUri = uploadImage.getImageUri(getApplicationContext(), selectedImage);
                     Glide.with(this)
                             .load(imageUri)
                             .transform(new CircleCrop())
@@ -189,37 +138,6 @@ public class SignUpActivity extends AppCompatActivity {
         }
     }
 
-    private String getFileExtension(Uri uri) {
-        ContentResolver cR = getContentResolver();
-        MimeTypeMap mime = MimeTypeMap.getSingleton();
-        return mime.getExtensionFromMimeType(cR.getType(uri));
-    }
-
-    private Uri uploadImage(){
-        if (imageUri != null) {
-            StorageReference fileReference = mStorageRef.child(System.currentTimeMillis()
-                    + "." + getFileExtension(imageUri));
-            uploadTask=fileReference.putFile(imageUri);
-            fileReference.putFile(imageUri)
-                    .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-                        @Override
-                        public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                            // Get a URL to the uploaded content
-                            imageUri= taskSnapshot.getUploadSessionUri();
-                        }
-
-                    })
-                    .addOnFailureListener(new OnFailureListener() {
-                        @Override
-                        public void onFailure(@NonNull Exception exception) {
-                            imageUri=null;;
-                            Toast.makeText(SignUpActivity.this, "failed to upload image please try later", Toast.LENGTH_SHORT).show();
-                        }
-                    });
-        }
-        return imageUri;
-    }
-
     private void createAccount(String username, String email, String password) {
         progressDialog.show();
         mAuth.createUserWithEmailAndPassword(email, password)
@@ -227,7 +145,7 @@ public class SignUpActivity extends AppCompatActivity {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         progressDialog.dismiss();
-                        Uri pdpUrl=uploadImage();
+                        Uri pdpUrl=uploadImage.uploadImage(imageUri);
                         if (task.isSuccessful()) {
 
                             new AlertDialog.Builder(SignUpActivity.this).setTitle(R.string.successfully_signed_up).setMessage(R.string.please_sign_in).setPositiveButton("OK", (dialog, which) -> {

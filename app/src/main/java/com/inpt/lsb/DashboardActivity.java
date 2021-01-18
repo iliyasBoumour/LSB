@@ -1,6 +1,7 @@
 package com.inpt.lsb;
 
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
 import android.view.MenuItem;
@@ -17,6 +18,7 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.inpt.Util.CurrentUserInfo;
+import com.inpt.Util.UploadImage;
 
 public class DashboardActivity extends AppCompatActivity implements View.OnClickListener, BottomNavigationView.OnNavigationItemSelectedListener {
     private static final int GALLERY_CODE = 1 ;
@@ -26,6 +28,7 @@ public class DashboardActivity extends AppCompatActivity implements View.OnClick
     Fragment fragment;
     private String currentUserId;
     private String currentUserName;
+    private UploadImage uploadImage;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -35,9 +38,12 @@ public class DashboardActivity extends AppCompatActivity implements View.OnClick
             finish();
             return;
         } else {
+//
             CurrentUserInfo currentUserInfo = CurrentUserInfo.getInstance();
+//
             currentUserInfo.setUserId(currentUser.getUid());
             currentUserInfo.setUserName("Hamza");
+//            pdp and username
         }
         setContentView(R.layout.dashboard);
         bottomNavigationView = findViewById(R.id.bottomNavView);
@@ -47,6 +53,7 @@ public class DashboardActivity extends AppCompatActivity implements View.OnClick
         currentUserId = CurrentUserInfo.getInstance().getUserId();
         currentUserName = CurrentUserInfo.getInstance().getUserName();
         fragmentManager = getSupportFragmentManager();
+        uploadImage=new UploadImage("post_images",this);
 
         fragment = fragmentManager.findFragmentById(R.id.homeFragment);
         if(fragment == null) {
@@ -61,23 +68,38 @@ public class DashboardActivity extends AppCompatActivity implements View.OnClick
     public void onClick(View v) {
         switch(v.getId()) {
             case R.id.add_post_btn:
-                Intent galleryIntent = new Intent(Intent.ACTION_GET_CONTENT);
-                galleryIntent.setType("image/*");
-                startActivityForResult(galleryIntent, GALLERY_CODE);
+                uploadImage.verifyPermissions();
                 break;
         }
     }
 
     @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        uploadImage.verifyPermissions();
+    }
+
+    @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if(requestCode == GALLERY_CODE && resultCode == RESULT_OK) {
-            if(data != null) {
-                Uri imageUri = data.getData();
-                Intent intent = new Intent(DashboardActivity.this, AddPostActivity.class);
-                intent.putExtra("imageUri", imageUri);
-                startActivity(intent);
-            }
+        Uri imageUri = null;
+        switch(requestCode) {
+            case 0:
+                if(resultCode == RESULT_OK){
+                    Bundle extras = data.getExtras();
+                    Bitmap selectedImage = (Bitmap) extras.get("data");
+                    imageUri = uploadImage.getImageUri(getApplicationContext(), selectedImage);
+                }
+                break;
+            case 1:
+                if(resultCode == RESULT_OK && data != null && data.getData() != null){
+                    imageUri = data.getData();
+                }
+                break;
+        }
+        if (imageUri!=null){
+            Intent intent = new Intent(DashboardActivity.this, AddPostActivity.class);
+            intent.putExtra("imageUri", imageUri);
+            startActivity(intent);
         }
     }
 
