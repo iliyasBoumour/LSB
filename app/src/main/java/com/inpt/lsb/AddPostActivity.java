@@ -25,12 +25,13 @@ import com.inpt.models.Post;
 import java.util.Date;
 
 public class AddPostActivity extends AppCompatActivity implements View.OnClickListener {
-    private ImageView imageView,add_btn;
+    private ImageView imageView,add_btn,cancelAdd;
     private EditText caption_field;
     private Uri imageUri;
     private String currentUserId;
     private UploadImage uploadImage;
     private ProgressDialog progressDialog;
+
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
     private StorageReference storageReference;
     @Override
@@ -41,10 +42,13 @@ public class AddPostActivity extends AppCompatActivity implements View.OnClickLi
         imageView = findViewById(R.id.imageView);
         add_btn = findViewById(R.id.add_btn);
         caption_field = findViewById(R.id.caption_field);
+        cancelAdd=findViewById(R.id.cancelAdd);
+        cancelAdd.setOnClickListener(this);
+
         storageReference = FirebaseStorage.getInstance().getReference();
         progressDialog = new ProgressDialog(this);
         progressDialog.setMessage(getString(R.string.please_wait));
-        uploadImage=new UploadImage("post_images",this);
+        uploadImage=new UploadImage(this);
         imageUri = getIntent().getParcelableExtra("imageUri");
         imageView.setImageURI(imageUri);
         add_btn.setOnClickListener(this);
@@ -55,6 +59,9 @@ public class AddPostActivity extends AppCompatActivity implements View.OnClickLi
         switch (v.getId()) {
             case R.id.add_btn:
                 addPost();
+                break;
+            case R.id.cancelAdd:
+                finish();
                 break;
         }
     }

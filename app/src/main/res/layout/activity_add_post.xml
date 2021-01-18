@@ -16,7 +16,7 @@
         app:layout_constraintTop_toTopOf="parent">
 
         <ImageView
-            android:id="@+id/back"
+            android:id="@+id/cancelAdd"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:src="@drawable/ic_back"
@@ -38,14 +38,14 @@
             android:id="@+id/textView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_toEndOf="@id/back"
+            android:layout_toEndOf="@id/cancelAdd"
             android:text="@string/new_post"
             android:textColor="@color/orange"
             android:textSize="20sp"
             android:textStyle="bold"
             android:layout_marginStart="30dp"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toEndOf="@+id/back"
+            app:layout_constraintStart_toEndOf="@+id/cancelAdd"
             app:layout_constraintTop_toTopOf="parent" />
 
 

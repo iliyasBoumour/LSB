@@ -61,7 +61,6 @@ public class SearchAdapter extends RecyclerView.Adapter<SearchAdapter.ViewHolder
     }
 
     public  class ViewHolder extends RecyclerView.ViewHolder{
-        //in our contact_item_layout we had a TextView and a relativeLayout so we have to definet them here
         private ConstraintLayout item;
         private ImageView pdp;
         private TextView name;
