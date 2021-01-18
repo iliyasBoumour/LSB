@@ -85,7 +85,7 @@ public class SearchFragment extends Fragment {
                 .addOnCompleteListener(t->{
                     progressBar.setVisibility(View.GONE);
                     for (DocumentSnapshot doc : t.getResult()){
-                        SearchResModel model=new SearchResModel(doc.getString("username"),doc.getString("pdp"));
+                        SearchResModel model=new SearchResModel(doc.getString("uid"),doc.getString("username"),doc.getString("pdp"));
                         searchResModels.add(model);
                     }
                     searchAdapter=new SearchAdapter(getActivity(),searchResModels);

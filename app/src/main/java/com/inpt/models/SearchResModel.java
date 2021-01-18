@@ -2,12 +2,22 @@ package com.inpt.models;
 
 public class SearchResModel {
 
+    private String id;
     private String image;
     private String name;
 
-    public SearchResModel(String name,String image) {
+    public SearchResModel(String id,String name,String image) {
+        this.id=id;
         this.name = name;
         this.image = image;
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
     }
 
     public String getImage() {

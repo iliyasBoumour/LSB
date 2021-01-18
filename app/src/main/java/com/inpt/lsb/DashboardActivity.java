@@ -17,6 +17,8 @@ import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.inpt.Util.CurrentUserInfo;
 import com.inpt.Util.UploadImage;
 
@@ -29,6 +31,7 @@ public class DashboardActivity extends AppCompatActivity implements View.OnClick
     private String currentUserId;
     private String currentUserName;
     private UploadImage uploadImage;
+    private CurrentUserInfo currentUserInfo = CurrentUserInfo.getInstance();
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -38,12 +41,20 @@ public class DashboardActivity extends AppCompatActivity implements View.OnClick
             finish();
             return;
         } else {
-//
-            CurrentUserInfo currentUserInfo = CurrentUserInfo.getInstance();
-//
-            currentUserInfo.setUserId(currentUser.getUid());
-            currentUserInfo.setUserName("Hamza");
-//            pdp and username
+            FirebaseAuth mAuth= FirebaseAuth.getInstance();;
+            FirebaseUser user = mAuth.getCurrentUser();
+            String uid=user.getUid();
+            FirebaseFirestore db = FirebaseFirestore.getInstance();
+            db.collection("users")
+                    .whereEqualTo("uid",uid)
+                    .get()
+                    .addOnSuccessListener(queryDocumentSnapshots ->{
+                            for(QueryDocumentSnapshot doc:queryDocumentSnapshots){
+                                currentUserInfo.setUserId(uid);
+                                currentUserInfo.setUserName(doc.getString("username"));
+                                currentUserInfo.setPdpUrl(doc.getString("pdp"));
+                        }
+                    });
         }
         setContentView(R.layout.dashboard);
         bottomNavigationView = findViewById(R.id.bottomNavView);
