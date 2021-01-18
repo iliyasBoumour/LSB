@@ -43,16 +43,11 @@ public class SearchAdapter extends RecyclerView.Adapter<SearchAdapter.ViewHolder
     @Override
     public void onBindViewHolder(@NonNull SearchAdapter.ViewHolder holder, int position) {
         holder.name.setText(searchResModels.get(position).getName());
-//        holder.pdp.setImageResource(R.drawable.pdp);
-//        Log.i("eeeeeeeeeeee",searchResModels.get(position).getImage());
 //        TODO : replace with fresco
         Glide.with(context)
                 .load(searchResModels.get(position).getImage())
                 .transform(new CircleCrop())
                 .into(holder.pdp);
-//        holder.item.setOnClickListener(view -> {
-//            Toast.makeText(context, notifications.get(position).getNotification(), Toast.LENGTH_SHORT).show();
-//        });
     }
 
     public void setSearchResModels(List<SearchResModel> searchResModels) {
