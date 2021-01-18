@@ -5,8 +5,9 @@ public class SearchResModel {
     private String image;
     private String name;
 
-    public SearchResModel(String name) {
+    public SearchResModel(String name,String image) {
         this.name = name;
+        this.image = image;
     }
 
     public String getImage() {

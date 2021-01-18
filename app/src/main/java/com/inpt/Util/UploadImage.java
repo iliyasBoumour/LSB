@@ -9,6 +9,7 @@ import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.provider.MediaStore;
+import android.util.Log;
 import android.webkit.MimeTypeMap;
 import android.widget.Toast;
 
@@ -41,7 +42,7 @@ public class UploadImage  {
     private String currentUserId = CurrentUserInfo.getInstance().getUserId();
 
     public UploadImage(String location,AppCompatActivity appCompatActivity){
-        this.mStorageRef = FirebaseStorage.getInstance().getReference(location);
+        this.mStorageRef = FirebaseStorage.getInstance().getReference().child(location);
         this.appCompatActivity=appCompatActivity;
     }
 
@@ -107,25 +108,28 @@ public class UploadImage  {
         return mime.getExtensionFromMimeType(cR.getType(uri));
     }
 
-    public Uri uploadImage(Uri imageUri){
-        final Uri[] url={imageUri};
+    public String uploadImage(Uri imageUri){
+        final String[] url={""};
         if (imageUri != null) {
             StorageReference fileReference = mStorageRef.child(currentUserId +System.currentTimeMillis()
-                    + "." + getFileExtension(url[0]));
-            uploadTask=fileReference.putFile(url[0]);
-            fileReference.putFile(url[0])
+                    + "." + getFileExtension(imageUri));
+            fileReference.putFile(imageUri)
                     .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
                         @Override
                         public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
                             // Get a URL to the uploaded content
-                            url[0]= taskSnapshot.getUploadSessionUri();
+                            fileReference.getDownloadUrl().addOnSuccessListener(uri->{
+                                url[0]= uri.toString();
+                                Log.i("eeeeeeeeeUp",url[0]);
+                            });
                         }
 
                     })
                     .addOnFailureListener(new OnFailureListener() {
                         @Override
                         public void onFailure(@NonNull Exception exception) {
-                            url[0]=null;;
+                            url[0]="";
+                            Log.i("eeeeeeeeeNoUp","failed"+url[0]);
                             Toast.makeText(appCompatActivity, "failed to upload image please try later", Toast.LENGTH_SHORT).show();
                         }
                     });

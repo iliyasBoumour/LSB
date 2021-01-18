@@ -6,13 +6,16 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.recyclerview.widget.RecyclerView;
+
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.resource.bitmap.CircleCrop;
 import com.inpt.lsb.R;
 import com.inpt.models.SearchResModel;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -24,7 +27,10 @@ public class SearchAdapter extends RecyclerView.Adapter<SearchAdapter.ViewHolder
     public SearchAdapter(Context context){
         this.context=context;
     }
-
+    public SearchAdapter(Context context,List<SearchResModel> searchResModels){
+        this.context=context;
+        this.searchResModels=searchResModels;
+    }
 
     @NonNull
     @Override
@@ -37,7 +43,13 @@ public class SearchAdapter extends RecyclerView.Adapter<SearchAdapter.ViewHolder
     @Override
     public void onBindViewHolder(@NonNull SearchAdapter.ViewHolder holder, int position) {
         holder.name.setText(searchResModels.get(position).getName());
-        holder.pdp.setImageResource(R.drawable.pdp);
+//        holder.pdp.setImageResource(R.drawable.pdp);
+//        Log.i("eeeeeeeeeeee",searchResModels.get(position).getImage());
+//        TODO : replace with fresco
+        Glide.with(context)
+                .load(searchResModels.get(position).getImage())
+                .transform(new CircleCrop())
+                .into(holder.pdp);
 //        holder.item.setOnClickListener(view -> {
 //            Toast.makeText(context, notifications.get(position).getNotification(), Toast.LENGTH_SHORT).show();
 //        });

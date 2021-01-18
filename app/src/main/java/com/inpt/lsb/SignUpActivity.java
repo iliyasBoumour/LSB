@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -20,14 +21,16 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.resource.bitmap.CircleCrop;
 import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.textfield.TextInputLayout;
+import com.google.firebase.Timestamp;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseAuthException;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 import com.inpt.Util.UploadImage;
 
 import java.util.HashMap;
@@ -45,6 +48,7 @@ public class SignUpActivity extends AppCompatActivity {
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
     private Uri imageUri;
     private UploadImage uploadImage;
+    private StorageReference storageReference;
     private static final String TAG="eeeeeeeeee";
 
     @Override
@@ -60,6 +64,7 @@ public class SignUpActivity extends AppCompatActivity {
         signInText = findViewById(R.id.signInText);
         pdp=findViewById(R.id.pdp);
         mAuth = FirebaseAuth.getInstance();
+        storageReference = FirebaseStorage.getInstance().getReference();
         uploadImage=new UploadImage("pdps",this);
         progressDialog = new ProgressDialog(this);
         progressDialog.setMessage(getString(R.string.please_wait));
@@ -144,38 +149,41 @@ public class SignUpActivity extends AppCompatActivity {
                 .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
-                        progressDialog.dismiss();
-                        Uri pdpUrl=uploadImage.uploadImage(imageUri);
                         if (task.isSuccessful()) {
-
-                            new AlertDialog.Builder(SignUpActivity.this).setTitle(R.string.successfully_signed_up).setMessage(R.string.please_sign_in).setPositiveButton("OK", (dialog, which) -> {
-                                dialog.dismiss();
-                                startActivity(new Intent(SignUpActivity.this, SignInActivity.class));
-                                finish();
-                            }).show();
-
                             String userid = mAuth.getCurrentUser().getUid();
                             Map<String, Object> user = new HashMap<>();
+                            user.put("uid",userid);
                             user.put("username", username);
                             user.put("email", email);
-                            if (pdpUrl==null) user.put("pdp","");
-                            else user.put("pdp",pdpUrl.toString());
-                            db.collection("users")
-                                    .document(userid)
-                                    .set(user)
-                                    .addOnSuccessListener(new OnSuccessListener<Void>() {
-                                        @Override
-                                        public void onSuccess(Void aVoid) {
-                                            new AlertDialog.Builder(SignUpActivity.this)
-                                                    .setTitle(R.string.successfully_signed_up)
-                                                    .setMessage(R.string.please_sign_in)
-                                                    .setPositiveButton("OK", (dialog, which) -> {
-                                                        dialog.dismiss();
-                                                        startActivity(new Intent(SignUpActivity.this, SignInActivity.class));
-                                                        finish();
-                                                    }).show();
-                                        }
+                            if(imageUri != null){
+                                Log.i("eeeee","there is an image");
+                                StorageReference filepath = storageReference
+                                        .child("pdps")
+                                        .child(userid + Timestamp.now().getSeconds());
+                                filepath.putFile(imageUri).addOnSuccessListener(taskSnapshot -> {
+                                    filepath.getDownloadUrl().addOnSuccessListener(uri -> {
+                                        user.put("pdp",uri.toString());
+                                        db.collection("users")
+                                                .document(userid)
+                                                .set(user)
+                                                .addOnSuccessListener( aVoid-> {
+                                                    progressDialog.dismiss();
+                                                    succesdDialog();
+                                                });
                                     });
+                                });
+                            }else{
+                                user.put("pdp","");
+                                db.collection("users")
+                                        .document(userid)
+                                        .set(user)
+                                        .addOnSuccessListener( aVoid-> {
+                                            progressDialog.dismiss();
+                                            succesdDialog();
+                                        });
+                            }
+
+
 
 
                         } else {
@@ -189,7 +197,12 @@ public class SignUpActivity extends AppCompatActivity {
                                         emailInput.setError(getString(R.string.email_already_in_use));
                                         break;
                                     default:
-                                        failedDialog();
+                                        new AlertDialog.Builder(SignUpActivity.this)
+                                                .setTitle(R.string.Login_Failed)
+                                                .setMessage(R.string.error_creating_account)
+                                                .setPositiveButton("OK", (dialog, which) -> {
+                                                    dialog.dismiss();
+                                                }).show();
                                         break;
                                 }
                             } catch (ClassCastException e) {
@@ -201,14 +214,15 @@ public class SignUpActivity extends AppCompatActivity {
                 });
     }
 
-    private void failedDialog() {
+    private void succesdDialog() {
         new AlertDialog.Builder(SignUpActivity.this)
-                .setTitle(R.string.Login_Failed)
-                .setMessage(R.string.error_creating_account)
+                .setTitle(R.string.successfully_signed_up)
+                .setMessage("Great ! enjoy your time !")
                 .setPositiveButton("OK", (dialog, which) -> {
                     dialog.dismiss();
+                    startActivity(new Intent(SignUpActivity.this, DashboardActivity.class));
+                    finish();
                 }).show();
-        ;
     }
 
     private void showErrorSnackbar() {

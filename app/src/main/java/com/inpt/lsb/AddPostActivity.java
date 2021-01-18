@@ -4,7 +4,6 @@ import android.app.ProgressDialog;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -16,6 +15,9 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.Timestamp;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
 import com.inpt.Util.CurrentUserInfo;
 import com.inpt.Util.UploadImage;
 import com.inpt.models.Post;
@@ -30,16 +32,16 @@ public class AddPostActivity extends AppCompatActivity implements View.OnClickLi
     private UploadImage uploadImage;
     private ProgressDialog progressDialog;
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
-//    private StorageReference storageReference;
+    private StorageReference storageReference;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_post);
         currentUserId = CurrentUserInfo.getInstance().getUserId();
-//        storageReference = FirebaseStorage.getInstance().getReference();
         imageView = findViewById(R.id.imageView);
         add_btn = findViewById(R.id.add_btn);
         caption_field = findViewById(R.id.caption_field);
+        storageReference = FirebaseStorage.getInstance().getReference();
         progressDialog = new ProgressDialog(this);
         progressDialog.setMessage(getString(R.string.please_wait));
         uploadImage=new UploadImage("post_images",this);
@@ -61,34 +63,44 @@ public class AddPostActivity extends AppCompatActivity implements View.OnClickLi
         String caption = caption_field.getText().toString().trim();
         progressDialog.show();
         if(imageUri != null) {
-            Uri pdpUrl=uploadImage.uploadImage(imageUri);
-            if (pdpUrl!=null){
-                Log.i("eeeeeeeeeeee","add post");
-                String imageUrl = pdpUrl.toString();
-                Post post = new Post();
-                if (caption.isEmpty())  post.setCaption("");
-                else post.setCaption(caption);
-                post.setImageUrl(imageUrl);
-                post.setNbLike(0);
-                post.setUserId(currentUserId);
-                post.setTimeAdded(new Timestamp(new Date()));
-                post.setPostId(currentUserId + Timestamp.now().getSeconds());
-                db.collection("Posts")
-                        .add(post)
-                        .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
-                            @Override
-                            public void onSuccess(DocumentReference documentReference) {
-                                progressDialog.dismiss();
-                                startActivity(new Intent(AddPostActivity.this, DashboardActivity.class));
-                                finish();
-                            }
-                        })
-                        .addOnFailureListener(e->{
-                            progressDialog.dismiss();
-                            showDialog();
-                        });
-            }
+            StorageReference filepath = storageReference
+                    .child("post_images")
+                    .child(currentUserId + Timestamp.now().getSeconds());
+            filepath.putFile(imageUri)
+                    .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>(){
+                        @Override
+                        public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                            filepath.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                                @Override
+                                public void onSuccess(Uri uri) {
+                                    Post post = new Post();
+                                    if (caption.isEmpty())  post.setCaption("");
+                                    else post.setCaption(caption);
+                                    post.setImageUrl(uri.toString());
+                                    post.setNbLike(0);
+                                    post.setUserId(currentUserId);
+                                    post.setTimeAdded(new Timestamp(new Date()));
+                                    post.setPostId(currentUserId + Timestamp.now().getSeconds());
+                                    db.collection("Posts")
+                                            .add(post)
+                                            .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
+                                                @Override
+                                                public void onSuccess(DocumentReference documentReference) {
+                                                    progressDialog.dismiss();
+                                                    startActivity(new Intent(AddPostActivity.this, DashboardActivity.class));
+                                                    finish();
+                                                }
+                                            })
+                                            .addOnFailureListener(e->{
+                                                progressDialog.dismiss();
+                                                showDialog();
+                                            });
+                                }
+                            });
+                        }
+                    });
         } else {
+            progressDialog.dismiss();
             showDialog();
         }
 

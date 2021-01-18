@@ -20,8 +20,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:scaleType="centerCrop"
-            android:src="@drawable/pdp" />
+            android:scaleType="centerCrop" />
 
     </com.google.android.material.circularreveal.cardview.CircularRevealCardView>
 
