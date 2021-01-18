@@ -80,10 +80,14 @@ public class ProfileAdapter extends RecyclerView.Adapter<ProfileAdapter.ViewHold
                     String imageUrl = posts.get(getAdapterPosition()).getImageUrl();
                     String caption = posts.get(getAdapterPosition()).getCaption();
                     String time = (String) DateUtils.getRelativeTimeSpanString(posts.get(getAdapterPosition()).getTimeAdded().getSeconds() * 1000);
+                    String postId = posts.get(getAdapterPosition()).getPostId();
+                    int nbLike = posts.get(getAdapterPosition()).getNbLike();
                     Bundle bundle = new Bundle();
                     bundle.putString("imageUrl", imageUrl);
                     bundle.putString("caption", caption);
                     bundle.putString("time", time);
+                    bundle.putString("postId", postId);
+                    bundle.putInt("nbLike", nbLike);
                     fragmentManager = f;
                     fragment = fragmentManager.findFragmentById(R.id.homeFragment);
                     fragment = new PostFragment();
