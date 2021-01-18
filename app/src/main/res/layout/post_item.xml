@@ -71,7 +71,7 @@
             android:layout_below="@id/postImage_cardView"
             android:scaleType="centerCrop"
             android:layout_gravity="center"
-            android:src="@drawable/before" />
+            android:src="@drawable/ic_before" />
         <TextView
             android:id="@+id/likes_nb"
             android:text="1000 Likes"
