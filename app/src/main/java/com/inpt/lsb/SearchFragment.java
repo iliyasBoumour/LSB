@@ -1,6 +1,7 @@
 package com.inpt.lsb;
 
 import android.os.Bundle;
+import android.os.Handler;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -47,6 +48,7 @@ public class SearchFragment extends Fragment {
         searchView=view.findViewById(R.id.searchKey);
         backBtn=view.findViewById(R.id.backBtn);
         progressBar = view.findViewById(R.id.progressBar);
+        Handler handler = new Handler();
 
         searchResModels=new ArrayList<>();
 
@@ -66,8 +68,13 @@ public class SearchFragment extends Fragment {
 
             @Override
             public boolean onQueryTextChange(String s) {
-                if (!TextUtils.isEmpty(s.trim())) searchUsers(s);
+                handler.removeCallbacksAndMessages(null);
+                handler.postDelayed(() -> {
+                if (!TextUtils.isEmpty(s.trim())) {
+                            searchUsers(s);
+                }
                 else clearList();
+                }, 600);
                 return false;
             }
         });

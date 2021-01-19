@@ -62,7 +62,7 @@ public class DashboardActivity extends AppCompatActivity implements View.OnClick
         bottomNavigationView.setOnNavigationItemSelectedListener(this);
         floatingActionButton.setOnClickListener(this);
         fragmentManager = getSupportFragmentManager();
-        uploadImage=new UploadImage("post_images",this);
+        uploadImage=new UploadImage(this);
 
         fragment = fragmentManager.findFragmentById(R.id.homeFragment);
         if(fragment == null) {

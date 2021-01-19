@@ -23,28 +23,28 @@ import com.inpt.models.SearchResModel;
 import java.util.ArrayList;
 import java.util.List;
 
-public class SearchAdapter extends RecyclerView.Adapter<SearchAdapter.ViewHolder>  {
+public class SearchAdapter extends RecyclerView.Adapter<SearchAdapter.ViewHolder> {
 
-    private List<SearchResModel> searchResModels=new ArrayList<>();
+    private List<SearchResModel> searchResModels = new ArrayList<>();
     private Context context;
     private FragmentManager fragmentManager;
 
 
-
-    public SearchAdapter(Context context){
-        this.context=context;
+    public SearchAdapter(Context context) {
+        this.context = context;
     }
-    public SearchAdapter(Context context,List<SearchResModel> searchResModels, FragmentManager fragmentManager){
-        this.context=context;
-        this.searchResModels=searchResModels;
+
+    public SearchAdapter(Context context, List<SearchResModel> searchResModels, FragmentManager fragmentManager) {
+        this.context = context;
+        this.searchResModels = searchResModels;
         this.fragmentManager = fragmentManager;
     }
 
     @NonNull
     @Override
     public SearchAdapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view= LayoutInflater.from(parent.getContext()).inflate(R.layout.search_res_item,parent,false);
-        SearchAdapter.ViewHolder holder=new SearchAdapter.ViewHolder(view,context, fragmentManager);
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.search_res_item, parent, false);
+        SearchAdapter.ViewHolder holder = new SearchAdapter.ViewHolder(view, context, fragmentManager);
         return holder;
     }
 
@@ -68,22 +68,23 @@ public class SearchAdapter extends RecyclerView.Adapter<SearchAdapter.ViewHolder
         return searchResModels.size();
     }
 
-    public  class ViewHolder extends RecyclerView.ViewHolder implements  View.OnClickListener{
-        //in our contact_item_layout we had a TextView and a relativeLayout so we have to definet them here
+
+    public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         private ConstraintLayout item;
         private ImageView pdp;
         private TextView name;
         FragmentManager fragmentManager;
         Fragment fragment;
-        public ViewHolder(@NonNull View itemView,Context ctx, final FragmentManager f) {
+
+        public ViewHolder(@NonNull View itemView, Context ctx, final FragmentManager f) {
             super(itemView);
             fragmentManager = f;
             context = ctx;
 
 
-            item=itemView.findViewById(R.id.item);
-            pdp=itemView.findViewById(R.id.profile);
-            name=itemView.findViewById(R.id.name);
+            item = itemView.findViewById(R.id.item);
+            pdp = itemView.findViewById(R.id.profile);
+            name = itemView.findViewById(R.id.name);
 
             item.setOnClickListener(this);
             pdp.setOnClickListener(this);
@@ -92,15 +93,16 @@ public class SearchAdapter extends RecyclerView.Adapter<SearchAdapter.ViewHolder
 
         @Override
         public void onClick(View v) {
-             switch (v.getId()) {
-                 case R.id.item:
-                     fragment = fragmentManager.findFragmentById(R.id.homeFragment);
-                     fragment = new ProfileOtherUsersFragment();
-                     fragmentManager.beginTransaction()
-                             .replace(R.id.homeFragment, fragment)
-                             .commit();
-                     break;
-             }
+            switch (v.getId()) {
+                case R.id.item:
+                    fragment = fragmentManager.findFragmentById(R.id.homeFragment);
+                    fragment = new ProfileOtherUsersFragment();
+                    fragmentManager.beginTransaction()
+                            .replace(R.id.homeFragment, fragment)
+                            .commit();
+                    break;
+            }
         }
+
     }
 }

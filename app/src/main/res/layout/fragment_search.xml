@@ -16,18 +16,16 @@
         app:layout_constraintBottom_toBottomOf="@+id/searchKey"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="@+id/searchKey" />
-
 <!--    <EditText-->
 <!--        android:id="@+id/searchKey"-->
 <!--        android:layout_width="0dp"-->
 <!--        android:layout_height="wrap_content"-->
 <!--        android:layout_marginStart="20dp"-->
-<!--        android:layout_marginEnd="20dp"-->
 <!--        android:background="@drawable/search_shape"-->
 <!--        android:hint="@string/search"-->
 <!--        android:paddingHorizontal="25dp"-->
 <!--        android:paddingVertical="7dp"-->
-<!--        app:layout_constraintEnd_toStartOf="@+id/searchBtn"-->
+<!--        app:layout_constraintEnd_toEndOf="parent"-->
 <!--        app:layout_constraintStart_toEndOf="@+id/backBtn"-->
 <!--        app:layout_constraintTop_toTopOf="parent" />-->
     <androidx.appcompat.widget.SearchView
