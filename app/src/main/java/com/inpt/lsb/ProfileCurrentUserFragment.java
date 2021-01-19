@@ -75,7 +75,9 @@ public class ProfileCurrentUserFragment extends Fragment {
                         if(!queryDocumentSnapshots.isEmpty()) {
                             for(QueryDocumentSnapshot post_ : queryDocumentSnapshots) {
                                 Log.d("TEST", "onSuccess: ");
+
                                 Post post = post_.toObject(Post.class);
+                                Log.d("TEST", "onSuccess: " + post.getImageUrl());
                                 posts.add(post);
                             }
                             profileAdapter = new ProfileAdapter(getActivity(), posts, (getActivity()).getSupportFragmentManager());

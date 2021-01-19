@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 
@@ -28,8 +29,6 @@ public class DashboardActivity extends AppCompatActivity implements View.OnClick
     private FloatingActionButton floatingActionButton;
     FragmentManager fragmentManager;
     Fragment fragment;
-    private String currentUserId;
-    private String currentUserName;
     private UploadImage uploadImage;
     private CurrentUserInfo currentUserInfo = CurrentUserInfo.getInstance();
     @Override
@@ -55,14 +54,13 @@ public class DashboardActivity extends AppCompatActivity implements View.OnClick
                                 currentUserInfo.setPdpUrl(doc.getString("pdp"));
                         }
                     });
+            Log.d("TEST", "onCreate: " + CurrentUserInfo.getInstance().getUserId());
         }
         setContentView(R.layout.dashboard);
         bottomNavigationView = findViewById(R.id.bottomNavView);
         floatingActionButton = findViewById(R.id.add_post_btn);
         bottomNavigationView.setOnNavigationItemSelectedListener(this);
         floatingActionButton.setOnClickListener(this);
-        currentUserId = CurrentUserInfo.getInstance().getUserId();
-        currentUserName = CurrentUserInfo.getInstance().getUserName();
         fragmentManager = getSupportFragmentManager();
         uploadImage=new UploadImage("post_images",this);
 

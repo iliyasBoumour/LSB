@@ -21,6 +21,7 @@ import com.inpt.models.SearchResModel;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 
 public class SearchFragment extends Fragment {
@@ -88,7 +89,7 @@ public class SearchFragment extends Fragment {
                         SearchResModel model=new SearchResModel(doc.getString("uid"),doc.getString("username"),doc.getString("pdp"));
                         searchResModels.add(model);
                     }
-                    searchAdapter=new SearchAdapter(getActivity(),searchResModels);
+                    searchAdapter=new SearchAdapter(getActivity(),searchResModels, (Objects.requireNonNull(getActivity())).getSupportFragmentManager());
                     serchRes.setAdapter(searchAdapter);
 
                 })

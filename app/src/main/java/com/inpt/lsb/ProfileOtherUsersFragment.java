@@ -16,8 +16,7 @@ import com.inpt.models.Post;
 
 import java.util.ArrayList;
 import java.util.List;
-
-
+import java.util.Objects;
 
 
 public class ProfileOtherUsersFragment extends Fragment {
@@ -38,7 +37,7 @@ public class ProfileOtherUsersFragment extends Fragment {
         recyclerView.setHasFixedSize(true);
         GridLayoutManager gridLayoutManager = new GridLayoutManager(getActivity(),2, GridLayoutManager.VERTICAL,false);
         recyclerView.setLayoutManager(gridLayoutManager);
-        profileAdapter = new ProfileAdapter(getActivity(), posts, (getActivity()).getSupportFragmentManager());
+        profileAdapter = new ProfileAdapter(getActivity(), posts, (Objects.requireNonNull(getActivity())).getSupportFragmentManager());
         recyclerView.setAdapter(profileAdapter);
         return view;
     }
