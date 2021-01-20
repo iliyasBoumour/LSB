@@ -1,19 +1,16 @@
 package com.inpt.adapters;
 
-import android.app.Notification;
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.google.android.material.circularreveal.cardview.CircularRevealCardView;
 import com.inpt.lsb.R;
 import com.inpt.models.NotificationModel;
 
@@ -39,12 +36,12 @@ public class NotificationAdapter extends RecyclerView.Adapter<NotificationAdapte
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        holder.notificationText.setText(notifications.get(position).getNotification());
-        holder.notificationDate.setText(notifications.get(position).getDate().toString());
+        holder.notificationText.setText("weee");
+        holder.notificationDate.setText("fbvjkfdvnf");
         holder.pdp.setImageResource(R.drawable.post_image);
 //        holder.notifiedImage.setImageResource(R.drawable.pdp);
         holder.item.setOnClickListener(view -> {
-            Toast.makeText(context, notifications.get(position).getNotification(), Toast.LENGTH_SHORT).show();
+//            Toast.makeText(context, notifications.get(position).getNotification(), Toast.LENGTH_SHORT).show();
         });
     }
 

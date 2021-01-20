@@ -34,8 +34,8 @@ public class NotificationsFragment extends Fragment {
 
         notifRecView = view.findViewById(R.id.notifRecyclerView);
         List<NotificationModel> notifs=new ArrayList<>();
-        notifs.add(new NotificationModel("weeeeeee1",new Timestamp(new Date())));
-        notifs.add(new NotificationModel("weeeeeee2",new Timestamp(new Date())));
+        notifs.add(new NotificationModel("weeeeeee1","weeeeeee1","weeeeeee1","weeeeeee1",new Timestamp(new Date())));
+        notifs.add(new NotificationModel("weeeeeee2","weeeeeee1","weeeeeee1","weeeeeee1",new Timestamp(new Date())));
 
         notifRecView.setLayoutManager(new LinearLayoutManager(getActivity()));
         notificationAdapter=new NotificationAdapter(getActivity());
