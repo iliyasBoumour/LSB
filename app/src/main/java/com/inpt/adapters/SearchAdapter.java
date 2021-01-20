@@ -1,6 +1,7 @@
 package com.inpt.adapters;
 
 import android.content.Context;
+import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,7 +16,9 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.resource.bitmap.CircleCrop;
+import com.inpt.Util.CurrentUserInfo;
 import com.inpt.lsb.PostFragment;
+import com.inpt.lsb.ProfileCurrentUserFragment;
 import com.inpt.lsb.ProfileOtherUsersFragment;
 import com.inpt.lsb.R;
 import com.inpt.models.SearchResModel;
@@ -93,14 +96,26 @@ public class SearchAdapter extends RecyclerView.Adapter<SearchAdapter.ViewHolder
 
         @Override
         public void onClick(View v) {
-            switch (v.getId()) {
-                case R.id.item:
-                    fragment = fragmentManager.findFragmentById(R.id.homeFragment);
+            String userId = searchResModels.get(getAdapterPosition()).getId();
+            String currentUserId = CurrentUserInfo.getInstance().getUserId();
+            String userName = searchResModels.get(getAdapterPosition()).getName();
+            String pdpUrl = searchResModels.get(getAdapterPosition()).getImage();
+
+            if(v.getId() == R.id.item || v.getId() == R.id.profile || v.getId() == R.id.name) {
+                fragment = fragmentManager.findFragmentById(R.id.homeFragment);
+                Bundle bundle = new Bundle();
+                bundle.putString("userId", userId);
+                bundle.putString("userName", userName);
+                bundle.putString("pdpUrl", pdpUrl);
+                if(userId.contentEquals(currentUserId)) {
+                    fragment = new ProfileCurrentUserFragment();
+                } else  {
                     fragment = new ProfileOtherUsersFragment();
-                    fragmentManager.beginTransaction()
-                            .replace(R.id.homeFragment, fragment)
-                            .commit();
-                    break;
+                    fragment.setArguments(bundle);
+                }
+                fragmentManager.beginTransaction()
+                        .replace(R.id.homeFragment, fragment)
+                        .commit();
             }
         }
 

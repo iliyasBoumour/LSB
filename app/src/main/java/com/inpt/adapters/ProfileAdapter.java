@@ -27,12 +27,16 @@ public class ProfileAdapter extends RecyclerView.Adapter<ProfileAdapter.ViewHold
     private Context context;
     private List<Post> posts;
     private FragmentManager fragmentManager;
+    private String userName;
+    private String pdpUrl;
 
 
-    public ProfileAdapter(Context context, List<Post> posts, FragmentManager fragmentManager) {
+    public ProfileAdapter(Context context, List<Post> posts, FragmentManager fragmentManager, String userName, String pdpUrl) {
         this.context = context;
         this.posts = posts;
         this.fragmentManager = fragmentManager;
+        this.userName = userName;
+        this.pdpUrl = pdpUrl;
     }
 
     @NonNull
@@ -59,6 +63,7 @@ public class ProfileAdapter extends RecyclerView.Adapter<ProfileAdapter.ViewHold
         return posts.size();
     }
 
+
     public class ViewHolder extends RecyclerView.ViewHolder {
         public SimpleDraweeView postImage;
         FragmentManager fragmentManager;
@@ -77,17 +82,12 @@ public class ProfileAdapter extends RecyclerView.Adapter<ProfileAdapter.ViewHold
 /*
                     (HideBottomViewOnScrollBehavior)((DashboardActivity)context).findViewById(R.id.bottomBar).
 */
-                    String imageUrl = posts.get(getAdapterPosition()).getImageUrl();
-                    String caption = posts.get(getAdapterPosition()).getCaption();
-                    String time = (String) DateUtils.getRelativeTimeSpanString(posts.get(getAdapterPosition()).getTimeAdded().getSeconds() * 1000);
+
                     String postId = posts.get(getAdapterPosition()).getPostId();
-                    int nbLike = posts.get(getAdapterPosition()).getNbLike();
                     Bundle bundle = new Bundle();
-                    bundle.putString("imageUrl", imageUrl);
-                    bundle.putString("caption", caption);
-                    bundle.putString("time", time);
                     bundle.putString("postId", postId);
-                    bundle.putInt("nbLike", nbLike);
+                    bundle.putString("userName", userName);
+                    bundle.putString("pdpUrl", pdpUrl);
                     fragmentManager = f;
                     fragment = fragmentManager.findFragmentById(R.id.homeFragment);
                     fragment = new PostFragment();

@@ -43,13 +43,13 @@ public class DashboardActivity extends AppCompatActivity implements View.OnClick
             FirebaseAuth mAuth= FirebaseAuth.getInstance();;
             FirebaseUser user = mAuth.getCurrentUser();
             String uid=user.getUid();
+            currentUserInfo.setUserId(uid);
             FirebaseFirestore db = FirebaseFirestore.getInstance();
             db.collection("users")
                     .whereEqualTo("uid",uid)
                     .get()
                     .addOnSuccessListener(queryDocumentSnapshots ->{
                             for(QueryDocumentSnapshot doc:queryDocumentSnapshots){
-                                currentUserInfo.setUserId(uid);
                                 currentUserInfo.setUserName(doc.getString("username"));
                                 currentUserInfo.setPdpUrl(doc.getString("pdp"));
                         }

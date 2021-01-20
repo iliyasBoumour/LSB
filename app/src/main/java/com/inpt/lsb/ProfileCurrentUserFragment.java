@@ -1,11 +1,13 @@
 package com.inpt.lsb;
 
 
+import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -14,6 +16,7 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.facebook.drawee.view.SimpleDraweeView;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.firestore.CollectionReference;
@@ -39,6 +42,9 @@ public class ProfileCurrentUserFragment extends Fragment {
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
     private CollectionReference collectionReference = db.collection("Posts");
 
+    private SimpleDraweeView pdp;
+    private TextView userNameTextView;
+
     public ProfileCurrentUserFragment() {
 
     }
@@ -54,13 +60,17 @@ public class ProfileCurrentUserFragment extends Fragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.profile_current_user_fragment, container, false);
+        pdp = view.findViewById(R.id.pdp_imageView);
+        userNameTextView = view.findViewById(R.id.userName);
         recyclerView = view.findViewById(R.id.ProfilerecyclerView);
+        userNameTextView.setText(CurrentUserInfo.getInstance().getUserName());
+        Uri uri = Uri.parse(CurrentUserInfo.getInstance().getPdpUrl());
+        pdp.setImageURI(uri);
         posts = new ArrayList<>();
         recyclerView.setHasFixedSize(true);
         GridLayoutManager gridLayoutManager = new GridLayoutManager(getActivity(),2, GridLayoutManager.VERTICAL,false);
         recyclerView.setLayoutManager(gridLayoutManager);
         getPosts();
-
         return view;
     }
 
@@ -80,7 +90,7 @@ public class ProfileCurrentUserFragment extends Fragment {
                                 Log.d("TEST", "onSuccess: " + post.getImageUrl());
                                 posts.add(post);
                             }
-                            profileAdapter = new ProfileAdapter(getActivity(), posts, (getActivity()).getSupportFragmentManager());
+                            profileAdapter = new ProfileAdapter(getActivity(), posts, (getActivity()).getSupportFragmentManager(), CurrentUserInfo.getInstance().getUserName(), CurrentUserInfo.getInstance().getPdpUrl());
                             recyclerView.setAdapter(profileAdapter);
                             profileAdapter.notifyDataSetChanged();
                         }
