@@ -22,6 +22,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.view.MotionEventCompat;
 import androidx.fragment.app.Fragment;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.facebook.drawee.view.SimpleDraweeView;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -46,6 +47,7 @@ import java.util.Map;
 public class PostFragment extends Fragment implements View.OnClickListener{
     private SimpleDraweeView simpleDraweeView, pdpImage;
     private TextView captionTextView, timeTextView, likesTextView, userNameTextView;
+    private SwipeRefreshLayout swipeRefreshLayout;
     private ProgressBar progressBar;
     private ImageView like_icone;
     private String currentUserId;
@@ -83,6 +85,7 @@ public class PostFragment extends Fragment implements View.OnClickListener{
         View view = inflater.inflate(R.layout.post_fragment, container, false);
         progressBar = view.findViewById(R.id.progressBar2);
         simpleDraweeView = view.findViewById(R.id.postImage);
+        swipeRefreshLayout = view.findViewById(R.id.swipeRefresh);
         captionTextView = view.findViewById(R.id.caption);
         likesTextView = view.findViewById(R.id.likes_nb);
         like_icone = view.findViewById(R.id.like);
@@ -90,6 +93,13 @@ public class PostFragment extends Fragment implements View.OnClickListener{
         pdpImage = view.findViewById(R.id.pdp_imageView);
         userNameTextView = view.findViewById(R.id.userName_textView);
         like_icone.setOnClickListener(this);
+        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                getPost(postId);
+                swipeRefreshLayout.setRefreshing(false);
+            }
+        });
         simpleDraweeView.setOnClickListener(new DoubleClickListener() {
             @Override
             public void onDoubleClick() {

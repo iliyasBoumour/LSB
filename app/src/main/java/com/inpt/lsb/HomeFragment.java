@@ -17,6 +17,7 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -44,6 +45,7 @@ public class HomeFragment extends Fragment {
     private CollectionReference collectionReferenceLikes = db.collection("Likes");
     private CollectionReference collectionReferencePosts = db.collection("Posts");
     private CollectionReference collectionReferenceRelations = db.collection("Relations");
+    private SwipeRefreshLayout swipeRefreshLayout;
 
 
 
@@ -68,10 +70,18 @@ public class HomeFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.home_fragment, container, false);
         recyclerView = view.findViewById(R.id.homeRecyclerView);
-        posts = new ArrayList<>();
+        swipeRefreshLayout = view.findViewById(R.id.swipeRefresh);
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         getPosts();
+        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+
+                getPosts();
+                swipeRefreshLayout.setRefreshing(false);
+            }
+        });
         return view;
     }
 
@@ -83,6 +93,7 @@ public class HomeFragment extends Fragment {
 
     private void getPosts() {
         Log.d("TEST", "getPosts: " + currentUserId);
+        posts = new ArrayList<>();
         collectionReferenceRelations.whereEqualTo("userFollowerId", currentUserId)
                 .get()
                 .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
