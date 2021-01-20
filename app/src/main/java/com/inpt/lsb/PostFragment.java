@@ -27,6 +27,7 @@ import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.inpt.Util.CurrentUserInfo;
 import com.inpt.Util.DoubleClickListener;
+import com.inpt.Util.SendNotif;
 import com.inpt.models.NotificationModel;
 import com.inpt.models.Post;
 
@@ -52,6 +53,7 @@ public class PostFragment extends Fragment implements View.OnClickListener{
 
     public static final String TAG = "EVENT";
     private static final String NOTIF_LIKE="like";
+    SendNotif sendNotif;
     private Post post;
 
 
@@ -196,7 +198,9 @@ public class PostFragment extends Fragment implements View.OnClickListener{
                                                                                             .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
                                                                                                 @Override
                                                                                                 public void onSuccess(DocumentReference documentReference) {
-//                                                                                                        currentUserId TYPE_NOTIF userId
+//                                                                                                      send notif
+                                                                                                    sendNotif=new SendNotif(CurrentUserInfo.getInstance().getUserName(),userId,NOTIF_LIKE);
+                                                                                                    sendNotif.send();
 
                                                                                                 }
                                                                                             });

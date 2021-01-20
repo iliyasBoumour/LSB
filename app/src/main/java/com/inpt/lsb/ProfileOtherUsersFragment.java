@@ -28,6 +28,7 @@ import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.inpt.Util.CurrentUserInfo;
+import com.inpt.Util.SendNotif;
 import com.inpt.adapters.ProfileAdapter;
 import com.inpt.models.NotificationModel;
 import com.inpt.models.Post;
@@ -56,6 +57,7 @@ public class ProfileOtherUsersFragment extends Fragment implements View.OnClickL
     private MaterialButton followBtn;
     private Boolean follow;
     private static final String NOTIF_FOLLOW="follow";
+    SendNotif sendNotif;
 
     public ProfileOtherUsersFragment() {
 
@@ -184,8 +186,9 @@ public class ProfileOtherUsersFragment extends Fragment implements View.OnClickL
                                     .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
                                         @Override
                                         public void onSuccess(DocumentReference documentReference) {
-//                                            send notif
-//                                                                                                        currentUserId TYPE_NOTIF userId 
+                                            //send notif
+                                            sendNotif=new SendNotif(CurrentUserInfo.getInstance().getUserName(),userId,NOTIF_FOLLOW);
+                                            sendNotif.send();
 
                                         }
                                     });

@@ -26,6 +26,7 @@ import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.inpt.Util.CurrentUserInfo;
 import com.inpt.Util.DoubleClickListener;
+import com.inpt.Util.SendNotif;
 import com.inpt.lsb.ProfileCurrentUserFragment;
 import com.inpt.lsb.ProfileOtherUsersFragment;
 import com.inpt.lsb.R;
@@ -51,6 +52,7 @@ public class HomeAdapter extends RecyclerView.Adapter<HomeAdapter.ViewHolder> {
     private CollectionReference collectionReferenceNotif = db.collection("Notifications");
 
     private FragmentManager fragmentManager;
+    SendNotif sendNotif;
 
 
     private String currentUserId = CurrentUserInfo.getInstance().getUserId();
@@ -270,8 +272,9 @@ public class HomeAdapter extends RecyclerView.Adapter<HomeAdapter.ViewHolder> {
                                                                                                 .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
                                                                                                     @Override
                                                                                                     public void onSuccess(DocumentReference documentReference) {
-//                                                                                    send notif
-//                                                                                                        currentUserId TYPE_NOTIF userId
+//                                                                                                      send notif
+                                                                                                        sendNotif=new SendNotif(CurrentUserInfo.getInstance().getUserName(),userId,NOTIF_LIKE);
+                                                                                                        sendNotif.send();
 
                                                                                                     }
                                                                                                 });
