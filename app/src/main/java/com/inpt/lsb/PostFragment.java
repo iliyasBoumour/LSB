@@ -25,16 +25,20 @@ import androidx.fragment.app.Fragment;
 
 import com.facebook.drawee.view.SimpleDraweeView;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.Timestamp;
 import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.inpt.Util.CurrentUserInfo;
 import com.inpt.Util.DoubleClickListener;
+import com.inpt.models.NotificationModel;
 import com.inpt.models.Post;
 import com.pranavpandey.android.dynamic.toasts.DynamicToast;
 
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -47,10 +51,13 @@ public class PostFragment extends Fragment implements View.OnClickListener{
     private String currentUserId;
     private String postId;
     private Boolean isliked;
+    private String userId;
     private int nbLike;
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
     private CollectionReference collectionReference = db.collection("Likes");
     private CollectionReference collectionReferencePost = db.collection("Posts");
+    private CollectionReference collectionReferenceNotif = db.collection("Notifications");
+
     public static final String TAG = "EVENT";
     private Post post;
 
@@ -63,6 +70,7 @@ public class PostFragment extends Fragment implements View.OnClickListener{
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         postId = this.getArguments().getString("postId");
+        userId = this.getArguments().getString("userId");
         currentUserId = CurrentUserInfo.getInstance().getUserId();
 
 
@@ -112,6 +120,7 @@ public class PostFragment extends Fragment implements View.OnClickListener{
     private void React() {
         if(isliked) {
             like_icone.setEnabled(false);
+            like_icone.setImageResource(R.drawable.ic_before);
             collectionReference.document(currentUserId + "_" + postId)
                     .delete()
                     .addOnSuccessListener(new OnSuccessListener<Void>() {
@@ -154,6 +163,7 @@ public class PostFragment extends Fragment implements View.OnClickListener{
             data.put("userId", currentUserId);
             data.put("postId", postId);
             like_icone.setEnabled(false);
+            like_icone.setImageResource(R.drawable.ic_after);
             collectionReference.document(currentUserId + "_" + postId)
                     .set(data)
                     .addOnSuccessListener(new OnSuccessListener<Void>() {
@@ -181,6 +191,22 @@ public class PostFragment extends Fragment implements View.OnClickListener{
                                                                                 like_icone.setEnabled(true);
                                                                                 isliked = true;
                                                                                 likesTextView.setText(setnbLike(nbLike));
+                                                                                // Notification
+                                                                                NotificationModel notificationModel = new NotificationModel();
+                                                                                notificationModel.setFrom(currentUserId);
+                                                                                notificationModel.setTo(userId);
+                                                                                notificationModel.setType("like");
+                                                                                notificationModel.setPostId(postId);
+                                                                                notificationModel.setDate(new Timestamp(new Date()));
+                                                                                if(!currentUserId.contentEquals(userId)) {
+                                                                                    collectionReferenceNotif.add(notificationModel)
+                                                                                            .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
+                                                                                                @Override
+                                                                                                public void onSuccess(DocumentReference documentReference) {
+
+                                                                                                }
+                                                                                            });
+                                                                                }
                                                                             }
                                                                         });
                                                             }

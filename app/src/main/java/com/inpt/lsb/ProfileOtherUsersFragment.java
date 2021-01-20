@@ -20,7 +20,9 @@ import com.facebook.drawee.view.SimpleDraweeView;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.button.MaterialButton;
+import com.google.firebase.Timestamp;
 import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
@@ -28,9 +30,11 @@ import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.inpt.Util.CurrentUserInfo;
 import com.inpt.adapters.ProfileAdapter;
+import com.inpt.models.NotificationModel;
 import com.inpt.models.Post;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -46,6 +50,7 @@ public class ProfileOtherUsersFragment extends Fragment implements View.OnClickL
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
     private CollectionReference collectionReference = db.collection("Posts");
     private  CollectionReference collectionReferenceFollow = db.collection("Relations");
+    private CollectionReference collectionReferenceNotif = db.collection("Notifications");
     private SimpleDraweeView pdp;
     private TextView userNameTextView;
     private String pdpUrl;
@@ -169,6 +174,20 @@ public class ProfileOtherUsersFragment extends Fragment implements View.OnClickL
                             follow = true;
                             setFollowBtnText(follow);
                             followBtn.setEnabled(true);
+                            // Notification
+                            NotificationModel notificationModel = new NotificationModel();
+                            notificationModel.setFrom(currentUserId);
+                            notificationModel.setTo(userId);
+                            notificationModel.setType("follow");
+                            notificationModel.setPostId(null);
+                            notificationModel.setDate(new Timestamp(new Date()));
+                            collectionReferenceNotif.add(notificationModel)
+                                    .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
+                                        @Override
+                                        public void onSuccess(DocumentReference documentReference) {
+
+                                        }
+                                    });
                         }
                     })
                     .addOnFailureListener(new OnFailureListener() {

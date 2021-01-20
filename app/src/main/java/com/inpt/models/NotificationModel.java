@@ -9,6 +9,10 @@ public class NotificationModel {
     private String postId;
     private Timestamp date;
 
+    public NotificationModel() {
+
+    }
+
     public NotificationModel(String from, String to, String type, String postId, Timestamp date) {
         this.from = from;
         this.to = to;
@@ -16,6 +20,7 @@ public class NotificationModel {
         this.postId = postId;
         this.date = date;
     }
+
 
     public String getFrom() {
         return from;

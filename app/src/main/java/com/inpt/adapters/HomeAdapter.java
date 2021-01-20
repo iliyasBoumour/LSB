@@ -23,6 +23,7 @@ import com.facebook.drawee.view.SimpleDraweeView;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.Timestamp;
 import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
@@ -33,11 +34,13 @@ import com.inpt.lsb.PostFragment;
 import com.inpt.lsb.ProfileCurrentUserFragment;
 import com.inpt.lsb.ProfileOtherUsersFragment;
 import com.inpt.lsb.R;
+import com.inpt.models.NotificationModel;
 import com.inpt.models.Post;
 import com.pranavpandey.android.dynamic.toasts.DynamicToast;
 
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -51,6 +54,8 @@ public class HomeAdapter extends RecyclerView.Adapter<HomeAdapter.ViewHolder> {
     private CollectionReference collectionReference = db.collection("Likes");
     private CollectionReference collectionReferenceUsers = db.collection("users");
     private CollectionReference collectionReferencePost = db.collection("Posts");
+    private CollectionReference collectionReferenceNotif = db.collection("Notifications");
+
     private FragmentManager fragmentManager;
     private static final float SWIPE_THRESHOLD = 50;
     private static final float SWIPE_VELOCITY_THRESHOLD = 50;
@@ -181,14 +186,15 @@ public class HomeAdapter extends RecyclerView.Adapter<HomeAdapter.ViewHolder> {
             postImage.setOnClickListener(new DoubleClickListener() {
                 @Override
                 public void onDoubleClick() {
-                    React(posts.get(getAdapterPosition()).getPostId());
+                    React(posts.get(getAdapterPosition()).getPostId(), posts.get(getAdapterPosition()).getUserId() );
                 }
             });
         }
 
-        private void React(String postId) {
+        private void React(String postId, String userId) {
             if (isliked) {
                 like_icone.setEnabled(false);
+                like_icone.setImageResource(R.drawable.ic_before);
                 collectionReference.document(currentUserId + "_" + postId)
                         .delete()
                         .addOnSuccessListener(new OnSuccessListener<Void>() {
@@ -231,6 +237,7 @@ public class HomeAdapter extends RecyclerView.Adapter<HomeAdapter.ViewHolder> {
                 data.put("userId", currentUserId);
                 data.put("postId", postId);
                 like_icone.setEnabled(false);
+                like_icone.setImageResource(R.drawable.ic_after);
                 collectionReference.document(currentUserId + "_" + postId)
                         .set(data)
                         .addOnSuccessListener(new OnSuccessListener<Void>() {
@@ -258,6 +265,22 @@ public class HomeAdapter extends RecyclerView.Adapter<HomeAdapter.ViewHolder> {
                                                                                     like_icone.setEnabled(true);
                                                                                     isliked = true;
                                                                                     likeNb.setText(setnbLike(nbLike));
+                                                                                    //Notification
+                                                                                    NotificationModel notificationModel = new NotificationModel();
+                                                                                    notificationModel.setFrom(currentUserId);
+                                                                                    notificationModel.setTo(userId);
+                                                                                    notificationModel.setType("like");
+                                                                                    notificationModel.setPostId(postId);
+                                                                                    notificationModel.setDate(new Timestamp(new Date()));
+                                                                                    if(!currentUserId.contentEquals(userId)) {
+                                                                                        collectionReferenceNotif.add(notificationModel)
+                                                                                                .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
+                                                                                                    @Override
+                                                                                                    public void onSuccess(DocumentReference documentReference) {
+
+                                                                                                    }
+                                                                                                });
+                                                                                    }
                                                                                 }
                                                                             });
                                                                 }
@@ -276,7 +299,7 @@ public class HomeAdapter extends RecyclerView.Adapter<HomeAdapter.ViewHolder> {
         @Override
         public void onClick(View v) {
             if (v.getId() == R.id.likeImageView) {
-                React(posts.get(getAdapterPosition()).getPostId());
+                React(posts.get(getAdapterPosition()).getPostId(), posts.get(getAdapterPosition()).getUserId());
             } else if (v.getId() == R.id.pdpImageView || v.getId() == R.id.userName_textView) {
                 String userId = posts.get(getAdapterPosition()).getUserId();
                 Bundle bundle = new Bundle();

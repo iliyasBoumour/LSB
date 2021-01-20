@@ -84,10 +84,12 @@ public class ProfileAdapter extends RecyclerView.Adapter<ProfileAdapter.ViewHold
 */
 
                     String postId = posts.get(getAdapterPosition()).getPostId();
+                    String userId = posts.get(getAdapterPosition()).getUserId();
                     Bundle bundle = new Bundle();
                     bundle.putString("postId", postId);
                     bundle.putString("userName", userName);
                     bundle.putString("pdpUrl", pdpUrl);
+                    bundle.putString("userId", userId);
                     fragmentManager = f;
                     fragment = fragmentManager.findFragmentById(R.id.homeFragment);
                     fragment = new PostFragment();
