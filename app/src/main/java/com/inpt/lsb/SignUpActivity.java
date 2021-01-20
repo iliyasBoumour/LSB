@@ -1,13 +1,11 @@
 package com.inpt.lsb;
 
 import android.app.ProgressDialog;
-import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
-import android.provider.MediaStore;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
@@ -35,7 +33,6 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.inpt.Util.UploadImage;
 
-import java.io.ByteArrayOutputStream;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.regex.Pattern;
@@ -90,13 +87,6 @@ public class SignUpActivity extends AppCompatActivity {
         uploadImage.verifyPermissions();
     }
 
-    public Uri getImageUri(Context inContext, Bitmap inImage) {
-        ByteArrayOutputStream bytes = new ByteArrayOutputStream();
-        inImage.compress(Bitmap.CompressFormat.JPEG, 100, bytes);
-        String path = MediaStore.Images.Media.insertImage(inContext.getContentResolver(), inImage, "Title", null);
-        return Uri.parse(path);
-    }
-
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         pdp.setPadding(0,0,0,0);
@@ -118,6 +108,7 @@ public class SignUpActivity extends AppCompatActivity {
             case 1:
                 if(resultCode == RESULT_OK && data != null && data.getData() != null){
                     imageUri = data.getData();
+//                    TODO : fresco
                     Glide.with(this)
                             .load(imageUri)
                             .transform(new CircleCrop())

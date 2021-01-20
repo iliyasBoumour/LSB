@@ -4,7 +4,6 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 
@@ -20,8 +19,10 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.iid.FirebaseInstanceId;
 import com.inpt.Util.CurrentUserInfo;
 import com.inpt.Util.UploadImage;
+import com.inpt.notifications.Token;
 
 public class DashboardActivity extends AppCompatActivity implements View.OnClickListener, BottomNavigationView.OnNavigationItemSelectedListener {
     private static final int GALLERY_CODE = 1 ;
@@ -54,7 +55,7 @@ public class DashboardActivity extends AppCompatActivity implements View.OnClick
                                 currentUserInfo.setPdpUrl(doc.getString("pdp"));
                         }
                     });
-            Log.d("TEST", "onCreate: " + CurrentUserInfo.getInstance().getUserId());
+            UpdateToken();
         }
         setContentView(R.layout.dashboard);
         bottomNavigationView = findViewById(R.id.bottomNavView);
@@ -71,6 +72,12 @@ public class DashboardActivity extends AppCompatActivity implements View.OnClick
                     .add(R.id.homeFragment, fragment)
                     .commit();
         }
+    }
+
+    private void UpdateToken(){
+        String refreshToken= FirebaseInstanceId.getInstance().getToken();
+        Token token= new Token(refreshToken);
+        FirebaseFirestore.getInstance().collection("Tokens").document(currentUserInfo.getUserId()).set(token);
     }
 
     @Override

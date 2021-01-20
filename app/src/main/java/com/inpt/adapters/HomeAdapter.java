@@ -4,15 +4,11 @@ import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
 import android.text.format.DateUtils;
-import android.util.Log;
-import android.view.GestureDetector;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
@@ -30,13 +26,12 @@ import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.inpt.Util.CurrentUserInfo;
 import com.inpt.Util.DoubleClickListener;
-import com.inpt.lsb.PostFragment;
+import com.inpt.Util.SendNotif;
 import com.inpt.lsb.ProfileCurrentUserFragment;
 import com.inpt.lsb.ProfileOtherUsersFragment;
 import com.inpt.lsb.R;
 import com.inpt.models.NotificationModel;
 import com.inpt.models.Post;
-import com.pranavpandey.android.dynamic.toasts.DynamicToast;
 
 import java.util.Collections;
 import java.util.Comparator;
@@ -57,11 +52,11 @@ public class HomeAdapter extends RecyclerView.Adapter<HomeAdapter.ViewHolder> {
     private CollectionReference collectionReferenceNotif = db.collection("Notifications");
 
     private FragmentManager fragmentManager;
-    private static final float SWIPE_THRESHOLD = 50;
-    private static final float SWIPE_VELOCITY_THRESHOLD = 50;
+    SendNotif sendNotif;
 
 
     private String currentUserId = CurrentUserInfo.getInstance().getUserId();
+    private static final String NOTIF_LIKE="like";
 
 
     public HomeAdapter(Context context, List<Post> posts, FragmentManager fragmentManager) {
@@ -269,7 +264,7 @@ public class HomeAdapter extends RecyclerView.Adapter<HomeAdapter.ViewHolder> {
                                                                                     NotificationModel notificationModel = new NotificationModel();
                                                                                     notificationModel.setFrom(currentUserId);
                                                                                     notificationModel.setTo(userId);
-                                                                                    notificationModel.setType("like");
+                                                                                    notificationModel.setType(NOTIF_LIKE);
                                                                                     notificationModel.setPostId(postId);
                                                                                     notificationModel.setDate(new Timestamp(new Date()));
                                                                                     if(!currentUserId.contentEquals(userId)) {
@@ -277,6 +272,9 @@ public class HomeAdapter extends RecyclerView.Adapter<HomeAdapter.ViewHolder> {
                                                                                                 .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
                                                                                                     @Override
                                                                                                     public void onSuccess(DocumentReference documentReference) {
+//                                                                                                      send notif
+                                                                                                        sendNotif=new SendNotif(CurrentUserInfo.getInstance().getUserName(),userId,NOTIF_LIKE);
+                                                                                                        sendNotif.send();
 
                                                                                                     }
                                                                                                 });
