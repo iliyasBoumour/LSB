@@ -19,7 +19,7 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
-import com.google.firebase.iid.FirebaseInstanceId;
+import com.google.firebase.messaging.FirebaseMessaging;
 import com.inpt.Util.CurrentUserInfo;
 import com.inpt.Util.UploadImage;
 import com.inpt.notifications.Token;
@@ -75,9 +75,13 @@ public class DashboardActivity extends AppCompatActivity implements View.OnClick
     }
 
     private void UpdateToken(){
-        String refreshToken= FirebaseInstanceId.getInstance().getToken();
-        Token token= new Token(refreshToken);
-        FirebaseFirestore.getInstance().collection("Tokens").document(currentUserInfo.getUserId()).set(token);
+        FirebaseMessaging.getInstance().getToken()
+                .addOnCompleteListener(task -> {
+                    String token = task.getResult();
+                    Token MyToken= new Token(token);
+                    FirebaseFirestore.getInstance().collection("Tokens").document(currentUserInfo.getUserId()).set(MyToken);
+                });
+
     }
 
     @Override

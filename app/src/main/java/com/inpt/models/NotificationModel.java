@@ -4,10 +4,22 @@ import com.google.firebase.Timestamp;
 
 public class NotificationModel {
     private String from;
+    private String fromName;
+    private String fromPdp;
     private String to;
     private String type;
     private String postId;
     private Timestamp date;
+
+    public String getImageNotified() {
+        return imageNotified;
+    }
+
+    public void setImageNotified(String imageNotified) {
+        this.imageNotified = imageNotified;
+    }
+
+    private String imageNotified;
 
     public NotificationModel() {
 
@@ -21,6 +33,39 @@ public class NotificationModel {
         this.date = date;
     }
 
+    public NotificationModel(String from, String fromName, String fromPdp, String type, String postId,String imageNotified, Timestamp date) {
+        this.from = from;
+        this.fromName = fromName;
+        this.fromPdp = fromPdp;
+        this.type = type;
+        this.postId = postId;
+        this.imageNotified=imageNotified;
+        this.date = date;
+    }
+
+    public NotificationModel(String from, String fromName, String fromPdp,Timestamp date, String type) {
+        this.from = from;
+        this.fromName = fromName;
+        this.fromPdp = fromPdp;
+        this.type = type;
+        this.date = date;
+    }
+
+    public String getFromName() {
+        return fromName;
+    }
+
+    public void setFromName(String fromName) {
+        this.fromName = fromName;
+    }
+
+    public String getFromPdp() {
+        return fromPdp;
+    }
+
+    public void setFromPdp(String fromPdp) {
+        this.fromPdp = fromPdp;
+    }
 
     public String getFrom() {
         return from;

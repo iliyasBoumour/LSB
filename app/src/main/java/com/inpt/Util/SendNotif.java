@@ -43,7 +43,7 @@ public class SendNotif {
                     @Override
                     public void onSuccess(DocumentSnapshot documentSnapshot) {
                         String usertoken = documentSnapshot.getString("token");
-                        Log.d("OOOOOOTOKEN", "onSuccess: "+usertoken);
+//                        Log.d("OOOOOOTOKEN", "onSuccess: "+usertoken);
                         sendNotifications(usertoken, title, message);
                     }
                 });
