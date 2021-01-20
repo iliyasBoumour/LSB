@@ -5,22 +5,15 @@ import android.annotation.SuppressLint;
 import android.net.Uri;
 import android.os.Bundle;
 import android.text.format.DateUtils;
-import android.util.Log;
-import android.view.GestureDetector;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.animation.Animation;
-import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.core.view.MotionEventCompat;
 import androidx.fragment.app.Fragment;
 
 import com.facebook.drawee.view.SimpleDraweeView;
@@ -36,7 +29,6 @@ import com.inpt.Util.CurrentUserInfo;
 import com.inpt.Util.DoubleClickListener;
 import com.inpt.models.NotificationModel;
 import com.inpt.models.Post;
-import com.pranavpandey.android.dynamic.toasts.DynamicToast;
 
 import java.util.Date;
 import java.util.HashMap;
@@ -59,6 +51,7 @@ public class PostFragment extends Fragment implements View.OnClickListener{
     private CollectionReference collectionReferenceNotif = db.collection("Notifications");
 
     public static final String TAG = "EVENT";
+    private static final String NOTIF_LIKE="like";
     private Post post;
 
 
@@ -195,7 +188,7 @@ public class PostFragment extends Fragment implements View.OnClickListener{
                                                                                 NotificationModel notificationModel = new NotificationModel();
                                                                                 notificationModel.setFrom(currentUserId);
                                                                                 notificationModel.setTo(userId);
-                                                                                notificationModel.setType("like");
+                                                                                notificationModel.setType(NOTIF_LIKE);
                                                                                 notificationModel.setPostId(postId);
                                                                                 notificationModel.setDate(new Timestamp(new Date()));
                                                                                 if(!currentUserId.contentEquals(userId)) {
@@ -203,6 +196,7 @@ public class PostFragment extends Fragment implements View.OnClickListener{
                                                                                             .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
                                                                                                 @Override
                                                                                                 public void onSuccess(DocumentReference documentReference) {
+//                                                                                                        currentUserId TYPE_NOTIF userId
 
                                                                                                 }
                                                                                             });

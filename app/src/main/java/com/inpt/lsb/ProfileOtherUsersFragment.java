@@ -6,7 +6,6 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -38,7 +37,6 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 
 
 public class ProfileOtherUsersFragment extends Fragment implements View.OnClickListener {
@@ -57,6 +55,7 @@ public class ProfileOtherUsersFragment extends Fragment implements View.OnClickL
     private String userName;
     private MaterialButton followBtn;
     private Boolean follow;
+    private static final String NOTIF_FOLLOW="follow";
 
     public ProfileOtherUsersFragment() {
 
@@ -178,13 +177,15 @@ public class ProfileOtherUsersFragment extends Fragment implements View.OnClickL
                             NotificationModel notificationModel = new NotificationModel();
                             notificationModel.setFrom(currentUserId);
                             notificationModel.setTo(userId);
-                            notificationModel.setType("follow");
+                            notificationModel.setType(NOTIF_FOLLOW);
                             notificationModel.setPostId(null);
                             notificationModel.setDate(new Timestamp(new Date()));
                             collectionReferenceNotif.add(notificationModel)
                                     .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
                                         @Override
                                         public void onSuccess(DocumentReference documentReference) {
+//                                            send notif
+//                                                                                                        currentUserId TYPE_NOTIF userId 
 
                                         }
                                     });
