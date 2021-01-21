@@ -2,6 +2,7 @@ package com.inpt.lsb;
 
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
@@ -91,6 +92,7 @@ public class HomeFragment extends Fragment {
 
     }
 
+
     private void getPosts() {
         Log.d("TEST", "getPosts: " + currentUserId);
         posts = new ArrayList<>();
@@ -113,9 +115,12 @@ public class HomeFragment extends Fragment {
                                                         Log.d("TEST", "onSuccess: " + postDocument.get("caption"));
                                                     }
                                                 }
-                                                homeAdapter = new HomeAdapter(getActivity(), posts, (getActivity()).getSupportFragmentManager());
-                                                recyclerView.setAdapter(homeAdapter);
-                                                homeAdapter.notifyDataSetChanged();
+                                                Log.d("TEST111", "onSuccess: " + getActivity());
+                                                if(getActivity() != null) {
+                                                    homeAdapter = new HomeAdapter(getActivity(), posts, (getActivity()).getSupportFragmentManager());
+                                                    recyclerView.setAdapter(homeAdapter);
+                                                    homeAdapter.notifyDataSetChanged();
+                                                }
                                                 Log.d("TEST", "onSuccess: size" + posts.size());
                                             }
                                         });

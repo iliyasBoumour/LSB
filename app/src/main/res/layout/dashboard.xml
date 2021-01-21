@@ -29,6 +29,8 @@
             app:labelVisibilityMode="unlabeled"
             android:layout_marginEnd="16dp"
             app:itemIconTint="#fff"
+            android:clickable="false"
+            android:contextClickable="false"
             app:menu="@menu/app_bar_menu" />
     </com.google.android.material.bottomappbar.BottomAppBar>
 

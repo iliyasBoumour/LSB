@@ -111,10 +111,12 @@ public class ProfileOtherUsersFragment extends Fragment implements View.OnClickL
                                 Log.d("TEST", "onSuccess: " + post.getImageUrl());
                                 posts.add(post);
                             }
-                            Log.d("TEST2", "onSuccess: " + posts.size());
-                            profileAdapter = new ProfileAdapter(getActivity(), posts, (getActivity()).getSupportFragmentManager(), userName, pdpUrl);
-                            recyclerView.setAdapter(profileAdapter);
-                            profileAdapter.notifyDataSetChanged();
+                            if(getActivity() != null) {
+                                Log.d("TEST2", "onSuccess: " + posts.size());
+                                profileAdapter = new ProfileAdapter(getActivity(), posts, (getActivity()).getSupportFragmentManager(), userName, pdpUrl);
+                                recyclerView.setAdapter(profileAdapter);
+                                profileAdapter.notifyDataSetChanged();
+                            }
                         }
                     }
                 })

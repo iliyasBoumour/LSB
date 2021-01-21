@@ -77,7 +77,8 @@
             <com.google.android.material.card.MaterialCardView
                 android:id="@+id/postImage_cardView"
                 android:layout_width="match_parent"
-                android:layout_height="240dp"
+                android:layout_height="400dp"
+                android:minHeight="240dp"
                 android:layout_below="@id/pdp"
                 android:layout_marginVertical="9dp"
                 app:cardCornerRadius="16dp">

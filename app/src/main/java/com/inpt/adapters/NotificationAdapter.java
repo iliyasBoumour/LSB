@@ -61,7 +61,6 @@ public class NotificationAdapter extends RecyclerView.Adapter<NotificationAdapte
                 holder.notificationText.setText(notifications.get(position).getFromName()+" likes your post");
                 Glide.with(context)
                         .load(notifications.get(position).getImageNotified())
-                        .transform(new CircleCrop())
                         .into(holder.notifiedImage);
                 break;
             case NOTIF_FOLLOW:

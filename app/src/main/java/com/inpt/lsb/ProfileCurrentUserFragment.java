@@ -90,9 +90,12 @@ public class ProfileCurrentUserFragment extends Fragment {
                                 Log.d("TEST", "onSuccess: " + post.getImageUrl());
                                 posts.add(post);
                             }
-                            profileAdapter = new ProfileAdapter(getActivity(), posts, (getActivity()).getSupportFragmentManager(), CurrentUserInfo.getInstance().getUserName(), CurrentUserInfo.getInstance().getPdpUrl());
-                            recyclerView.setAdapter(profileAdapter);
-                            profileAdapter.notifyDataSetChanged();
+                            Log.d("TEST111", "onSuccess: " + getActivity());
+                            if(getActivity() != null) {
+                                profileAdapter = new ProfileAdapter(getActivity(), posts, (getActivity()).getSupportFragmentManager(), CurrentUserInfo.getInstance().getUserName(), CurrentUserInfo.getInstance().getPdpUrl());
+                                recyclerView.setAdapter(profileAdapter);
+                                profileAdapter.notifyDataSetChanged();
+                            }
                         }
                     }
                 })
