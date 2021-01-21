@@ -9,6 +9,13 @@
         android:id="@+id/header"
         layout="@layout/header_layout" />
 
+    <ProgressBar
+        android:id="@+id/pb"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:visibility="gone"/>
+
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/notifRecyclerView"
         android:layout_width="match_parent"

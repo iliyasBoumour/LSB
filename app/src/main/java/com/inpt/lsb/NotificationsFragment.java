@@ -4,17 +4,20 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ProgressBar;
+import android.widget.Toast;
 
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.google.firebase.Timestamp;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.inpt.Util.CurrentUserInfo;
 import com.inpt.adapters.NotificationAdapter;
 import com.inpt.models.NotificationModel;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 
@@ -22,6 +25,9 @@ public class NotificationsFragment extends Fragment {
 
     private RecyclerView notifRecView;
     private NotificationAdapter notificationAdapter;
+    private CurrentUserInfo currentUserInfo = CurrentUserInfo.getInstance();
+    private FirebaseFirestore db = FirebaseFirestore.getInstance();
+    ProgressBar pb;
 
     public NotificationsFragment() {
         // Required empty public constructor
@@ -33,14 +39,67 @@ public class NotificationsFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_notifications, container, false);
 
         notifRecView = view.findViewById(R.id.notifRecyclerView);
-        List<NotificationModel> notifs=new ArrayList<>();
-        notifs.add(new NotificationModel("weeeeeee1","weeeeeee1","weeeeeee1","weeeeeee1",new Timestamp(new Date())));
-        notifs.add(new NotificationModel("weeeeeee2","weeeeeee1","weeeeeee1","weeeeeee1",new Timestamp(new Date())));
-
+        pb = view.findViewById(R.id.pb);
         notifRecView.setLayoutManager(new LinearLayoutManager(getActivity()));
-        notificationAdapter=new NotificationAdapter(getActivity());
-        notificationAdapter.setNotifications(notifs);
-        notifRecView.setAdapter(notificationAdapter);
+        getList();
         return view;
+    }
+
+    private void getList() {
+        pb.setVisibility(View.VISIBLE);
+        final int[] size = {-1};
+        List<NotificationModel> notificationModels = new ArrayList<>();
+        db.collection("Notifications")
+                .whereEqualTo("to", currentUserInfo.getUserId())
+                .get()
+                .addOnSuccessListener(queryDocumentSnapshots -> {
+                    size[0] = queryDocumentSnapshots.size();
+                    if (size[0] > 0) {
+//                        Log.d("TAG", "getList: " + size[0]);
+                        for (QueryDocumentSnapshot doc : queryDocumentSnapshots) {
+                            db.collection("users")
+                                    .document(doc.getString("from"))
+                                    .get()
+                                    .addOnSuccessListener(ds -> {
+                                        if (doc.getString("postId") != null) {
+                                            db.collection("Posts")
+                                                    .whereEqualTo("postId", doc.getString("postId"))
+                                                    .get()
+                                                    .addOnSuccessListener(documentSnapshots -> {
+                                                        for (QueryDocumentSnapshot ds1 : documentSnapshots) {
+                                                            pb.setVisibility(View.GONE);
+                                                            NotificationModel model = new NotificationModel(doc.getString("from"), ds.getString("username"), ds.getString("pdp"), doc.getString("type"), doc.getString("postId"), ds1.getString("imageUrl"), doc.getTimestamp("date"));
+                                                            notificationModels.add(model);
+                                                            if (notificationModels.size() == size[0]) {
+                                                                notificationAdapter = new NotificationAdapter(getActivity(), notificationModels);
+                                                                notifRecView.setAdapter(notificationAdapter);
+                                                                notificationAdapter.notifyDataSetChanged();
+                                                                return;
+                                                            }
+                                                        }
+                                                    });
+                                        } else {
+                                            pb.setVisibility(View.GONE);
+                                            NotificationModel model = new NotificationModel(doc.getString("from"), ds.getString("username"), ds.getString("pdp"), doc.getTimestamp("date"), doc.getString("type"));
+                                            notificationModels.add(model);
+                                            if (notificationModels.size() == size[0]) {
+                                                notificationAdapter = new NotificationAdapter(getActivity(), notificationModels);
+                                                notifRecView.setAdapter(notificationAdapter);
+                                                notificationAdapter.notifyDataSetChanged();
+                                                return;
+                                            }
+                                        }
+                                    });
+                        }
+
+                    } else {
+                        pb.setVisibility(View.GONE);
+                    }
+                })
+                .addOnFailureListener(e -> {
+                    pb.setVisibility(View.GONE);
+                    Toast.makeText(getActivity(), "Error", Toast.LENGTH_SHORT).show();
+                });
+
     }
 }
