@@ -1,11 +1,11 @@
 package com.inpt.lsb;
 
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ProgressBar;
+import android.widget.Toast;
 
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -42,51 +42,63 @@ public class NotificationsFragment extends Fragment {
         pb = view.findViewById(R.id.pb);
         notifRecView.setLayoutManager(new LinearLayoutManager(getActivity()));
         getList();
-
-
         return view;
     }
 
     private void getList() {
         pb.setVisibility(View.VISIBLE);
+        final int[] size = {-1};
         List<NotificationModel> notificationModels = new ArrayList<>();
         db.collection("Notifications")
                 .whereEqualTo("to", currentUserInfo.getUserId())
                 .get()
                 .addOnSuccessListener(queryDocumentSnapshots -> {
-                    for (QueryDocumentSnapshot doc : queryDocumentSnapshots) {
-                        db.collection("users")
-                                .document(doc.getString("from"))
-                                .get()
-                                .addOnSuccessListener(ds -> {
-                                    if (doc.getString("postId") != null) {
-                                        db.collection("Posts")
-                                                .whereEqualTo("postId", doc.getString("postId"))
-                                                .get()
-                                                .addOnSuccessListener(documentSnapshots -> {
-                                                    for (QueryDocumentSnapshot ds1 : documentSnapshots) {
-                                                        pb.setVisibility(View.GONE);
-                                                        NotificationModel model = new NotificationModel(doc.getString("from"), ds.getString("username"), ds.getString("pdp"), doc.getString("type"), doc.getString("postId"), ds1.getString("imageUrl"), doc.getTimestamp("date"));
-                                                        notificationModels.add(model);
-                                                        notificationAdapter = new NotificationAdapter(getActivity(), notificationModels);
-                                                        notifRecView.setAdapter(notificationAdapter);
-                                                        notificationAdapter.notifyDataSetChanged();
-                                                    }
-                                                });
-                                    }else{
-                                        pb.setVisibility(View.GONE);
-                                        NotificationModel model = new NotificationModel(doc.getString("from"), ds.getString("username"), ds.getString("pdp"), doc.getTimestamp("date"), doc.getString("type"));
-                                        notificationModels.add(model);
-                                        notificationAdapter = new NotificationAdapter(getActivity(), notificationModels);
-                                        notifRecView.setAdapter(notificationAdapter);
-                                        notificationAdapter.notifyDataSetChanged();
-                                    }
-                                });
+                    size[0] = queryDocumentSnapshots.size();
+                    if (size[0] > 0) {
+//                        Log.d("TAG", "getList: " + size[0]);
+                        for (QueryDocumentSnapshot doc : queryDocumentSnapshots) {
+                            db.collection("users")
+                                    .document(doc.getString("from"))
+                                    .get()
+                                    .addOnSuccessListener(ds -> {
+                                        if (doc.getString("postId") != null) {
+                                            db.collection("Posts")
+                                                    .whereEqualTo("postId", doc.getString("postId"))
+                                                    .get()
+                                                    .addOnSuccessListener(documentSnapshots -> {
+                                                        for (QueryDocumentSnapshot ds1 : documentSnapshots) {
+                                                            pb.setVisibility(View.GONE);
+                                                            NotificationModel model = new NotificationModel(doc.getString("from"), ds.getString("username"), ds.getString("pdp"), doc.getString("type"), doc.getString("postId"), ds1.getString("imageUrl"), doc.getTimestamp("date"));
+                                                            notificationModels.add(model);
+                                                            if (notificationModels.size() == size[0]) {
+                                                                notificationAdapter = new NotificationAdapter(getActivity(), notificationModels);
+                                                                notifRecView.setAdapter(notificationAdapter);
+                                                                notificationAdapter.notifyDataSetChanged();
+                                                                return;
+                                                            }
+                                                        }
+                                                    });
+                                        } else {
+                                            pb.setVisibility(View.GONE);
+                                            NotificationModel model = new NotificationModel(doc.getString("from"), ds.getString("username"), ds.getString("pdp"), doc.getTimestamp("date"), doc.getString("type"));
+                                            notificationModels.add(model);
+                                            if (notificationModels.size() == size[0]) {
+                                                notificationAdapter = new NotificationAdapter(getActivity(), notificationModels);
+                                                notifRecView.setAdapter(notificationAdapter);
+                                                notificationAdapter.notifyDataSetChanged();
+                                                return;
+                                            }
+                                        }
+                                    });
+                        }
+
+                    } else {
+                        pb.setVisibility(View.GONE);
                     }
                 })
                 .addOnFailureListener(e -> {
-//                    progressBar.setVisibility(View.GONE);
-                    Log.i("eeeeee", "erreur");
+                    pb.setVisibility(View.GONE);
+                    Toast.makeText(getActivity(), "Error", Toast.LENGTH_SHORT).show();
                 });
 
     }

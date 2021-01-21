@@ -2,7 +2,6 @@ package com.inpt.lsb;
 
 import android.app.ProgressDialog;
 import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.text.Editable;
@@ -16,9 +15,11 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+
 import com.facebook.AccessToken;
 import com.facebook.CallbackManager;
 import com.facebook.FacebookCallback;
@@ -32,7 +33,6 @@ import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.textfield.TextInputLayout;
@@ -43,12 +43,7 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseAuthException;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
-
-import com.google.firebase.auth.UserProfileChangeRequest;
-import com.inpt.Util.CurrentUserInfo;
-
 import com.google.firebase.firestore.FirebaseFirestore;
-
 
 import java.util.Arrays;
 import java.util.HashMap;
@@ -374,10 +369,13 @@ public class SignInActivity extends AppCompatActivity {
         Map<String, Object> newUser = new HashMap<>();
         newUser.put("username", user.getDisplayName());
         newUser.put("email", user.getEmail());
+        newUser.put("pdp",user.getPhotoUrl().toString());
+        newUser.put("uid",user.getUid());
+        Log.i("TAG", "addNew: "+user.getPhotoUrl());
         db.collection("users")
                 .document(user.getUid())
                 .set(newUser);
-        Log.i("eeeee","new");
+        Log.i("TAG","new");
     }
 
 }
