@@ -30,7 +30,7 @@
                 android:id="@+id/threeDotMenu"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="5.5dp"
+                android:layout_marginTop="6dp"
                 android:layout_alignParentEnd="true"
                 android:src="@drawable/ic_three_dots_menu"/>
 
@@ -57,7 +57,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="6dp"
-                android:layout_marginTop="6dp"
+                android:layout_marginTop="5dp"
                 android:layout_toEndOf="@id/pdp"
                 android:text="Hamza Sajid"
                 android:textColor="#000"
