@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 
@@ -13,6 +14,8 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.auth.FirebaseAuth;
@@ -20,6 +23,7 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.iid.FirebaseInstanceId;
+import com.google.firebase.messaging.FirebaseMessaging;
 import com.inpt.Util.CurrentUserInfo;
 import com.inpt.Util.UploadImage;
 import com.inpt.notifications.Token;
@@ -32,6 +36,7 @@ public class DashboardActivity extends AppCompatActivity implements View.OnClick
     Fragment fragment;
     private UploadImage uploadImage;
     private CurrentUserInfo currentUserInfo = CurrentUserInfo.getInstance();
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -53,9 +58,11 @@ public class DashboardActivity extends AppCompatActivity implements View.OnClick
                             for(QueryDocumentSnapshot doc:queryDocumentSnapshots){
                                 currentUserInfo.setUserName(doc.getString("username"));
                                 currentUserInfo.setPdpUrl(doc.getString("pdp"));
-                        }
+                            }
+
                     });
             UpdateToken();
+
         }
         setContentView(R.layout.dashboard);
         bottomNavigationView = findViewById(R.id.bottomNavView);
@@ -75,9 +82,26 @@ public class DashboardActivity extends AppCompatActivity implements View.OnClick
     }
 
     private void UpdateToken(){
-        String refreshToken= FirebaseInstanceId.getInstance().getToken();
-        Token token= new Token(refreshToken);
-        FirebaseFirestore.getInstance().collection("Tokens").document(currentUserInfo.getUserId()).set(token);
+        Log.d("TOKEN", "UpdateToken: ENTER");
+        FirebaseMessaging.getInstance().getToken()
+                .addOnCompleteListener(new OnCompleteListener<String>() {
+                    @Override
+                    public void onComplete(@NonNull Task<String> task) {
+                        if (!task.isSuccessful()) {
+                            Log.d("ERROR",  "onComplete:  "  + task.getException().getMessage());
+
+                            return;
+                        }
+
+                        String token_ = task.getResult();
+                        Token token= new Token(token_);
+                        Log.d("TOKEN",  "onComplete: " + token);
+                        FirebaseFirestore.getInstance().collection("Tokens").document(currentUserInfo.getUserId()).set(token);
+
+
+                    }
+                });
+
     }
 
     @Override

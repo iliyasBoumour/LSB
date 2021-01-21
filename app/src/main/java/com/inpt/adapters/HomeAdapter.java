@@ -217,6 +217,7 @@ public class HomeAdapter extends RecyclerView.Adapter<HomeAdapter.ViewHolder> {
                                                                                     like_icone.setEnabled(true);
                                                                                     isliked = false;
                                                                                     likeNb.setText(setnbLike(nbLike));
+                                                                                    collectionReferenceNotif.document(currentUserId + "_" + NOTIF_LIKE + "_" + postId).delete();
                                                                                 }
                                                                             });
                                                                 }
@@ -268,14 +269,12 @@ public class HomeAdapter extends RecyclerView.Adapter<HomeAdapter.ViewHolder> {
                                                                                     notificationModel.setPostId(postId);
                                                                                     notificationModel.setDate(new Timestamp(new Date()));
                                                                                     if(!currentUserId.contentEquals(userId)) {
-                                                                                        collectionReferenceNotif.add(notificationModel)
-                                                                                                .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
+                                                                                        collectionReferenceNotif.document(currentUserId + "_" + NOTIF_LIKE + "_" + postId).set(notificationModel)
+                                                                                                .addOnSuccessListener(new OnSuccessListener<Void>() {
                                                                                                     @Override
-                                                                                                    public void onSuccess(DocumentReference documentReference) {
-//                                                                                                      send notif
+                                                                                                    public void onSuccess(Void aVoid) {
                                                                                                         sendNotif=new SendNotif(CurrentUserInfo.getInstance().getUserName(),userId,NOTIF_LIKE);
                                                                                                         sendNotif.send();
-
                                                                                                     }
                                                                                                 });
                                                                                     }

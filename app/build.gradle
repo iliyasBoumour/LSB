@@ -49,10 +49,13 @@ dependencies {
      implementation 'com.github.jrvansuita:PickImage:+'
 //    for notifs
     implementation 'com.google.firebase:firebase-messaging:21.0.1'
+
     implementation 'com.squareup.retrofit2:retrofit:2.3.0'
     implementation 'com.squareup.retrofit2:converter-gson:2.3.0'
+
 //    show dialog camera or gallery
     implementation 'com.github.jrvansuita:PickImage:+'
+    implementation 'com.google.gms:google-services:4.3.4'
 
     testImplementation 'junit:junit:4.+'
     androidTestImplementation 'androidx.test.ext:junit:1.1.2'

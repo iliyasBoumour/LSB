@@ -153,6 +153,7 @@ public class ProfileOtherUsersFragment extends Fragment implements View.OnClickL
                             follow = false;
                             setFollowBtnText(follow);
                             followBtn.setEnabled(true);
+                            collectionReferenceNotif.document(currentUserId + "_" + NOTIF_FOLLOW + "_" + userId).delete();
                         }
                     })
                     .addOnFailureListener(new OnFailureListener() {
@@ -182,14 +183,12 @@ public class ProfileOtherUsersFragment extends Fragment implements View.OnClickL
                             notificationModel.setType(NOTIF_FOLLOW);
                             notificationModel.setPostId(null);
                             notificationModel.setDate(new Timestamp(new Date()));
-                            collectionReferenceNotif.add(notificationModel)
-                                    .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
+                            collectionReferenceNotif.document(currentUserId + "_" + NOTIF_FOLLOW + "_" + userId).set(notificationModel)
+                                    .addOnSuccessListener(new OnSuccessListener<Void>() {
                                         @Override
-                                        public void onSuccess(DocumentReference documentReference) {
-                                            //send notif
+                                        public void onSuccess(Void aVoid) {
                                             sendNotif=new SendNotif(CurrentUserInfo.getInstance().getUserName(),userId,NOTIF_FOLLOW);
                                             sendNotif.send();
-
                                         }
                                     });
                         }

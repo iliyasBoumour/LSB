@@ -6,11 +6,14 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.text.format.DateUtils;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.PopupMenu;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -26,6 +29,8 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 import com.inpt.Util.CurrentUserInfo;
 import com.inpt.Util.DoubleClickListener;
 import com.inpt.Util.SendNotif;
@@ -35,6 +40,7 @@ import com.inpt.models.Post;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 
 public class PostFragment extends Fragment implements View.OnClickListener{
@@ -42,9 +48,10 @@ public class PostFragment extends Fragment implements View.OnClickListener{
     private TextView captionTextView, timeTextView, likesTextView, userNameTextView;
     private SwipeRefreshLayout swipeRefreshLayout;
     private ProgressBar progressBar;
-    private ImageView like_icone;
+    private ImageView like_icone, threeDotMenu;
     private String currentUserId;
     private String postId;
+    private String postImageUrl;
     private Boolean isliked;
     private String userId;
     private int nbLike;
@@ -85,6 +92,11 @@ public class PostFragment extends Fragment implements View.OnClickListener{
         likesTextView = view.findViewById(R.id.likes_nb);
         like_icone = view.findViewById(R.id.like);
         timeTextView = view.findViewById(R.id.time);
+        threeDotMenu = view.findViewById(R.id.threeDotMenu);
+        if(!currentUserId.contentEquals(userId)) {
+            threeDotMenu.setVisibility(View.INVISIBLE);
+        }
+        threeDotMenu.setOnClickListener(this);
         pdpImage = view.findViewById(R.id.pdp_imageView);
         userNameTextView = view.findViewById(R.id.userName_textView);
         like_icone.setOnClickListener(this);
@@ -119,6 +131,25 @@ public class PostFragment extends Fragment implements View.OnClickListener{
             case R.id.like:
                 React();
                 break;
+            case R.id.threeDotMenu:
+                PopupMenu popupMenu = new PopupMenu(Objects.requireNonNull(getActivity()).getApplicationContext(), threeDotMenu);
+                popupMenu.inflate(R.menu.post_menu);
+                popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+                    @Override
+                    public boolean onMenuItemClick(MenuItem item) {
+                        switch (item.getItemId()) {
+                            case R.id.delete:
+                                Toast.makeText(getActivity(), "DELETE", Toast.LENGTH_LONG).show();
+                                break;
+                            case R.id.edit:
+                                Toast.makeText(getActivity(), "EDIT", Toast.LENGTH_LONG).show();
+                                break;
+                        }
+                        return false;
+                    }
+                });
+                popupMenu.show();
+
         }
     }
 
@@ -153,6 +184,7 @@ public class PostFragment extends Fragment implements View.OnClickListener{
                                                                                 like_icone.setEnabled(true);
                                                                                 isliked = false;
                                                                                 likesTextView.setText(setnbLike(nbLike));
+                                                                                collectionReferenceNotif.document(currentUserId + "_" + NOTIF_LIKE + "_" + postId).delete();
                                                                             }
                                                                         });
                                                             }
@@ -204,14 +236,12 @@ public class PostFragment extends Fragment implements View.OnClickListener{
                                                                                 notificationModel.setPostId(postId);
                                                                                 notificationModel.setDate(new Timestamp(new Date()));
                                                                                 if(!currentUserId.contentEquals(userId)) {
-                                                                                    collectionReferenceNotif.add(notificationModel)
-                                                                                            .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
+                                                                                    collectionReferenceNotif.document(currentUserId + "_" + NOTIF_LIKE + "_" + postId).set(notificationModel)
+                                                                                            .addOnSuccessListener(new OnSuccessListener<Void>() {
                                                                                                 @Override
-                                                                                                public void onSuccess(DocumentReference documentReference) {
-//                                                                                                      send notif
+                                                                                                public void onSuccess(Void aVoid) {
                                                                                                     sendNotif=new SendNotif(CurrentUserInfo.getInstance().getUserName(),userId,NOTIF_LIKE);
                                                                                                     sendNotif.send();
-
                                                                                                 }
                                                                                             });
                                                                                 }
@@ -269,16 +299,70 @@ public class PostFragment extends Fragment implements View.OnClickListener{
                             post = postDocument.toObject(Post.class);
                         }
                         String caption = post.getCaption();
-                        String imageUrl = post.getImageUrl();
+                        postImageUrl = post.getImageUrl();
                         int nbLike = post.getNbLike();
                         String time = (String) DateUtils.getRelativeTimeSpanString(post.getTimeAdded().getSeconds() * 1000);
-                        Uri uri = Uri.parse(imageUrl);
+                        Uri uri = Uri.parse(postImageUrl);
                         captionTextView.setText(caption);
                         simpleDraweeView.setImageURI(uri);
                         likesTextView.setText(setnbLike(nbLike));
                         timeTextView.setText(time);
                     }
                 });
+    }
+
+    private void deletePost(String postId) {
+        StorageReference photoRef = FirebaseStorage.getInstance().getReference().getStorage().getReferenceFromUrl(postImageUrl);
+        photoRef.delete()
+                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
+                        collectionReferencePost.whereEqualTo("postId", postId).get()
+                                .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+                                    @Override
+                                    public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
+                                        for (QueryDocumentSnapshot postDocument : queryDocumentSnapshots) {
+                                            postDocument.getReference().delete()
+                                                    .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                        @Override
+                                                        public void onSuccess(Void aVoid) {
+                                                            collectionReference.whereEqualTo("postId", postId).get()
+                                                                    .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+                                                                        @Override
+                                                                        public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
+                                                                            for(QueryDocumentSnapshot likeDocument : queryDocumentSnapshots) {
+                                                                                likeDocument.getReference().delete()
+                                                                                        .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                                                            @Override
+                                                                                            public void onSuccess(Void aVoid) {
+                                                                                                collectionReferenceNotif.whereEqualTo("postId", postId).get()
+                                                                                                        .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+                                                                                                            @Override
+                                                                                                            public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
+                                                                                                                for(QueryDocumentSnapshot notifDocument : queryDocumentSnapshots) {
+                                                                                                                    notifDocument.getReference().delete()
+                                                                                                                            .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                                                                                                @Override
+                                                                                                                                public void onSuccess(Void aVoid) {
+
+                                                                                                                                }
+                                                                                                                            });
+                                                                                                                }
+                                                                                                            }
+                                                                                                        });
+                                                                                            }
+                                                                                        });
+                                                                            }
+                                                                        }
+                                                                    });
+                                                        }
+                                                    });
+                                        }
+                                    }
+                                });
+                    }
+                });
+
     }
 
 
