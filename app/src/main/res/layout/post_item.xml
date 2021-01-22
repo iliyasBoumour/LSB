@@ -54,7 +54,8 @@
             android:layout_below="@id/pdp"
             android:layout_width="match_parent"
             app:cardCornerRadius="16dp"
-            android:layout_height="240dp">
+            android:minHeight="240dp"
+            android:layout_height="400dp">
 
             <com.facebook.drawee.view.SimpleDraweeView
                 android:id="@+id/postImage"

@@ -63,12 +63,18 @@ public class DashboardActivity extends AppCompatActivity implements View.OnClick
             UpdateToken();
 
         }
+        fragmentManager = getSupportFragmentManager();
         setContentView(R.layout.dashboard);
         bottomNavigationView = findViewById(R.id.bottomNavView);
         floatingActionButton = findViewById(R.id.add_post_btn);
-        bottomNavigationView.setOnNavigationItemSelectedListener(this);
+
+        bottomNavigationView.setOnNavigationItemSelectedListener(null);
+
+
+/*
+        bottomNavigationView.setOnClickListener(null);
+*/
         floatingActionButton.setOnClickListener(this);
-        fragmentManager = getSupportFragmentManager();
         uploadImage=new UploadImage(this);
 
         fragment = fragmentManager.findFragmentById(R.id.homeFragment);
@@ -78,6 +84,7 @@ public class DashboardActivity extends AppCompatActivity implements View.OnClick
                     .add(R.id.homeFragment, fragment)
                     .commit();
         }
+        Log.d("LAST LINE", "onCreate: ");
     }
 
     private void UpdateToken(){
@@ -101,6 +108,12 @@ public class DashboardActivity extends AppCompatActivity implements View.OnClick
                 uploadImage.verifyPermissions();
                 break;
         }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        bottomNavigationView.setOnNavigationItemSelectedListener(this);
     }
 
     @Override
