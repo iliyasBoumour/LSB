@@ -1,22 +1,21 @@
 package com.inpt.lsb;
 
+import android.app.ActivityOptions;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
+import android.util.Pair;
 import android.view.View;
+import android.view.WindowManager;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
-import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
+public class LandingActivity extends AppCompatActivity {
 
-public class LandingActivity extends AppCompatActivity implements View.OnClickListener {
-
-    private Button signUp,signIn;
     private Animation bottomAnim,topAnim;
     private ImageView logo;
     private TextView slogan;
@@ -24,34 +23,29 @@ public class LandingActivity extends AppCompatActivity implements View.OnClickLi
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_landing);
-        signIn=findViewById(R.id.signInButton);
-        signUp=findViewById(R.id.signUpButton);
+        this.getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
         logo=findViewById(R.id.logo);
         slogan=findViewById(R.id.slogan);
-        signIn.setOnClickListener(this);
-        signUp.setOnClickListener(this);
         animation();
+        Pair[] pairs=new Pair[2];
+        pairs[0]=new Pair<View,String>(logo,"logo_transition");
+        pairs[1]=new Pair<View,String>(slogan,"slogan_transition");
+        new Handler().postDelayed(()->{
+            Intent intent=new Intent(this,SignInActivity.class);
+            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
+                ActivityOptions activityOptions=ActivityOptions.makeSceneTransitionAnimation(this,pairs);
+                startActivity(intent,activityOptions.toBundle());
+            }
+        },2000);
     }
 
     private void animation() {
         bottomAnim= AnimationUtils.loadAnimation(this,R.anim.bottom_anim);
         topAnim= AnimationUtils.loadAnimation(this,R.anim.top_anim);
-        signIn.setAnimation(bottomAnim);
-        signUp.setAnimation(bottomAnim);
         logo.setAnimation(topAnim);
-        slogan.setAnimation(topAnim);
+        slogan.setAnimation(bottomAnim);
     }
 
-    @Override
-    public void onClick(View v) {
-        Intent intent;
 
-        if (v.getId()==R.id.signInButton){
-            intent = new Intent(this, SignInActivity.class);
-        } else {
-            intent = new Intent(this, SignUpActivity.class);
-        }
-        startActivity(intent);
-    }
 
 }
