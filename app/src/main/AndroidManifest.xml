@@ -23,8 +23,8 @@
 
         <activity android:name=".SignUpActivity" />
         <activity android:name=".SignInActivity" />
-        <activity android:name=".DashboardActivity" />
-        <activity android:name=".LandingActivity">
+        <activity android:name=".LandingActivity" />
+        <activity android:name=".DashboardActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
