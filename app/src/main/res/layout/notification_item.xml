@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    xmlns:fresco="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:padding="15dp"
@@ -17,13 +18,12 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
-        <ImageView
+        <com.facebook.drawee.view.SimpleDraweeView
             android:id="@+id/profile"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
             android:layout_gravity="center"
-            android:scaleType="centerCrop"
-            android:src="@drawable/pdp" />
+            android:scaleType="centerCrop" />
 
     </com.google.android.material.circularreveal.cardview.CircularRevealCardView>
 
@@ -37,7 +37,6 @@
         android:layout_marginLeft="15dp"
         android:layout_marginTop="7dp"
         android:layout_marginRight="15dp"
-        android:text="Hamza Sajid liked your post"
         android:textColor="@color/black"
         android:textSize="14sp"
         android:textStyle="bold" />
@@ -49,7 +48,6 @@
         app:layout_constraintStart_toEndOf="@+id/pdp"
         app:layout_constraintTop_toBottomOf="@+id/notificationText"
         android:layout_marginLeft="15dp"
-        android:text="1d"
         android:textSize="12sp" />
 
     <com.google.android.material.circularreveal.cardview.CircularRevealCardView
@@ -62,10 +60,10 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
-        <ImageView
+        <com.facebook.drawee.view.SimpleDraweeView
             android:id="@+id/image"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
             android:layout_gravity="center"
             android:src="@drawable/pdp"
             android:scaleType="centerCrop"/>

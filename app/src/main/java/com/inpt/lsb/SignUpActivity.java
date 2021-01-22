@@ -8,18 +8,16 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
-import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.bumptech.glide.Glide;
-import com.bumptech.glide.load.resource.bitmap.CircleCrop;
+import com.facebook.drawee.backends.pipeline.Fresco;
+import com.facebook.drawee.view.SimpleDraweeView;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.snackbar.Snackbar;
@@ -42,7 +40,7 @@ public class SignUpActivity extends AppCompatActivity {
     private TextInputLayout emailInput, passwordInput, usernameInput;
     private Button signUpButton;
     private TextView signInText;
-    private ImageView pdp;
+    private SimpleDraweeView pdp;
     private FirebaseAuth mAuth;
     private ProgressDialog progressDialog;
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
@@ -67,7 +65,7 @@ public class SignUpActivity extends AppCompatActivity {
         uploadImage=new UploadImage(this);
         progressDialog = new ProgressDialog(this);
         progressDialog.setMessage(getString(R.string.please_wait));
-
+        Fresco.initialize(this);
 //        events listeners
         signInText.setOnClickListener(e -> {
             startActivity(new Intent(this, SignInActivity.class));
@@ -89,30 +87,20 @@ public class SignUpActivity extends AppCompatActivity {
 
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        pdp.setPadding(0,0,0,0);
-        pdp.setMinimumWidth(200);
-        pdp.setMinimumHeight(200);
         switch(requestCode) {
             case 0:
                 if(resultCode == RESULT_OK){
                     Bundle extras = data.getExtras();
                     Bitmap selectedImage = (Bitmap) extras.get("data");
                     imageUri = uploadImage.getImageUri(getApplicationContext(), selectedImage);
-                    Glide.with(this)
-                            .load(imageUri)
-                            .transform(new CircleCrop())
-                            .into(pdp);
+                    pdp.setImageURI(imageUri);
                 }
 
                 break;
             case 1:
                 if(resultCode == RESULT_OK && data != null && data.getData() != null){
                     imageUri = data.getData();
-//                    TODO : fresco
-                    Glide.with(this)
-                            .load(imageUri)
-                            .transform(new CircleCrop())
-                            .into(pdp);
+                    pdp.setImageURI(imageUri);
                 }
                 break;
         }
@@ -156,7 +144,6 @@ public class SignUpActivity extends AppCompatActivity {
                             user.put("username", username);
                             user.put("email", email);
                             if(imageUri != null){
-                                Log.i("eeeee","there is an image");
                                 StorageReference filepath = storageReference
                                         .child("pdps")
                                         .child(userid + Timestamp.now().getSeconds());
@@ -173,7 +160,7 @@ public class SignUpActivity extends AppCompatActivity {
                                     });
                                 });
                             }else{
-                                user.put("pdp","");
+                                user.put("pdp","https://firebasestorage.googleapis.com/v0/b/slbdatabase.appspot.com/o/pdps%2F9nwZm99Gz6az0lZeyBnFjbRi7q431610997551?alt=media&token=fbd1d59b-e295-4754-932a-113eda60e144");
                                 db.collection("users")
                                         .document(userid)
                                         .set(user)

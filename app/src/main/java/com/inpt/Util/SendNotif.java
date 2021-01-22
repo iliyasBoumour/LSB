@@ -43,7 +43,6 @@ public class SendNotif {
                     @Override
                     public void onSuccess(DocumentSnapshot documentSnapshot) {
                         String usertoken = documentSnapshot.getString("token");
-//                        Log.d("OOOOOOTOKEN", "onSuccess: "+usertoken);
                         sendNotifications(usertoken, title, message);
                     }
                 });
@@ -52,7 +51,6 @@ public class SendNotif {
     public void sendNotifications(String usertoken, String title, String message) {
         Data data = new Data(title, message);
         NotificationSender sender = new NotificationSender(data, usertoken);
-        Log.d("OOOOOOnResponse","send notifs");
         apiService.sendNotifcation(sender).enqueue(new Callback<MyResponse>() {
             @Override
             public void onResponse(Call<MyResponse> call, Response<MyResponse> response) {

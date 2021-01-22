@@ -96,9 +96,10 @@ public class SearchFragment extends Fragment {
                         SearchResModel model=new SearchResModel(doc.getString("uid"),doc.getString("username"),doc.getString("pdp"));
                         searchResModels.add(model);
                     }
-                    searchAdapter=new SearchAdapter(getActivity(),searchResModels, (Objects.requireNonNull(getActivity())).getSupportFragmentManager());
-                    serchRes.setAdapter(searchAdapter);
-
+                    if (searchAdapter!=null) {
+                        searchAdapter = new SearchAdapter(getActivity(), searchResModels, (Objects.requireNonNull(getActivity())).getSupportFragmentManager());
+                        serchRes.setAdapter(searchAdapter);
+                    }
                 })
                 .addOnFailureListener(e->{
                     progressBar.setVisibility(View.GONE);

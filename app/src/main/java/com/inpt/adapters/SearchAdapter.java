@@ -5,7 +5,6 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -14,10 +13,8 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.bumptech.glide.Glide;
-import com.bumptech.glide.load.resource.bitmap.CircleCrop;
+import com.facebook.drawee.view.SimpleDraweeView;
 import com.inpt.Util.CurrentUserInfo;
-import com.inpt.lsb.PostFragment;
 import com.inpt.lsb.ProfileCurrentUserFragment;
 import com.inpt.lsb.ProfileOtherUsersFragment;
 import com.inpt.lsb.R;
@@ -54,11 +51,7 @@ public class SearchAdapter extends RecyclerView.Adapter<SearchAdapter.ViewHolder
     @Override
     public void onBindViewHolder(@NonNull SearchAdapter.ViewHolder holder, int position) {
         holder.name.setText(searchResModels.get(position).getName());
-//        TODO : replace with fresco
-        Glide.with(context)
-                .load(searchResModels.get(position).getImage())
-                .transform(new CircleCrop())
-                .into(holder.pdp);
+        holder.pdp.setImageURI(searchResModels.get(position).getImage());
     }
 
     public void setSearchResModels(List<SearchResModel> searchResModels) {
@@ -74,7 +67,7 @@ public class SearchAdapter extends RecyclerView.Adapter<SearchAdapter.ViewHolder
 
     public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         private ConstraintLayout item;
-        private ImageView pdp;
+        private SimpleDraweeView pdp;
         private TextView name;
         FragmentManager fragmentManager;
         Fragment fragment;
