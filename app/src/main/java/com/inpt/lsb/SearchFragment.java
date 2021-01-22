@@ -96,7 +96,7 @@ public class SearchFragment extends Fragment {
                         SearchResModel model=new SearchResModel(doc.getString("uid"),doc.getString("username"),doc.getString("pdp"));
                         searchResModels.add(model);
                     }
-                    if (searchAdapter!=null) {
+                    if (searchAdapter!=null && getActivity() != null) {
                         searchAdapter = new SearchAdapter(getActivity(), searchResModels, (Objects.requireNonNull(getActivity())).getSupportFragmentManager());
                         serchRes.setAdapter(searchAdapter);
                     }

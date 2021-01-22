@@ -1,5 +1,6 @@
 package com.inpt.lsb;
 
+import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
@@ -69,6 +70,8 @@ public class SignInActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_sign_in);
 
+        LandingActivity.activity.finish();
+
 //        initialize views
         textEmailInput = findViewById(R.id.textEmailInput);
         textPasswordInput = findViewById(R.id.textPasswordInput);
@@ -105,9 +108,11 @@ public class SignInActivity extends AppCompatActivity {
 
             @Override
             public void onError(FacebookException exception) {
+
                 if (exception.getMessage().contains("ERR_INTERNET_DISCONNECTED")){
                     showErrorSnackbar("fb");
                 }else{
+                    Log.d("FB", "onError: " + exception.getMessage());
                     showDialog(getString(R.string.error_sign_fb));
                 }
             }
@@ -144,6 +149,7 @@ public class SignInActivity extends AppCompatActivity {
                             if (((FirebaseAuthException) task.getException()).getErrorCode().equals("ERROR_ACCOUNT_EXISTS_WITH_DIFFERENT_CREDENTIAL")){
                             showDialog(getString(R.string.account_exists));
                             }else {
+                                Log.d("FB", "onComplete: " + task.getException().getMessage());
                             showDialog(getString(R.string.error_sign_fb));
                             }
                         }
@@ -153,19 +159,22 @@ public class SignInActivity extends AppCompatActivity {
 
     private void loginWithGoogle() {
         Intent signInIntent = mGoogleSignInClient.getSignInIntent();
+        Log.d("LOGIN WITH GOOGLE", "loginWithGoogle:  SHOW DIALOG" );
+
         startActivityForResult(signInIntent, RC_SIGN_IN);
     }
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
         callbackManager.onActivityResult(requestCode, resultCode, data);
+        super.onActivityResult(requestCode, resultCode, data);
 
         // Result returned from launching the Intent from GoogleSignInApi.getSignInIntent(...);
         if (requestCode == RC_SIGN_IN) {
             Task<GoogleSignInAccount> task = GoogleSignIn.getSignedInAccountFromIntent(data);
             try {
                 // Google Sign In was successful, authenticate with Firebase
+                Log.d("LOGIN SUCCESSFFUL", "onActivityResult: ");
                 GoogleSignInAccount account = task.getResult(ApiException.class);
                 firebaseAuthWithGoogle(account.getIdToken());
             } catch (ApiException e) {
@@ -173,7 +182,13 @@ public class SignInActivity extends AppCompatActivity {
                 if (e.getMessage().contains("7:")) {
                     showErrorSnackbar("google");
                 }else{
+                    try {
+                        throw e;
+                    } catch (ApiException apiException) {
+                        apiException.printStackTrace();
+                    }
                     showDialog(getString(R.string.error_sign_google));
+                    Log.d("G", "onComplete: " + e.getMessage());
                 }
             }
         }
@@ -193,6 +208,7 @@ public class SignInActivity extends AppCompatActivity {
                         } else {
                             // If sign in fails, display a message to the user.
                             showDialog(getString(R.string.error_sign_google));
+                            Log.d("G", "onComplete: " + task.getException().getMessage());
                         }
                     }
                 });

@@ -1,18 +1,25 @@
 package com.inpt.adapters;
 import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
 import android.text.format.DateUtils;
+import android.util.DisplayMetrics;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
+import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.facebook.drawee.view.SimpleDraweeView;
@@ -30,9 +37,11 @@ import com.inpt.Util.SendNotif;
 import com.inpt.lsb.ProfileCurrentUserFragment;
 import com.inpt.lsb.ProfileOtherUsersFragment;
 import com.inpt.lsb.R;
+import com.inpt.models.LikesModel;
 import com.inpt.models.NotificationModel;
 import com.inpt.models.Post;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
@@ -57,6 +66,9 @@ public class HomeAdapter extends RecyclerView.Adapter<HomeAdapter.ViewHolder> {
 
     private String currentUserId = CurrentUserInfo.getInstance().getUserId();
     private static final String NOTIF_LIKE="like";
+
+    private AlertDialog.Builder builder;
+    private AlertDialog dialog;
 
 
     public HomeAdapter(Context context, List<Post> posts, FragmentManager fragmentManager) {
@@ -124,6 +136,9 @@ public class HomeAdapter extends RecyclerView.Adapter<HomeAdapter.ViewHolder> {
         String pdpUrl;
         FragmentManager fragmentManager;
         Fragment fragment;
+        RecyclerView recyclerView;
+        List<LikesModel> likes;
+        LikesAdapter likesAdapter;
 
 
         public void checkReact(String currentUserId, String postId) {
@@ -175,6 +190,7 @@ public class HomeAdapter extends RecyclerView.Adapter<HomeAdapter.ViewHolder> {
             pdpImage = itemView.findViewById(R.id.pdpImageView);
             userNameTextView = itemView.findViewById(R.id.userName_textView);
             likeNb = itemView.findViewById(R.id.likes_nb);
+            likeNb.setOnClickListener(this);
             like_icone.setOnClickListener(this);
             pdpImage.setOnClickListener(this);
             userNameTextView.setOnClickListener(this);
@@ -313,9 +329,78 @@ public class HomeAdapter extends RecyclerView.Adapter<HomeAdapter.ViewHolder> {
                 fragmentManager.beginTransaction()
                         .replace(R.id.homeFragment, fragment)
                         .commit();
+            } else if(v.getId() == R.id.likes_nb) {
+                createLikesPopup();
+
+
             }
+
+        }
+
+        private void createLikesPopup() {
+            likes= new ArrayList<>();
+            Log.d("POPUP", "createLikesPopup: ");
+            builder = new AlertDialog.Builder(context);
+            View view = ((Activity)context).getLayoutInflater().inflate(R.layout.likes_popup, null);
+            recyclerView = view.findViewById(R.id.likes_recyclerView);
+            recyclerView.setHasFixedSize(true);
+            recyclerView.setLayoutManager(new LinearLayoutManager(context));
+            collectionReference.whereEqualTo("postId", posts.get(getAdapterPosition()).getPostId())
+                    .get()
+                    .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+                        @Override
+                        public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
+                            for (QueryDocumentSnapshot likeDocument : queryDocumentSnapshots) {
+                                collectionReferenceUsers.whereEqualTo("uid", likeDocument.getString("userId"))
+                                        .get()
+                                        .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+                                            @Override
+                                            public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
+                                                for(QueryDocumentSnapshot userDocument : queryDocumentSnapshots) {
+                                                    String userId = userDocument.getString("uid");
+                                                    String userName = userDocument.getString("username");
+                                                    String pdpUrl = userDocument.getString("pdp");
+
+                                                    LikesModel likesModel = new LikesModel(userId, userName, pdpUrl);
+                                                    likes.add(likesModel);
+                                                    Log.d("SIZE", "onSuccess: " + likes.size());
+
+                                                }
+                                                Log.d("SIZE", "onSuccess: " + likes.size());
+                                                likesAdapter = new LikesAdapter(context, likes, fragmentManager, dialog);
+                                                recyclerView.setAdapter(likesAdapter);
+                                                likesAdapter.notifyDataSetChanged();
+                                            }
+                                        });
+                            }
+
+                        }
+                    });
+
+            builder.setView(view);
+            dialog = builder.create();
+            dialog.show();
+            resizePopup(dialog);
+
         }
 
 
+
+        private void resizePopup(AlertDialog dialog) {
+            DisplayMetrics displayMetrics = new DisplayMetrics();
+            ((Activity)context).getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
+            int displayHeight = displayMetrics.heightPixels;
+            WindowManager.LayoutParams layoutParams = new WindowManager.LayoutParams();
+            layoutParams.copyFrom(dialog.getWindow().getAttributes());
+            int dialogWindowHeight = (int) (displayHeight * 0.7f);
+            layoutParams.height = dialogWindowHeight;
+            dialog.getWindow().setAttributes(layoutParams);
+        }
+
+
+
+
     }
+
+
 }

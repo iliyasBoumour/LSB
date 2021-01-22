@@ -8,6 +8,7 @@ import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -28,6 +29,7 @@ public class NotificationsFragment extends Fragment {
     private CurrentUserInfo currentUserInfo = CurrentUserInfo.getInstance();
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
     ProgressBar pb;
+
 
     public NotificationsFragment() {
         // Required empty public constructor
@@ -70,8 +72,8 @@ public class NotificationsFragment extends Fragment {
                                                             pb.setVisibility(View.GONE);
                                                             NotificationModel model = new NotificationModel(doc.getString("from"), ds.getString("username"), ds.getString("pdp"), doc.getString("type"), doc.getString("postId"), ds1.getString("imageUrl"), doc.getTimestamp("date"));
                                                             notificationModels.add(model);
-                                                            if (notificationModels.size() == size[0]) {
-                                                                notificationAdapter = new NotificationAdapter(getActivity(), notificationModels);
+                                                            if (notificationModels.size() == size[0] && getActivity() != null) {
+                                                                notificationAdapter = new NotificationAdapter(getActivity(), notificationModels, getActivity().getSupportFragmentManager());
                                                                 notifRecView.setAdapter(notificationAdapter);
                                                                 notificationAdapter.notifyDataSetChanged();
                                                                 return;
@@ -82,8 +84,8 @@ public class NotificationsFragment extends Fragment {
                                             pb.setVisibility(View.GONE);
                                             NotificationModel model = new NotificationModel(doc.getString("from"), ds.getString("username"), ds.getString("pdp"), doc.getTimestamp("date"), doc.getString("type"));
                                             notificationModels.add(model);
-                                            if (notificationModels.size() == size[0]) {
-                                                notificationAdapter = new NotificationAdapter(getActivity(), notificationModels);
+                                            if (notificationModels.size() == size[0] && getActivity() != null) {
+                                                notificationAdapter = new NotificationAdapter(getActivity(), notificationModels, getActivity().getSupportFragmentManager());
                                                 notifRecView.setAdapter(notificationAdapter);
                                                 notificationAdapter.notifyDataSetChanged();
                                                 return;
