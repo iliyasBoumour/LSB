@@ -51,7 +51,6 @@ public class SearchAdapter extends RecyclerView.Adapter<SearchAdapter.ViewHolder
     @Override
     public void onBindViewHolder(@NonNull SearchAdapter.ViewHolder holder, int position) {
         holder.name.setText(searchResModels.get(position).getName());
-//        TODO : replace with fresco
         holder.pdp.setImageURI(searchResModels.get(position).getImage());
     }
 
