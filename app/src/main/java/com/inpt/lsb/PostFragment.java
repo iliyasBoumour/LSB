@@ -2,13 +2,17 @@ package com.inpt.lsb;
 
 
 import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.net.Uri;
 import android.os.Bundle;
 import android.text.format.DateUtils;
+import android.util.DisplayMetrics;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.PopupMenu;
 import android.widget.ProgressBar;
@@ -17,7 +21,10 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.facebook.drawee.view.SimpleDraweeView;
@@ -34,11 +41,15 @@ import com.google.firebase.storage.StorageReference;
 import com.inpt.Util.CurrentUserInfo;
 import com.inpt.Util.DoubleClickListener;
 import com.inpt.Util.SendNotif;
+import com.inpt.adapters.LikesAdapter;
+import com.inpt.models.LikesModel;
 import com.inpt.models.NotificationModel;
 import com.inpt.models.Post;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
@@ -56,14 +67,20 @@ public class PostFragment extends Fragment implements View.OnClickListener{
     private String userId;
     private int nbLike;
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
+    private CollectionReference collectionReferenceUsers = db.collection("users");
     private CollectionReference collectionReference = db.collection("Likes");
     private CollectionReference collectionReferencePost = db.collection("Posts");
     private CollectionReference collectionReferenceNotif = db.collection("Notifications");
 
-    public static final String TAG = "EVENT";
     private static final String NOTIF_LIKE="like";
     SendNotif sendNotif;
     private Post post;
+
+    private AlertDialog.Builder builder;
+    private AlertDialog dialog;
+    RecyclerView recyclerView;
+    List<LikesModel> likes;
+    LikesAdapter likesAdapter;
 
 
     public PostFragment() {
@@ -90,6 +107,7 @@ public class PostFragment extends Fragment implements View.OnClickListener{
         swipeRefreshLayout = view.findViewById(R.id.swipeRefresh);
         captionTextView = view.findViewById(R.id.caption);
         likesTextView = view.findViewById(R.id.likes_nb);
+        likesTextView.setOnClickListener(this);
         like_icone = view.findViewById(R.id.like);
         timeTextView = view.findViewById(R.id.time);
         threeDotMenu = view.findViewById(R.id.threeDotMenu);
@@ -149,6 +167,11 @@ public class PostFragment extends Fragment implements View.OnClickListener{
                     }
                 });
                 popupMenu.show();
+                break;
+            case R.id.likes_nb:
+                createLikesPopup();
+                break;
+
 
         }
     }
@@ -259,6 +282,7 @@ public class PostFragment extends Fragment implements View.OnClickListener{
 
 
     }
+
     private void checkReact() {
         collectionReference.document(currentUserId + "_" + postId)
                 .get()
@@ -364,6 +388,69 @@ public class PostFragment extends Fragment implements View.OnClickListener{
                 });
 
     }
+
+    private void createLikesPopup() {
+        likes= new ArrayList<>();
+        Log.d("POPUP", "createLikesPopup: ");
+        builder = new AlertDialog.Builder(getActivity());
+        View view = ((Activity)getActivity()).getLayoutInflater().inflate(R.layout.likes_popup, null);
+        recyclerView = view.findViewById(R.id.likes_recyclerView);
+        recyclerView.setHasFixedSize(true);
+        recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+        collectionReference.whereEqualTo("postId", postId)
+                .get()
+                .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+                    @Override
+                    public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
+                        for (QueryDocumentSnapshot likeDocument : queryDocumentSnapshots) {
+                            collectionReferenceUsers.whereEqualTo("uid", likeDocument.getString("userId"))
+                                    .get()
+                                    .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+                                        @Override
+                                        public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
+                                            for(QueryDocumentSnapshot userDocument : queryDocumentSnapshots) {
+                                                String userId = userDocument.getString("uid");
+                                                String userName = userDocument.getString("username");
+                                                String pdpUrl = userDocument.getString("pdp");
+
+                                                LikesModel likesModel = new LikesModel(userId, userName, pdpUrl);
+                                                likes.add(likesModel);
+                                                Log.d("SIZE", "onSuccess: " + likes.size());
+
+                                            }
+                                            Log.d("SIZE", "onSuccess: " + likes.size());
+                                            if(getActivity() != null) {
+                                                likesAdapter = new LikesAdapter(getActivity(), likes, getActivity().getSupportFragmentManager(), dialog);
+                                                recyclerView.setAdapter(likesAdapter);
+                                                likesAdapter.notifyDataSetChanged();
+                                            }
+                                        }
+                                    });
+                        }
+
+                    }
+                });
+
+        builder.setView(view);
+        dialog = builder.create();
+        dialog.show();
+        resizePopup(dialog);
+
+    }
+
+
+
+    private void resizePopup(AlertDialog dialog) {
+        DisplayMetrics displayMetrics = new DisplayMetrics();
+        ((Activity)getActivity()).getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
+        int displayHeight = displayMetrics.heightPixels;
+        WindowManager.LayoutParams layoutParams = new WindowManager.LayoutParams();
+        layoutParams.copyFrom(dialog.getWindow().getAttributes());
+        int dialogWindowHeight = (int) (displayHeight * 0.7f);
+        layoutParams.height = dialogWindowHeight;
+        dialog.getWindow().setAttributes(layoutParams);
+    }
+
 
 
 
