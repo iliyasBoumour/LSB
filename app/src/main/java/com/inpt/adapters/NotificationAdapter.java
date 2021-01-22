@@ -7,15 +7,13 @@ import android.text.format.DateUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.bumptech.glide.Glide;
-import com.bumptech.glide.load.resource.bitmap.CircleCrop;
+import com.facebook.drawee.view.SimpleDraweeView;
 import com.google.android.material.circularreveal.cardview.CircularRevealCardView;
 import com.inpt.lsb.R;
 import com.inpt.models.NotificationModel;
@@ -51,18 +49,11 @@ public class NotificationAdapter extends RecyclerView.Adapter<NotificationAdapte
     @SuppressLint("SetTextI18n")
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-//        TODO : fresco
-        Glide.with(context)
-                .load(notifications.get(position).getFromPdp())
-                .transform(new CircleCrop())
-                .into(holder.pdp);
+        holder.pdp.setImageURI(notifications.get(position).getFromPdp());
         switch (notifications.get(position).getType()){
             case NOTIF_LIKE:
                 holder.notificationText.setText(notifications.get(position).getFromName()+" likes your post");
-                Glide.with(context)
-                        .load(notifications.get(position).getImageNotified())
-                        .transform(new CircleCrop())
-                        .into(holder.notifiedImage);
+                holder.notifiedImage.setImageURI(notifications.get(position).getImageNotified());
                 break;
             case NOTIF_FOLLOW:
                 holder.notificationText.setText(notifications.get(position).getFromName()+" starts following you");
@@ -94,10 +85,9 @@ public class NotificationAdapter extends RecyclerView.Adapter<NotificationAdapte
 
     public  class ViewHolder extends RecyclerView.ViewHolder{
         private ConstraintLayout item;
-        private ImageView pdp;
+        private SimpleDraweeView pdp, notifiedImage;
         private TextView notificationText;
         private TextView notificationDate;
-        private ImageView notifiedImage;
         private CircularRevealCardView notifiedImageContainer;
         public ViewHolder(@NonNull View itemView,Context context) {
             super(itemView);
