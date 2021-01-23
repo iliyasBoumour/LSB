@@ -1,6 +1,5 @@
 package com.inpt.lsb;
 
-import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
@@ -45,6 +44,8 @@ import com.google.firebase.auth.FirebaseAuthException;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.inpt.Util.CurrentUserInfo;
 
 import java.util.Arrays;
 import java.util.HashMap;
@@ -57,29 +58,28 @@ public class SignInActivity extends AppCompatActivity {
     private static final int RC_SIGN_IN = 100;
     private TextInputLayout textEmailInput, textPasswordInput;
     private Button loginButton;
-    private TextView signupText,forgetPassword;
+    private TextView signupText, forgetPassword;
     private FirebaseAuth mAuth;
     private ProgressDialog progressDialog;
-    private ImageView signGoogle,signFb;
+    private ImageView signGoogle, signFb;
     private GoogleSignInClient mGoogleSignInClient;
     private CallbackManager callbackManager;
-    FirebaseFirestore db = FirebaseFirestore.getInstance();
+    private FirebaseFirestore db = FirebaseFirestore.getInstance();
+    private CurrentUserInfo currentUserInfo = CurrentUserInfo.getInstance();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_sign_in);
 
-        LandingActivity.activity.finish();
-
 //        initialize views
         textEmailInput = findViewById(R.id.textEmailInput);
         textPasswordInput = findViewById(R.id.textPasswordInput);
         loginButton = findViewById(R.id.loginButton);
-        signupText=findViewById(R.id.signupText);
-        forgetPassword =findViewById(R.id.forgetPassword);
-        signGoogle=findViewById(R.id.signGoogle);
-        signFb=findViewById(R.id.signFb);
+        signupText = findViewById(R.id.signupText);
+        forgetPassword = findViewById(R.id.forgetPassword);
+        signGoogle = findViewById(R.id.signGoogle);
+        signFb = findViewById(R.id.signFb);
         progressDialog = new ProgressDialog(this);
         progressDialog.setMessage(getString(R.string.please_wait));
 
@@ -88,13 +88,13 @@ public class SignInActivity extends AppCompatActivity {
                 .requestIdToken(getString(R.string.default_web_client_id))
                 .requestEmail()
                 .build();
-        mGoogleSignInClient= GoogleSignIn.getClient(this,gso);
+        mGoogleSignInClient = GoogleSignIn.getClient(this, gso);
 
         mAuth = FirebaseAuth.getInstance();
 
 //        Configure Fb Sign In
         FacebookSdk.sdkInitialize(getApplicationContext());
-        callbackManager=CallbackManager.Factory.create();
+        callbackManager = CallbackManager.Factory.create();
         LoginManager.getInstance().registerCallback(callbackManager, new FacebookCallback<LoginResult>() {
             @Override
             public void onSuccess(LoginResult loginResult) {
@@ -109,9 +109,9 @@ public class SignInActivity extends AppCompatActivity {
             @Override
             public void onError(FacebookException exception) {
 
-                if (exception.getMessage().contains("ERR_INTERNET_DISCONNECTED")){
+                if (exception.getMessage().contains("ERR_INTERNET_DISCONNECTED")) {
                     showErrorSnackbar("fb");
-                }else{
+                } else {
                     Log.d("FB", "onError: " + exception.getMessage());
                     showDialog(getString(R.string.error_sign_fb));
                 }
@@ -119,11 +119,11 @@ public class SignInActivity extends AppCompatActivity {
         });
 
 //        initialize events listeners
-        signFb.setOnClickListener(e->LoginManager.getInstance().logInWithReadPermissions(this, Arrays.asList("email", "public_profile")));
-        signGoogle.setOnClickListener(e-> loginWithGoogle());
-        forgetPassword.setOnClickListener(e->enterEmailDialog());
+        signFb.setOnClickListener(e -> LoginManager.getInstance().logInWithReadPermissions(this, Arrays.asList("email", "public_profile")));
+        signGoogle.setOnClickListener(e -> loginWithGoogle());
+        forgetPassword.setOnClickListener(e -> enterEmailDialog());
         loginButton.setOnClickListener(e -> onLoginClicked());
-        signupText.setOnClickListener(e->{
+        signupText.setOnClickListener(e -> {
             startActivity(new Intent(this, SignUpActivity.class));
             finish();
         });
@@ -140,17 +140,17 @@ public class SignInActivity extends AppCompatActivity {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if (task.isSuccessful()) {
-                            if (task.getResult().getAdditionalUserInfo().isNewUser()){
+                            if (task.getResult().getAdditionalUserInfo().isNewUser()) {
                                 addNew();
                             }
                             signInSucces();
                         } else {
                             // If sign in fails, display a message to the user.
-                            if (((FirebaseAuthException) task.getException()).getErrorCode().equals("ERROR_ACCOUNT_EXISTS_WITH_DIFFERENT_CREDENTIAL")){
-                            showDialog(getString(R.string.account_exists));
-                            }else {
+                            if (((FirebaseAuthException) task.getException()).getErrorCode().equals("ERROR_ACCOUNT_EXISTS_WITH_DIFFERENT_CREDENTIAL")) {
+                                showDialog(getString(R.string.account_exists));
+                            } else {
                                 Log.d("FB", "onComplete: " + task.getException().getMessage());
-                            showDialog(getString(R.string.error_sign_fb));
+                                showDialog(getString(R.string.error_sign_fb));
                             }
                         }
                     }
@@ -159,7 +159,7 @@ public class SignInActivity extends AppCompatActivity {
 
     private void loginWithGoogle() {
         Intent signInIntent = mGoogleSignInClient.getSignInIntent();
-        Log.d("LOGIN WITH GOOGLE", "loginWithGoogle:  SHOW DIALOG" );
+        Log.d("LOGIN WITH GOOGLE", "loginWithGoogle:  SHOW DIALOG");
 
         startActivityForResult(signInIntent, RC_SIGN_IN);
     }
@@ -181,7 +181,7 @@ public class SignInActivity extends AppCompatActivity {
                 // Google Sign In failed
                 if (e.getMessage().contains("7:")) {
                     showErrorSnackbar("google");
-                }else{
+                } else {
                     try {
                         throw e;
                     } catch (ApiException apiException) {
@@ -201,7 +201,7 @@ public class SignInActivity extends AppCompatActivity {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if (task.isSuccessful()) {
-                            if (task.getResult().getAdditionalUserInfo().isNewUser()){
+                            if (task.getResult().getAdditionalUserInfo().isNewUser()) {
                                 addNew();
                             }
                             signInSucces();
@@ -216,21 +216,22 @@ public class SignInActivity extends AppCompatActivity {
 
     private void enterEmailDialog() {
 //        create the view
-        LinearLayout linearLayout=new LinearLayout(this);
-        EditText emailEt=new EditText(this);
+        LinearLayout linearLayout = new LinearLayout(this);
+        EditText emailEt = new EditText(this);
         emailEt.setHint(R.string.email);
         emailEt.setInputType(InputType.TYPE_TEXT_VARIATION_EMAIL_ADDRESS);
-        emailEt.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT));;
-        linearLayout.setPadding(50,20,50,20);
+        emailEt.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT));
+        ;
+        linearLayout.setPadding(50, 20, 50, 20);
         linearLayout.addView(emailEt);
 //create the alert dialog
         AlertDialog.Builder alertDialog = new AlertDialog.Builder(this)
                 .setTitle(R.string.recover_password)
-                .setPositiveButton(R.string.Recover,((dialogInterface, i) -> {
-                    String email=emailEt.getText().toString().trim();
+                .setPositiveButton(R.string.Recover, ((dialogInterface, i) -> {
+                    String email = emailEt.getText().toString().trim();
                     recoverPassword(email);
                 }))
-                .setNegativeButton(R.string.Cancel,((dialogInterface, i) -> {
+                .setNegativeButton(R.string.Cancel, ((dialogInterface, i) -> {
                     dialogInterface.dismiss();
                 }));
 //        show the alert dialog with an edit text
@@ -239,7 +240,7 @@ public class SignInActivity extends AppCompatActivity {
     }
 
     private void recoverPassword(String email) {
-        if (!Patterns.EMAIL_ADDRESS.matcher(email).find() || email.isEmpty())  {
+        if (!Patterns.EMAIL_ADDRESS.matcher(email).find() || email.isEmpty()) {
             showDialog(getString(R.string.email_empty));
             return;
         }
@@ -249,9 +250,9 @@ public class SignInActivity extends AppCompatActivity {
                     @Override
                     public void onComplete(@NonNull Task<Void> task) {
                         progressDialog.dismiss();
-                        if (task.isSuccessful()){
-                            showDialog(getString(R.string.email_was_sent)+email);
-                        }else{
+                        if (task.isSuccessful()) {
+                            showDialog(getString(R.string.email_was_sent) + email);
+                        } else {
                             try {
                                 String errorCode = ((FirebaseAuthException) task.getException()).getErrorCode();
                                 switch (errorCode) {
@@ -262,26 +263,27 @@ public class SignInActivity extends AppCompatActivity {
                                         showDialog(getString(R.string.error_sending_email));
                                         break;
                                 }
-                        }catch (ClassCastException e){
+                            } catch (ClassCastException e) {
                                 showErrorSnackbar("recoverEmpty");
                             }
-                    }}
+                        }
+                    }
                 })
         ;
 
     }
 
     private void onLoginClicked() {
-        String email= textEmailInput.getEditText().getText().toString();
-        String password= textPasswordInput.getEditText().getText().toString();
-        if (email.isEmpty()){
+        String email = textEmailInput.getEditText().getText().toString();
+        String password = textPasswordInput.getEditText().getText().toString();
+        if (email.isEmpty()) {
             textEmailInput.setError("Email must not be empty");
-        }else if (!Pattern.compile("^[A-Z0-9._%+-]+@[A-Z0-9.-]+\\.[A-Z]{2,6}$", Pattern.CASE_INSENSITIVE).matcher(email).find()) {
+        } else if (!Pattern.compile("^[A-Z0-9._%+-]+@[A-Z0-9.-]+\\.[A-Z]{2,6}$", Pattern.CASE_INSENSITIVE).matcher(email).find()) {
             textEmailInput.setError(getString(R.string.email_invalid));
-        }else if(password.isEmpty()){
+        } else if (password.isEmpty()) {
             textPasswordInput.setError(getString(R.string.password_empty));
-        }else {
-            login(email,password);
+        } else {
+            login(email, password);
         }
     }
 
@@ -298,25 +300,25 @@ public class SignInActivity extends AppCompatActivity {
                             AlertDialog.Builder alertDialog = new AlertDialog.Builder(SignInActivity.this).setTitle(R.string.Login_Failed);
                             try {
                                 String errorCode = ((FirebaseAuthException) task.getException()).getErrorCode();
-                            switch (errorCode) {
-                                case "ERROR_INVALID_EMAIL":
+                                switch (errorCode) {
+                                    case "ERROR_INVALID_EMAIL":
                                         textEmailInput.setError(getString(R.string.email_badly_formatted));
-                                    break;
-                                case "ERROR_USER_NOT_FOUND":
-                                    alertDialog.setMessage(R.string.user_does_not_exist).setPositiveButton("OK", (dialog, which) -> {
-                                        dialog.dismiss();
-                                    }).show();
-                                    break;
-                                case "ERROR_WRONG_PASSWORD":
+                                        break;
+                                    case "ERROR_USER_NOT_FOUND":
+                                        alertDialog.setMessage(R.string.user_does_not_exist).setPositiveButton("OK", (dialog, which) -> {
+                                            dialog.dismiss();
+                                        }).show();
+                                        break;
+                                    case "ERROR_WRONG_PASSWORD":
                                         textPasswordInput.setError(getString(R.string.wrong_password));
-                                    break;
-                                default:
-                                    alertDialog.setMessage(R.string.error_logged_in).setPositiveButton("OK", (dialog, which) -> {
-                                        dialog.dismiss();
-                                    }).show();
-                                    break;
-                            }
-                            }catch (ClassCastException e){
+                                        break;
+                                    default:
+                                        alertDialog.setMessage(R.string.error_logged_in).setPositiveButton("OK", (dialog, which) -> {
+                                            dialog.dismiss();
+                                        }).show();
+                                        break;
+                                }
+                            } catch (ClassCastException e) {
                                 showErrorSnackbar("simpleLogin");
                             }
 
@@ -332,15 +334,15 @@ public class SignInActivity extends AppCompatActivity {
         snackbar.setActionTextColor(getResources().getColor(R.color.orange));
         snackbar.setAction(R.string.retry, v -> {
             switch (src) {
-                case "simpleLogin" :
+                case "simpleLogin":
                     onLoginClicked();
-                break;
-                case "recoverEmpty" :
+                    break;
+                case "recoverEmpty":
                     enterEmailDialog();
-                break;
+                    break;
                 case "google":
                     loginWithGoogle();
-                break;
+                    break;
                 case "fb":
                     LoginManager.getInstance().logInWithReadPermissions(this, Arrays.asList("email", "public_profile"));
                     break;
@@ -358,40 +360,56 @@ public class SignInActivity extends AppCompatActivity {
     private TextWatcher createTextWatcher(TextInputLayout textInput) {
         return new TextWatcher() {
             @Override
-            public void beforeTextChanged(CharSequence s,int start, int count, int after) {}
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+            }
 
             @Override
-            public void onTextChanged(CharSequence s,int start, int before, int count) {
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
                 textInput.setError(null);
             }
 
             @Override
-            public void afterTextChanged(Editable s) {}
+            public void afterTextChanged(Editable s) {
+            }
         };
     }
 
-    private void showDialog(String message){
+    private void showDialog(String message) {
         new AlertDialog.Builder(SignInActivity.this).setMessage(message).setPositiveButton("OK", (dialog, which) -> dialog.dismiss()).show();
     }
 
-//    get the user logged In
-    private void signInSucces(){
-        startActivity(new Intent(SignInActivity.this,DashboardActivity.class));
-        finishAffinity();
+    //    get the user logged In
+    private void signInSucces() {
+        FirebaseUser currentUser = mAuth.getCurrentUser();
+        String uid = currentUser.getUid();
+        currentUserInfo.setUserId(uid);
+        db.collection("users")
+                .whereEqualTo("uid", uid)
+                .get()
+                .addOnSuccessListener(queryDocumentSnapshots -> {
+                    for (QueryDocumentSnapshot doc : queryDocumentSnapshots) {
+                        currentUserInfo.setUserName(doc.getString("username"));
+                        currentUserInfo.setPdpUrl(doc.getString("pdp"));
+                    }
+                    startActivity(new Intent(this, DashboardActivity.class));
+                    finish();
+                });
+
+
     }
 
-    private void addNew(){
+    private void addNew() {
         FirebaseUser user = mAuth.getCurrentUser();
         Map<String, Object> newUser = new HashMap<>();
         newUser.put("username", user.getDisplayName());
         newUser.put("email", user.getEmail());
-        newUser.put("pdp",user.getPhotoUrl().toString());
-        newUser.put("uid",user.getUid());
-        Log.i("TAG", "addNew: "+user.getPhotoUrl());
+        newUser.put("pdp", user.getPhotoUrl().toString());
+        newUser.put("uid", user.getUid());
+        Log.i("TAG", "addNew: " + user.getPhotoUrl());
         db.collection("users")
                 .document(user.getUid())
                 .set(newUser);
-        Log.i("TAG","new");
+        Log.i("TAG", "new");
     }
 
 }

@@ -31,7 +31,6 @@ import com.facebook.drawee.view.SimpleDraweeView;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.Timestamp;
 import com.google.firebase.firestore.CollectionReference;
-import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
@@ -252,18 +251,21 @@ public class PostFragment extends Fragment implements View.OnClickListener{
                                                                                 isliked = true;
                                                                                 likesTextView.setText(setnbLike(nbLike));
                                                                                 // Notification
+//                                                                                TODO: set the image uri
                                                                                 NotificationModel notificationModel = new NotificationModel();
                                                                                 notificationModel.setFrom(currentUserId);
                                                                                 notificationModel.setTo(userId);
                                                                                 notificationModel.setType(NOTIF_LIKE);
                                                                                 notificationModel.setPostId(postId);
+                                                                                notificationModel.setFromName(CurrentUserInfo.getInstance().getUserName());
+                                                                                notificationModel.setFromPdp(CurrentUserInfo.getInstance().getPdpUrl());
                                                                                 notificationModel.setDate(new Timestamp(new Date()));
                                                                                 if(!currentUserId.contentEquals(userId)) {
                                                                                     collectionReferenceNotif.document(currentUserId + "_" + NOTIF_LIKE + "_" + postId).set(notificationModel)
                                                                                             .addOnSuccessListener(new OnSuccessListener<Void>() {
                                                                                                 @Override
                                                                                                 public void onSuccess(Void aVoid) {
-                                                                                                    sendNotif=new SendNotif(CurrentUserInfo.getInstance().getUserName(),userId,NOTIF_LIKE);
+                                                                                                    sendNotif=new SendNotif(notificationModel);
                                                                                                     sendNotif.send();
                                                                                                 }
                                                                                             });

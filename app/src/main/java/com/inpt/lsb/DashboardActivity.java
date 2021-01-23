@@ -14,70 +14,38 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.messaging.FirebaseMessaging;
 import com.inpt.Util.CurrentUserInfo;
 import com.inpt.Util.UploadImage;
 import com.inpt.notifications.Token;
 
 public class DashboardActivity extends AppCompatActivity implements View.OnClickListener, BottomNavigationView.OnNavigationItemSelectedListener {
-    private static final int GALLERY_CODE = 1 ;
     private BottomNavigationView bottomNavigationView;
     private FloatingActionButton floatingActionButton;
     FragmentManager fragmentManager;
     Fragment fragment;
     private UploadImage uploadImage;
-    private CurrentUserInfo currentUserInfo = CurrentUserInfo.getInstance();
+    private CurrentUserInfo currentUserInfo= CurrentUserInfo.getInstance();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
-        if (currentUser==null) {
-            startActivity(new Intent(this,LandingActivity.class));
-            finish();
-            return;
-        } else {
-            FirebaseAuth mAuth= FirebaseAuth.getInstance();;
-            FirebaseUser user = mAuth.getCurrentUser();
-            String uid=user.getUid();
-            currentUserInfo.setUserId(uid);
-            FirebaseFirestore db = FirebaseFirestore.getInstance();
-            db.collection("users")
-                    .whereEqualTo("uid",uid)
-                    .get()
-                    .addOnSuccessListener(queryDocumentSnapshots ->{
-                            for(QueryDocumentSnapshot doc:queryDocumentSnapshots){
-                                currentUserInfo.setUserName(doc.getString("username"));
-                                currentUserInfo.setPdpUrl(doc.getString("pdp"));
-                            }
-
-                    });
-            UpdateToken();
-
-        }
-        fragmentManager = getSupportFragmentManager();
         setContentView(R.layout.dashboard);
         bottomNavigationView = findViewById(R.id.bottomNavView);
         floatingActionButton = findViewById(R.id.add_post_btn);
-
-        bottomNavigationView.setOnNavigationItemSelectedListener(null);
-
-
-/*
-        bottomNavigationView.setOnClickListener(null);
-*/
-        floatingActionButton.setOnClickListener(this);
+        fragmentManager = getSupportFragmentManager();
+        fragment = fragmentManager.findFragmentById(R.id.homeFragment);
         uploadImage=new UploadImage(this);
 
-        fragment = fragmentManager.findFragmentById(R.id.homeFragment);
+        UpdateToken();
+
+//        bottomNavigationView.setOnNavigationItemSelectedListener(null);
+        bottomNavigationView.setOnNavigationItemSelectedListener(this);
+        floatingActionButton.setOnClickListener(this);
+
         if(fragment == null) {
             fragment = new HomeFragment();
             fragmentManager.beginTransaction()
@@ -88,7 +56,6 @@ public class DashboardActivity extends AppCompatActivity implements View.OnClick
     }
 
     private void UpdateToken(){
-        Log.d("TOKEN", "UpdateToken: ENTER");
         FirebaseMessaging.getInstance().getToken()
                 .addOnCompleteListener( task-> {
                         if (!task.isSuccessful()) {
