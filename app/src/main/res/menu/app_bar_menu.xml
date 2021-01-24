@@ -13,6 +13,11 @@
         android:title="Search"
         app:showAsAction="always"/>
 
+    <item android:id="@+id/menuAdd"
+        android:icon="@drawable/ic_add"
+        android:title="Add"
+        app:showAsAction="always"/>
+
     <item android:id="@+id/menuNotification"
         android:icon="@drawable/ic_notification"
         android:title="Notification"

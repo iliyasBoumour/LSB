@@ -80,7 +80,7 @@ public class SignInActivity extends AppCompatActivity {
         forgetPassword =findViewById(R.id.forgetPassword);
         signGoogle=findViewById(R.id.signGoogle);
         signFb=findViewById(R.id.signFb);
-        progressDialog = new ProgressDialog(this);
+        progressDialog = new ProgressDialog(this, R.style.MyAlertDialogStyle);
         progressDialog.setMessage(getString(R.string.please_wait));
 
 //        Configure Google Sign In

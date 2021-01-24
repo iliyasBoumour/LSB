@@ -1,48 +1,56 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto">
+
+
     <FrameLayout
         android:id="@+id/homeFragment"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:layout_above="@id/bottomNavView"
+        android:layout_alignParentTop="true"
+        app:layout_constraintEnd_toEndOf="parent"
+        >
 
     </FrameLayout>
 
-    <com.google.android.material.bottomappbar.BottomAppBar
+    <com.google.android.material.bottomnavigation.BottomNavigationView
+        android:id="@+id/bottomNavView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:elevation="5dp"
+        android:background="@drawable/app_bar_bottom_gradient"
+        android:clickable="false"
+        app:itemIconTint="@color/white"
+        app:labelVisibilityMode="unlabeled"
+        app:menu="@menu/app_bar_menu" />
+    <!--<com.google.android.material.bottomappbar.BottomAppBar
         android:id="@+id/bottomBar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:background="@drawable/app_bar_bottom_gradient"
+        android:layout_marginTop="20dp"
         android:layout_gravity="bottom"
         app:hideOnScroll="true"
-        android:backgroundTint="@color/orange"
         android:gravity="bottom">
 
-        <com.google.android.material.bottomnavigation.BottomNavigationView
-            android:id="@+id/bottomNavView"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:background="@android:color/transparent"
-            app:elevation="0dp"
-            app:itemHorizontalTranslationEnabled="false"
-            app:labelVisibilityMode="unlabeled"
-            android:layout_marginEnd="16dp"
-            app:itemIconTint="#fff"
-            android:clickable="false"
-            android:contextClickable="false"
-            app:menu="@menu/app_bar_menu" />
-    </com.google.android.material.bottomappbar.BottomAppBar>
 
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
+    </com.google.android.material.bottomappbar.BottomAppBar>-->
+
+   <!-- <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/add_post_btn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:src="@android:drawable/ic_input_add"
         app:layout_anchor="@id/bottomBar"
-        app:tint="#fff"/>
+        app:layout_behavior="com.google.android.material.behavior.HideBottomViewOnScrollBehavior"
+        app:tint="#fff"/>-->
 
 
 
 
-</androidx.coordinatorlayout.widget.CoordinatorLayout>
+</RelativeLayout>

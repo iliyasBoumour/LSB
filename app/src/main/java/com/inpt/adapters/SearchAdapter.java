@@ -108,6 +108,7 @@ public class SearchAdapter extends RecyclerView.Adapter<SearchAdapter.ViewHolder
                 }
                 fragmentManager.beginTransaction()
                         .replace(R.id.homeFragment, fragment)
+                        .addToBackStack(null)
                         .commit();
             }
         }

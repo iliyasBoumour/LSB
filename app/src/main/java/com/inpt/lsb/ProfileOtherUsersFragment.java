@@ -56,7 +56,7 @@ public class ProfileOtherUsersFragment extends Fragment implements View.OnClickL
     private String userName;
     private MaterialButton followBtn;
     private Boolean follow;
-    private static final String NOTIF_FOLLOW="follow";
+    private static final String NOTIF_FOLLOW = "follow";
     SendNotif sendNotif;
 
     public ProfileOtherUsersFragment() {
@@ -135,10 +135,14 @@ public class ProfileOtherUsersFragment extends Fragment implements View.OnClickL
                     @Override
                     public void onSuccess(DocumentSnapshot documentSnapshot) {
                         if(documentSnapshot.exists()) {
+                            followBtn.setWidth(followBtn.getWidth());
                             followBtn.setText("Unfollow");
+                            followBtn.setTextColor(getResources().getColor(R.color.white));
                             follow = true;
                         } else {
+                            followBtn.setWidth(followBtn.getWidth());
                             followBtn.setText("Follow");
+                            followBtn.setTextColor(getResources().getColor(R.color.white));
                             follow = false;
                         }
                     }
@@ -206,9 +210,13 @@ public class ProfileOtherUsersFragment extends Fragment implements View.OnClickL
     }
     private void setFollowBtnText(Boolean follow) {
         if(follow) {
+            followBtn.setWidth(followBtn.getWidth());
             followBtn.setText("Unfollow");
+            followBtn.setTextColor(getResources().getColor(R.color.white));
         } else {
+            followBtn.setWidth(followBtn.getWidth());
             followBtn.setText("Follow");
+            followBtn.setTextColor(getResources().getColor(R.color.white));
         }
     }
 

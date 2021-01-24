@@ -46,7 +46,7 @@ public class AddPostActivity extends AppCompatActivity implements View.OnClickLi
         cancelAdd.setOnClickListener(this);
 
         storageReference = FirebaseStorage.getInstance().getReference();
-        progressDialog = new ProgressDialog(this);
+        progressDialog = new ProgressDialog(this, R.style.MyAlertDialogStyle);
         progressDialog.setMessage(getString(R.string.please_wait));
         uploadImage=new UploadImage(this);
         imageUri = getIntent().getParcelableExtra("imageUri");
