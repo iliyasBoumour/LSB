@@ -26,9 +26,12 @@ import com.google.firebase.Timestamp;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseAuthException;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
+import com.inpt.Util.CurrentUserInfo;
 import com.inpt.Util.UploadImage;
 
 import java.util.HashMap;
@@ -47,6 +50,7 @@ public class SignUpActivity extends AppCompatActivity {
     private Uri imageUri;
     private UploadImage uploadImage;
     private StorageReference storageReference;
+    private CurrentUserInfo currentUserInfo = CurrentUserInfo.getInstance();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -202,14 +206,26 @@ public class SignUpActivity extends AppCompatActivity {
     }
 
     private void succesdDialog() {
-        new AlertDialog.Builder(SignUpActivity.this)
-                .setTitle(R.string.successfully_signed_up)
-                .setMessage("Great ! enjoy your time !")
-                .setPositiveButton("OK", (dialog, which) -> {
-                    dialog.dismiss();
-                    startActivity(new Intent(SignUpActivity.this, DashboardActivity.class));
-                    finish();
-                }).show();
+        FirebaseUser currentUser = mAuth.getCurrentUser();
+        String uid = currentUser.getUid();
+        currentUserInfo.setUserId(uid);
+        db.collection("users")
+                .whereEqualTo("uid", uid)
+                .get()
+                .addOnSuccessListener(queryDocumentSnapshots -> {
+                    for (QueryDocumentSnapshot doc : queryDocumentSnapshots) {
+                        currentUserInfo.setUserName(doc.getString("username"));
+                        currentUserInfo.setPdpUrl(doc.getString("pdp"));
+                    }
+                    new AlertDialog.Builder(SignUpActivity.this)
+                            .setTitle(R.string.successfully_signed_up)
+                            .setMessage(R.string.great_enjoy)
+                            .setPositiveButton("OK", (dialog, which) -> {
+                                dialog.dismiss();
+                                startActivity(new Intent(SignUpActivity.this, DashboardActivity.class));
+                                finish();
+                            }).show();
+                });
     }
 
     private void showErrorSnackbar() {

@@ -29,8 +29,8 @@ public class MainActivity extends AppCompatActivity {
 
         logout.setOnClickListener(v -> {
 
-            sendNotif=new SendNotif("iliyas",UserTB.getText().toString().trim(),"like");
-            sendNotif.send();
+//            sendNotif=new SendNotif("iliyas",UserTB.getText().toString().trim(),"like");
+//            sendNotif.send();
                 });
         UpdateToken();
     }

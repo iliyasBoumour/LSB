@@ -21,7 +21,6 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.button.MaterialButton;
 import com.google.firebase.Timestamp;
 import com.google.firebase.firestore.CollectionReference;
-import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
@@ -48,7 +47,7 @@ public class ProfileOtherUsersFragment extends Fragment implements View.OnClickL
     private String currentUserId;
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
     private CollectionReference collectionReference = db.collection("Posts");
-    private  CollectionReference collectionReferenceFollow = db.collection("Relations");
+    private CollectionReference collectionReferenceFollow = db.collection("Relations");
     private CollectionReference collectionReferenceNotif = db.collection("Notifications");
     private SimpleDraweeView pdp;
     private TextView userNameTextView;
@@ -88,7 +87,7 @@ public class ProfileOtherUsersFragment extends Fragment implements View.OnClickL
         recyclerView = view.findViewById(R.id.ProfilerecyclerView);
         posts = new ArrayList<>();
         recyclerView.setHasFixedSize(true);
-        GridLayoutManager gridLayoutManager = new GridLayoutManager(getActivity(),2, GridLayoutManager.VERTICAL,false);
+        GridLayoutManager gridLayoutManager = new GridLayoutManager(getActivity(), 2, GridLayoutManager.VERTICAL, false);
         recyclerView.setLayoutManager(gridLayoutManager);
         checkFollow();
         getPosts();
@@ -103,15 +102,15 @@ public class ProfileOtherUsersFragment extends Fragment implements View.OnClickL
                 .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
                     @Override
                     public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
-                        if(!queryDocumentSnapshots.isEmpty()) {
-                            for(QueryDocumentSnapshot post_ : queryDocumentSnapshots) {
+                        if (!queryDocumentSnapshots.isEmpty()) {
+                            for (QueryDocumentSnapshot post_ : queryDocumentSnapshots) {
                                 Log.d("TEST", "onSuccess: ");
 
                                 Post post = post_.toObject(Post.class);
                                 Log.d("TEST", "onSuccess: " + post.getImageUrl());
                                 posts.add(post);
                             }
-                            if(getActivity() != null) {
+                            if (getActivity() != null) {
                                 Log.d("TEST2", "onSuccess: " + posts.size());
                                 profileAdapter = new ProfileAdapter(getActivity(), posts, (getActivity()).getSupportFragmentManager(), userName, pdpUrl);
                                 recyclerView.setAdapter(profileAdapter);
@@ -148,8 +147,9 @@ public class ProfileOtherUsersFragment extends Fragment implements View.OnClickL
                     }
                 });
     }
-    private  void followUser() {
-        if(follow) {
+
+    private void followUser() {
+        if (follow) {
             followBtn.setEnabled(false);
             collectionReferenceFollow.document(currentUserId + "_" + userId)
                     .delete()
@@ -193,7 +193,9 @@ public class ProfileOtherUsersFragment extends Fragment implements View.OnClickL
                                     .addOnSuccessListener(new OnSuccessListener<Void>() {
                                         @Override
                                         public void onSuccess(Void aVoid) {
-                                            sendNotif=new SendNotif(CurrentUserInfo.getInstance().getUserName(),userId,NOTIF_FOLLOW);
+                                            notificationModel.setFromName(CurrentUserInfo.getInstance().getUserName());
+                                            notificationModel.setFromPdp(CurrentUserInfo.getInstance().getPdpUrl());
+                                            sendNotif = new SendNotif(notificationModel);
                                             sendNotif.send();
                                         }
                                     });
@@ -208,6 +210,7 @@ public class ProfileOtherUsersFragment extends Fragment implements View.OnClickL
 
         }
     }
+
     private void setFollowBtnText(Boolean follow) {
         if(follow) {
             followBtn.setWidth(followBtn.getWidth());

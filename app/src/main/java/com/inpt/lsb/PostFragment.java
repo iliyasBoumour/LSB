@@ -10,7 +10,6 @@ import android.os.Handler;
 import android.text.format.DateUtils;
 import android.util.DisplayMetrics;
 import android.util.Log;
-import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -21,7 +20,6 @@ import android.widget.ImageView;
 import android.widget.PopupMenu;
 import android.widget.ProgressBar;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -37,7 +35,6 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.button.MaterialButton;
 import com.google.firebase.Timestamp;
 import com.google.firebase.firestore.CollectionReference;
-import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
@@ -295,6 +292,7 @@ public class PostFragment extends Fragment implements View.OnClickListener{
                                                                                 isliked = true;
                                                                                 likesTextView.setText(setnbLike(nbLike));
                                                                                 // Notification
+//                                                                                TODO: set the image uri
                                                                                 NotificationModel notificationModel = new NotificationModel();
                                                                                 notificationModel.setFrom(currentUserId);
                                                                                 notificationModel.setTo(userId);
@@ -306,7 +304,10 @@ public class PostFragment extends Fragment implements View.OnClickListener{
                                                                                             .addOnSuccessListener(new OnSuccessListener<Void>() {
                                                                                                 @Override
                                                                                                 public void onSuccess(Void aVoid) {
-                                                                                                    sendNotif=new SendNotif(CurrentUserInfo.getInstance().getUserName(),userId,NOTIF_LIKE);
+                                                                                                    notificationModel.setFromName(CurrentUserInfo.getInstance().getUserName());
+                                                                                                    notificationModel.setFromPdp(CurrentUserInfo.getInstance().getPdpUrl());
+                                                                                                    notificationModel.setImageNotified(postImageUrl);
+                                                                                                    sendNotif=new SendNotif(notificationModel);
                                                                                                     sendNotif.send();
                                                                                                 }
                                                                                             });

@@ -7,8 +7,11 @@ public class NotificationModel {
     private String fromName;
     private String fromPdp;
     private String to;
+    private String toPdp;
+    private String toUsername;
     private String type;
     private String postId;
+    private String postUrl;
     private Timestamp date;
 
     public String getImageNotified() {
@@ -105,5 +108,29 @@ public class NotificationModel {
 
     public void setDate(Timestamp date) {
         this.date = date;
+    }
+
+    public String getPostUrl() {
+        return postUrl;
+    }
+
+    public void setPostUrl(String postUrl) {
+        this.postUrl = postUrl;
+    }
+
+    public String getToPdp() {
+        return toPdp;
+    }
+
+    public void setToPdp(String toPdp) {
+        this.toPdp = toPdp;
+    }
+
+    public String getToUsername() {
+        return toUsername;
+    }
+
+    public void setToUsername(String toUsername) {
+        this.toUsername = toUsername;
     }
 }

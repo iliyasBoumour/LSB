@@ -1,4 +1,5 @@
 package com.inpt.adapters;
+
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
@@ -12,7 +13,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.ImageView;
-import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -26,7 +26,6 @@ import com.facebook.drawee.view.SimpleDraweeView;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.Timestamp;
 import com.google.firebase.firestore.CollectionReference;
-import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
@@ -65,7 +64,7 @@ public class HomeAdapter extends RecyclerView.Adapter<HomeAdapter.ViewHolder> {
 
 
     private String currentUserId = CurrentUserInfo.getInstance().getUserId();
-    private static final String NOTIF_LIKE="like";
+    private static final String NOTIF_LIKE = "like";
 
     private AlertDialog.Builder builder;
     private AlertDialog dialog;
@@ -197,7 +196,7 @@ public class HomeAdapter extends RecyclerView.Adapter<HomeAdapter.ViewHolder> {
             postImage.setOnClickListener(new DoubleClickListener() {
                 @Override
                 public void onDoubleClick() {
-                    React(posts.get(getAdapterPosition()).getPostId(), posts.get(getAdapterPosition()).getUserId() );
+                    React(posts.get(getAdapterPosition()).getPostId(), posts.get(getAdapterPosition()).getUserId());
                 }
             });
         }
@@ -278,18 +277,24 @@ public class HomeAdapter extends RecyclerView.Adapter<HomeAdapter.ViewHolder> {
                                                                                     isliked = true;
                                                                                     likeNb.setText(setnbLike(nbLike));
                                                                                     //Notification
+//                                                                                TODO: set the image uri
                                                                                     NotificationModel notificationModel = new NotificationModel();
                                                                                     notificationModel.setFrom(currentUserId);
                                                                                     notificationModel.setTo(userId);
                                                                                     notificationModel.setType(NOTIF_LIKE);
                                                                                     notificationModel.setPostId(postId);
                                                                                     notificationModel.setDate(new Timestamp(new Date()));
-                                                                                    if(!currentUserId.contentEquals(userId)) {
+                                                                                    if (!currentUserId.contentEquals(userId)) {
                                                                                         collectionReferenceNotif.document(currentUserId + "_" + NOTIF_LIKE + "_" + postId).set(notificationModel)
                                                                                                 .addOnSuccessListener(new OnSuccessListener<Void>() {
                                                                                                     @Override
                                                                                                     public void onSuccess(Void aVoid) {
-                                                                                                        sendNotif=new SendNotif(CurrentUserInfo.getInstance().getUserName(),userId,NOTIF_LIKE);
+                                                                                                        notificationModel.setFromName(CurrentUserInfo.getInstance().getUserName());
+                                                                                                        notificationModel.setFromPdp(CurrentUserInfo.getInstance().getPdpUrl());
+                                                                                                        notificationModel.setToUsername(userName);
+                                                                                                        notificationModel.setToPdp(pdpUrl);
+                                                                                                        notificationModel.setImageNotified(posts.get(getAdapterPosition()).getImageUrl());
+                                                                                                        sendNotif = new SendNotif(notificationModel);
                                                                                                         sendNotif.send();
                                                                                                     }
                                                                                                 });
@@ -330,7 +335,7 @@ public class HomeAdapter extends RecyclerView.Adapter<HomeAdapter.ViewHolder> {
                         .replace(R.id.homeFragment, fragment)
                         .addToBackStack(null)
                         .commit();
-            } else if(v.getId() == R.id.likes_nb) {
+            } else if (v.getId() == R.id.likes_nb) {
                 createLikesPopup();
 
 
@@ -339,10 +344,10 @@ public class HomeAdapter extends RecyclerView.Adapter<HomeAdapter.ViewHolder> {
         }
 
         private void createLikesPopup() {
-            likes= new ArrayList<>();
+            likes = new ArrayList<>();
             Log.d("POPUP", "createLikesPopup: ");
             builder = new AlertDialog.Builder(context);
-            View view = ((Activity)context).getLayoutInflater().inflate(R.layout.likes_popup, null);
+            View view = ((Activity) context).getLayoutInflater().inflate(R.layout.likes_popup, null);
             recyclerView = view.findViewById(R.id.likes_recyclerView);
             recyclerView.setHasFixedSize(true);
             recyclerView.setLayoutManager(new LinearLayoutManager(context));
@@ -357,7 +362,7 @@ public class HomeAdapter extends RecyclerView.Adapter<HomeAdapter.ViewHolder> {
                                         .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
                                             @Override
                                             public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
-                                                for(QueryDocumentSnapshot userDocument : queryDocumentSnapshots) {
+                                                for (QueryDocumentSnapshot userDocument : queryDocumentSnapshots) {
                                                     String userId = userDocument.getString("uid");
                                                     String userName = userDocument.getString("username");
                                                     String pdpUrl = userDocument.getString("pdp");
@@ -386,10 +391,9 @@ public class HomeAdapter extends RecyclerView.Adapter<HomeAdapter.ViewHolder> {
         }
 
 
-
         private void resizePopup(AlertDialog dialog) {
             DisplayMetrics displayMetrics = new DisplayMetrics();
-            ((Activity)context).getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
+            ((Activity) context).getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
             int displayHeight = displayMetrics.heightPixels;
             WindowManager.LayoutParams layoutParams = new WindowManager.LayoutParams();
             layoutParams.copyFrom(dialog.getWindow().getAttributes());
@@ -397,8 +401,6 @@ public class HomeAdapter extends RecyclerView.Adapter<HomeAdapter.ViewHolder> {
             layoutParams.height = dialogWindowHeight;
             dialog.getWindow().setAttributes(layoutParams);
         }
-
-
 
 
     }

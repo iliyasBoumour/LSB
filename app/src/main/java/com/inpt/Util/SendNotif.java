@@ -5,6 +5,7 @@ import android.util.Log;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.inpt.models.NotificationModel;
 import com.inpt.notifications.APIService;
 import com.inpt.notifications.Client;
 import com.inpt.notifications.Data;
@@ -16,40 +17,40 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 public class SendNotif {
-    private String to;
-    private String from;
-    private String title;
-    private String message;
+    private NotificationModel notificationModel;
+    private String title,message;
     private APIService apiService;
     private static final String NOTIF_LIKE="like";
     private static final String NOTIF_FOLLOW="follow";
-    public SendNotif(String from, String idTo,String type){
-        this.to=idTo;
-        switch (type){
+    public SendNotif(NotificationModel notificationModel){
+        this.notificationModel=notificationModel;
+        switch (notificationModel.getType()){
             case NOTIF_FOLLOW :
                 this.title="New Follow";
-                this.message=from+" starts following you";
+                this.message=notificationModel.getFromName()+" starts following you";
                 break;
             case NOTIF_LIKE :
                 this.title="New Like";
-                this.message=from+" likes your post";
+                this.message=notificationModel.getFromName()+" likes your post";
                 break;
         }
         this.apiService = Client.getClient("https://fcm.googleapis.com/").create(APIService.class);
     }
     public void send(){
-        FirebaseFirestore.getInstance().collection("Tokens").document(this.to).get()
+        FirebaseFirestore.getInstance().collection("Tokens").document(notificationModel.getTo()).get()
                 .addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
                     @Override
                     public void onSuccess(DocumentSnapshot documentSnapshot) {
                         String usertoken = documentSnapshot.getString("token");
-                        sendNotifications(usertoken, title, message);
+                        sendNotifications(usertoken,notificationModel);
                     }
                 });
     }
 
-    public void sendNotifications(String usertoken, String title, String message) {
-        Data data = new Data(title, message);
+    public void sendNotifications(String usertoken, NotificationModel notificationModel) {
+//        (String userId, String userName, String type, String postId, String pdpUrl)
+        Data data = new Data(notificationModel.getFrom(),notificationModel.getFromName(),notificationModel.getType(),notificationModel.getImageNotified(),notificationModel.getFromPdp(),notificationModel.getPostId());
+        Log.d("TAG", "sendNotifications: "+notificationModel.getFromPdp());
         NotificationSender sender = new NotificationSender(data, usertoken);
         apiService.sendNotifcation(sender).enqueue(new Callback<MyResponse>() {
             @Override

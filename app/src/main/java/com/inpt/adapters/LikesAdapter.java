@@ -1,10 +1,8 @@
 package com.inpt.adapters;
 
 import android.content.Context;
-import android.content.res.ColorStateList;
 import android.net.Uri;
 import android.os.Bundle;
-import android.text.format.DateUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -26,13 +24,11 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.inpt.Util.CurrentUserInfo;
 import com.inpt.Util.SendNotif;
-import com.inpt.lsb.PostFragment;
 import com.inpt.lsb.ProfileCurrentUserFragment;
 import com.inpt.lsb.ProfileOtherUsersFragment;
 import com.inpt.lsb.R;
 import com.inpt.models.LikesModel;
 import com.inpt.models.NotificationModel;
-import com.inpt.models.Post;
 
 import java.util.Date;
 import java.util.HashMap;
@@ -214,7 +210,7 @@ public class LikesAdapter extends RecyclerView.Adapter<LikesAdapter.ViewHolder> 
                                         .addOnSuccessListener(new OnSuccessListener<Void>() {
                                             @Override
                                             public void onSuccess(Void aVoid) {
-                                                sendNotif=new SendNotif(CurrentUserInfo.getInstance().getUserName(),userId,NOTIF_FOLLOW);
+                                                sendNotif=new SendNotif(notificationModel);
                                                 sendNotif.send();
                                             }
                                         });

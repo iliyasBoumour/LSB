@@ -40,7 +40,7 @@
     <string name="Recover">Recover</string>
     <string name="Cancel">Cancel</string>
     <string name="Email_sent">Email sent !</string>
-    <string name="email_was_sent">\"an email was sent to : \"</string>
+    <string name="email_was_sent">an email was sent to : </string>
     <string name="error_sign_fb">Authentication with facebook Failed.</string>
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="search">Search ...</string>
@@ -48,5 +48,10 @@
     <string name="Camera">Camera</string>
     <string name="Gallery">Gallery</string>
     <string name="new_post">New Post</string>
+    <string name="great_enjoy">Great ! enjoy your time !</string>
+    <string name="new_follow">New Follow</string>
+    <string name="starts_follow"> starts following you !</string>
+    <string name="new_like">New Like</string>
+    <string name="like_post"> likes your post !</string>
 
 </resources>
