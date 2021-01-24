@@ -93,6 +93,8 @@ public class MyFireBaseMessagingService extends FirebaseMessagingService {
             manager.createNotificationChannel(channel);
         }
 
+//        TODO: round image
+
         Notification notification =
                 new NotificationCompat.Builder(getApplicationContext(), NOTIF_FOLLOW)
                         .setContentTitle(title)
