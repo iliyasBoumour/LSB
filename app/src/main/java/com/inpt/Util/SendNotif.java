@@ -49,7 +49,7 @@ public class SendNotif {
 
     public void sendNotifications(String usertoken, NotificationModel notificationModel) {
 //        (String userId, String userName, String type, String postId, String pdpUrl)
-        Data data = new Data(notificationModel.getFrom(),notificationModel.getFromName(),notificationModel.getType(),notificationModel.getPostId(),notificationModel.getFromPdp());
+        Data data = new Data(notificationModel.getFrom(),notificationModel.getFromName(),notificationModel.getType(),notificationModel.getImageNotified(),notificationModel.getFromPdp(),notificationModel.getPostId());
         Log.d("TAG", "sendNotifications: "+notificationModel.getFromPdp());
         NotificationSender sender = new NotificationSender(data, usertoken);
         apiService.sendNotifcation(sender).enqueue(new Callback<MyResponse>() {

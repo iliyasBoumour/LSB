@@ -179,19 +179,18 @@ public class ProfileOtherUsersFragment extends Fragment implements View.OnClickL
                             setFollowBtnText(follow);
                             followBtn.setEnabled(true);
                             // Notification
-//TODO: set the image uri
                             NotificationModel notificationModel = new NotificationModel();
                             notificationModel.setFrom(currentUserId);
                             notificationModel.setTo(userId);
                             notificationModel.setType(NOTIF_FOLLOW);
                             notificationModel.setPostId(null);
-                            notificationModel.setFromName(CurrentUserInfo.getInstance().getUserName());
-                            notificationModel.setFromPdp(CurrentUserInfo.getInstance().getPdpUrl());
                             notificationModel.setDate(new Timestamp(new Date()));
                             collectionReferenceNotif.document(currentUserId + "_" + NOTIF_FOLLOW + "_" + userId).set(notificationModel)
                                     .addOnSuccessListener(new OnSuccessListener<Void>() {
                                         @Override
                                         public void onSuccess(Void aVoid) {
+                                            notificationModel.setFromName(CurrentUserInfo.getInstance().getUserName());
+                                            notificationModel.setFromPdp(CurrentUserInfo.getInstance().getPdpUrl());
                                             sendNotif = new SendNotif(notificationModel);
                                             sendNotif.send();
                                         }

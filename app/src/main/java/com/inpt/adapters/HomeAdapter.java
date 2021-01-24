@@ -283,14 +283,17 @@ public class HomeAdapter extends RecyclerView.Adapter<HomeAdapter.ViewHolder> {
                                                                                     notificationModel.setTo(userId);
                                                                                     notificationModel.setType(NOTIF_LIKE);
                                                                                     notificationModel.setPostId(postId);
-                                                                                    notificationModel.setFromName(CurrentUserInfo.getInstance().getUserName());
-                                                                                    notificationModel.setFromPdp(CurrentUserInfo.getInstance().getPdpUrl());
                                                                                     notificationModel.setDate(new Timestamp(new Date()));
                                                                                     if (!currentUserId.contentEquals(userId)) {
                                                                                         collectionReferenceNotif.document(currentUserId + "_" + NOTIF_LIKE + "_" + postId).set(notificationModel)
                                                                                                 .addOnSuccessListener(new OnSuccessListener<Void>() {
                                                                                                     @Override
                                                                                                     public void onSuccess(Void aVoid) {
+                                                                                                        notificationModel.setFromName(CurrentUserInfo.getInstance().getUserName());
+                                                                                                        notificationModel.setFromPdp(CurrentUserInfo.getInstance().getPdpUrl());
+                                                                                                        notificationModel.setToUsername(userName);
+                                                                                                        notificationModel.setToPdp(pdpUrl);
+                                                                                                        notificationModel.setImageNotified(posts.get(getAdapterPosition()).getImageUrl());
                                                                                                         sendNotif = new SendNotif(notificationModel);
                                                                                                         sendNotif.send();
                                                                                                     }

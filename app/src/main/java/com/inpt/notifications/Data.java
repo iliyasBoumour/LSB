@@ -4,15 +4,20 @@ public class Data {
     private String userId;
     private String userName;
     private String type;
-    private String postId;
+    private String postUrl;
     private String pdpUrl;
 
-    public Data(String userId, String userName, String type, String postId, String pdpUrl) {
+
+
+    private String postId;
+
+    public Data(String userId, String userName, String type, String postUrl, String pdpUrl,String postId) {
         this.userId = userId;
         this.userName = userName;
         this.type = type;
-        this.postId = postId;
+        this.postUrl = postUrl;
         this.pdpUrl = pdpUrl;
+        this.postId=postId;
     }
 
     public Data() {
@@ -43,11 +48,11 @@ public class Data {
     }
 
     public String getPostId() {
-        return postId;
+        return postUrl;
     }
 
     public void setPostId(String postId) {
-        this.postId = postId;
+        this.postUrl = postId;
     }
 
     public String getPdpUrl() {
@@ -56,5 +61,11 @@ public class Data {
 
     public void setPdpUrl(String pdpUrl) {
         this.pdpUrl = pdpUrl;
+    }public String getPostUrl() {
+        return postUrl;
+    }
+
+    public void setPostUrl(String postUrl) {
+        this.postUrl = postUrl;
     }
 }
