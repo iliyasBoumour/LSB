@@ -210,6 +210,8 @@ public class LikesAdapter extends RecyclerView.Adapter<LikesAdapter.ViewHolder> 
                                         .addOnSuccessListener(new OnSuccessListener<Void>() {
                                             @Override
                                             public void onSuccess(Void aVoid) {
+                                                notificationModel.setFromName(CurrentUserInfo.getInstance().getUserName());
+                                                notificationModel.setFromPdp(CurrentUserInfo.getInstance().getPdpUrl());
                                                 sendNotif=new SendNotif(notificationModel);
                                                 sendNotif.send();
                                             }

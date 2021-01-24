@@ -307,6 +307,8 @@ public class PostFragment extends Fragment implements View.OnClickListener{
                                                                                                     notificationModel.setFromName(CurrentUserInfo.getInstance().getUserName());
                                                                                                     notificationModel.setFromPdp(CurrentUserInfo.getInstance().getPdpUrl());
                                                                                                     notificationModel.setImageNotified(postImageUrl);
+                                                                                                    notificationModel.setToUsername(userName);
+                                                                                                    notificationModel.setToPdp(pdpUrl);
                                                                                                     sendNotif=new SendNotif(notificationModel);
                                                                                                     sendNotif.send();
                                                                                                 }

@@ -3,7 +3,6 @@ package com.inpt.lsb;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
-import android.util.Log;
 import android.view.WindowManager;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
@@ -46,7 +45,6 @@ public class LandingActivity extends AppCompatActivity {
                             currentUserInfo.setUserName(doc.getString("username"));
                             currentUserInfo.setPdpUrl(doc.getString("pdp"));
                         }
-                        Log.d("TAG", "onCreate: "+currentUserInfo.getUserId());
                         startActivity(new Intent(this,DashboardActivity.class));
                         finish();
                     });

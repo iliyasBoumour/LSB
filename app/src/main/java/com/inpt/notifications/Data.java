@@ -3,6 +3,9 @@ package com.inpt.notifications;
 public class Data {
     private String userId;
     private String userName;
+    private String to;
+    private String toUsername;
+    private String toPdp;
     private String type;
     private String postUrl;
     private String pdpUrl;
@@ -11,13 +14,16 @@ public class Data {
 
     private String postId;
 
-    public Data(String userId, String userName, String type, String postUrl, String pdpUrl,String postId) {
+    public Data(String userId, String userName, String type, String postUrl, String pdpUrl,String postId,String toUsername,String toPdp,String to) {
         this.userId = userId;
         this.userName = userName;
         this.type = type;
         this.postUrl = postUrl;
         this.pdpUrl = pdpUrl;
         this.postId=postId;
+        this.toUsername=toUsername;
+        this.toPdp=toPdp;
+        this.to=to;
     }
 
     public Data() {
@@ -67,5 +73,29 @@ public class Data {
 
     public void setPostUrl(String postUrl) {
         this.postUrl = postUrl;
+    }
+
+    public String getToUsername() {
+        return toUsername;
+    }
+
+    public void setToUsername(String toUsername) {
+        this.toUsername = toUsername;
+    }
+
+    public String getToPdp() {
+        return toPdp;
+    }
+
+    public void setToPdp(String toPdp) {
+        this.toPdp = toPdp;
+    }
+
+    public String getTo() {
+        return to;
+    }
+
+    public void setTo(String to) {
+        this.to = to;
     }
 }

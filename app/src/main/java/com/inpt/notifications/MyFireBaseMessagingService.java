@@ -10,7 +10,6 @@ import android.graphics.BitmapFactory;
 import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.Build;
-import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.core.app.NotificationCompat;
@@ -54,8 +53,8 @@ public class MyFireBaseMessagingService extends FirebaseMessagingService {
 
                 CHANNEL_ID = NOTIF_FOLLOW;
                 CHANNEL_NAME = NOTIF_FOLLOW;
-                message = getString(R.string.new_follow);
-                title = notificationModel.getFromName() + " " + getString(R.string.starts_follow);
+                title = getString(R.string.new_follow);
+                message= notificationModel.getFromName() + " " + getString(R.string.starts_follow);
 
                 image = getBitmapFromURL(notificationModel.getFromPdp());
 
@@ -67,8 +66,11 @@ public class MyFireBaseMessagingService extends FirebaseMessagingService {
 
                 notificationModel.setPostUrl(remoteMessage.getData().get("postUrl"));
                 notificationModel.setPostId(remoteMessage.getData().get("postId"));
+                notificationModel.setToUsername(remoteMessage.getData().get("toUsername"));
+                notificationModel.setToPdp(remoteMessage.getData().get("toPdp"));
+                notificationModel.setTo(remoteMessage.getData().get("to"));
 
-                Log.d("TAG", "onMessageReceived: "+notificationModel.getPostId()+" "+currentUserInfo.getUserName()+" "+currentUserInfo.getPdpUrl()+" "+currentUserInfo.getUserId());
+//                Log.d("TAG", "onMessageReceived: "+notificationModel.getPostId()+" "+notificationModel.getToUsername()+" "+notificationModel.getTo()+" "+notificationModel.getToPdp());
                 CHANNEL_ID = NOTIF_LIKE;
                 CHANNEL_NAME = NOTIF_LIKE;
                 title = getString(R.string.new_like);
@@ -83,7 +85,6 @@ public class MyFireBaseMessagingService extends FirebaseMessagingService {
         }
 
 
-//        Bitmap likedImage = getBitmapFromURL(notificationModel.getFromPdp());
         NotificationManagerCompat manager = NotificationManagerCompat.from(getApplicationContext());
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
