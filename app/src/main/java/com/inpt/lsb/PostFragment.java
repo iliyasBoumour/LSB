@@ -3,16 +3,20 @@ package com.inpt.lsb;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.app.ProgressDialog;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
 import android.text.format.DateUtils;
 import android.util.DisplayMetrics;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.PopupMenu;
 import android.widget.ProgressBar;
@@ -23,12 +27,14 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.facebook.drawee.view.SimpleDraweeView;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.material.button.MaterialButton;
 import com.google.firebase.Timestamp;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
@@ -59,18 +65,21 @@ public class PostFragment extends Fragment implements View.OnClickListener{
     private TextView captionTextView, timeTextView, likesTextView, userNameTextView;
     private SwipeRefreshLayout swipeRefreshLayout;
     private ProgressBar progressBar;
-    private ImageView like_icone, threeDotMenu;
+    private ImageView like_icone, threeDotMenu, back;
     private String currentUserId;
     private String postId;
     private String postImageUrl;
     private Boolean isliked;
     private String userId;
     private int nbLike;
+    private String caption;
+    private EditText captionField;
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
     private CollectionReference collectionReferenceUsers = db.collection("users");
     private CollectionReference collectionReference = db.collection("Likes");
     private CollectionReference collectionReferencePost = db.collection("Posts");
     private CollectionReference collectionReferenceNotif = db.collection("Notifications");
+    private MaterialButton cancelBtn, confirmBtn;
 
     private static final String NOTIF_LIKE="like";
     SendNotif sendNotif;
@@ -81,6 +90,10 @@ public class PostFragment extends Fragment implements View.OnClickListener{
     RecyclerView recyclerView;
     List<LikesModel> likes;
     LikesAdapter likesAdapter;
+
+    String userName;
+    String pdpUrl;
+
 
 
     public PostFragment() {
@@ -110,13 +123,17 @@ public class PostFragment extends Fragment implements View.OnClickListener{
         likesTextView.setOnClickListener(this);
         like_icone = view.findViewById(R.id.like);
         timeTextView = view.findViewById(R.id.time);
+        back = view.findViewById(R.id.back);
+        back.setOnClickListener(this);
         threeDotMenu = view.findViewById(R.id.threeDotMenu);
         if(!currentUserId.contentEquals(userId)) {
             threeDotMenu.setVisibility(View.INVISIBLE);
         }
         threeDotMenu.setOnClickListener(this);
         pdpImage = view.findViewById(R.id.pdp_imageView);
+        pdpImage.setOnClickListener(this);
         userNameTextView = view.findViewById(R.id.userName_textView);
+        userNameTextView.setOnClickListener(this);
         like_icone.setOnClickListener(this);
         swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
@@ -132,48 +149,74 @@ public class PostFragment extends Fragment implements View.OnClickListener{
             }
         });
         Bundle bundle = this.getArguments();
-        String userName = bundle.getString("userName");
-        String pdpUrl = bundle.getString("pdpUrl");
+        userName = bundle.getString("userName");
+        pdpUrl = bundle.getString("pdpUrl");
         userNameTextView.setText(userName);
         Uri uriPdp = Uri.parse(pdpUrl);
         pdpImage.setImageURI(uriPdp);
         getPost(postId);
 
+
         return view;
     }
 
 
+
     @Override
     public void onClick(View v) {
-        switch (v.getId()) {
-            case R.id.like:
-                React();
-                break;
-            case R.id.threeDotMenu:
-                PopupMenu popupMenu = new PopupMenu(Objects.requireNonNull(getActivity()).getApplicationContext(), threeDotMenu);
-                popupMenu.inflate(R.menu.post_menu);
-                popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
-                    @Override
-                    public boolean onMenuItemClick(MenuItem item) {
-                        switch (item.getItemId()) {
-                            case R.id.delete:
-                                Toast.makeText(getActivity(), "DELETE", Toast.LENGTH_LONG).show();
-                                break;
-                            case R.id.edit:
-                                Toast.makeText(getActivity(), "EDIT", Toast.LENGTH_LONG).show();
-                                break;
+
+        if((v.getId() == R.id.pdp_imageView || v.getId() == R.id.userName_textView) && getActivity() != null ) {
+            FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
+            Fragment fragment;
+            Bundle bundle = new Bundle();
+            bundle.putString("userId", userId);
+            bundle.putString("userName", userName);
+            bundle.putString("pdpUrl", pdpUrl);
+            if(userId.contentEquals(currentUserId)) {
+                fragment = new ProfileCurrentUserFragment();
+            } else  {
+                fragment = new ProfileOtherUsersFragment();
+                fragment.setArguments(bundle);
+            }
+            fragmentManager.beginTransaction()
+                    .replace(R.id.homeFragment, fragment)
+                    .addToBackStack(null)
+                    .commit();
+        } else {
+            switch (v.getId()) {
+                case R.id.like:
+                    React();
+                    break;
+                case R.id.threeDotMenu:
+                    PopupMenu popupMenu = new PopupMenu(Objects.requireNonNull(getActivity()).getApplicationContext(), threeDotMenu);
+                    popupMenu.inflate(R.menu.post_menu);
+                    popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+                        @Override
+                        public boolean onMenuItemClick(MenuItem item) {
+                            switch (item.getItemId()) {
+                                case R.id.delete:
+                                    createConfirmationPopup();
+
+                                    break;
+                                case R.id.edit:
+                                    createEditPostPopup();
+                                    break;
+                            }
+                            return false;
                         }
-                        return false;
-                    }
-                });
-                popupMenu.show();
-                break;
-            case R.id.likes_nb:
-                createLikesPopup();
-                break;
-
-
+                    });
+                    popupMenu.show();
+                    break;
+                case R.id.likes_nb:
+                    createLikesPopup();
+                    break;
+                case R.id.back:
+                    if(getActivity() != null)
+                        getActivity().getSupportFragmentManager().popBackStack();
+                    break;
+            }
         }
+
     }
 
     private void React() {
@@ -322,7 +365,7 @@ public class PostFragment extends Fragment implements View.OnClickListener{
                         for(QueryDocumentSnapshot postDocument : queryDocumentSnapshots) {
                             post = postDocument.toObject(Post.class);
                         }
-                        String caption = post.getCaption();
+                        caption = post.getCaption();
                         postImageUrl = post.getImageUrl();
                         int nbLike = post.getNbLike();
                         String time = (String) DateUtils.getRelativeTimeSpanString(post.getTimeAdded().getSeconds() * 1000);
@@ -334,6 +377,8 @@ public class PostFragment extends Fragment implements View.OnClickListener{
                     }
                 });
     }
+
+
 
     private void deletePost(String postId) {
         StorageReference photoRef = FirebaseStorage.getInstance().getReference().getStorage().getReferenceFromUrl(postImageUrl);
@@ -369,9 +414,11 @@ public class PostFragment extends Fragment implements View.OnClickListener{
                                                                                                                                 @Override
                                                                                                                                 public void onSuccess(Void aVoid) {
 
+
                                                                                                                                 }
                                                                                                                             });
                                                                                                                 }
+
                                                                                                             }
                                                                                                         });
                                                                                             }
@@ -450,6 +497,94 @@ public class PostFragment extends Fragment implements View.OnClickListener{
         layoutParams.height = dialogWindowHeight;
         dialog.getWindow().setAttributes(layoutParams);
     }
+
+    private void createEditPostPopup() {
+        builder = new AlertDialog.Builder(getActivity());
+        View view = getLayoutInflater().inflate(R.layout.edit_post_popup, null);
+        cancelBtn = view.findViewById(R.id.cancelBtn);
+        confirmBtn = view.findViewById(R.id.confirmBtn);
+        captionField = view.findViewById(R.id.caption_field);
+        captionField.setText(caption);
+        cancelBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialog.dismiss();
+            }
+        });
+        confirmBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                editPost(postId, dialog, captionField.getText().toString().trim());
+            }
+        });
+        builder.setView(view);
+        dialog = builder.create(); // creating dialog object
+        dialog.show();
+    }
+
+    private void createConfirmationPopup() {
+        ProgressDialog progressDialog;
+        progressDialog = new ProgressDialog(getActivity(), R.style.MyAlertDialogStyle);
+        progressDialog.setMessage("Deleting ...");
+        builder = new AlertDialog.Builder(getActivity());
+        View view = getLayoutInflater().inflate(R.layout.confirmation_popup, null);
+        cancelBtn = view.findViewById(R.id.cancelBtn);
+        confirmBtn = view.findViewById(R.id.confirmBtn);
+        cancelBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialog.dismiss();
+            }
+        });
+        confirmBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                deletePost(postId);
+                dialog.dismiss();
+                progressDialog.show();
+                new Handler().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        progressDialog.dismiss();
+
+                        getActivity().getSupportFragmentManager().popBackStack();
+                    }
+                }, 2000);
+
+
+            }
+        });
+        builder.setView(view);
+        dialog = builder.create(); // creating dialog object
+        dialog.show();
+
+    }
+
+    private void editPost(String postId, AlertDialog dialog, String newCaption) {
+        collectionReferencePost.whereEqualTo("postId", postId)
+                .get()
+                .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+                    @Override
+                    public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
+                        for(QueryDocumentSnapshot postDocument : queryDocumentSnapshots) {
+                            Map<String, Object> data = new HashMap<>();
+                            data.put("caption", newCaption);
+                            postDocument.getReference().update(data)
+                                    .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                        @Override
+                                        public void onSuccess(Void aVoid) {
+                                            getPost(postId);
+                                            dialog.dismiss();
+                                        }
+                                    });
+
+                        }
+                    }
+                });
+    }
+
+
 
 
 

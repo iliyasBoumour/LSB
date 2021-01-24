@@ -328,6 +328,7 @@ public class HomeAdapter extends RecyclerView.Adapter<HomeAdapter.ViewHolder> {
                 }
                 fragmentManager.beginTransaction()
                         .replace(R.id.homeFragment, fragment)
+                        .addToBackStack(null)
                         .commit();
             } else if(v.getId() == R.id.likes_nb) {
                 createLikesPopup();

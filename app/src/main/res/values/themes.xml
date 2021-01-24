@@ -3,6 +3,8 @@
     <style name="Theme.LSB" parent="Theme.MaterialComponents.Light.NoActionBar">
 
 
+
+
 <!--        <item name="android:windowFullscreen">true</item>-->
 
         <!-- Primary brand color. -->
@@ -29,4 +31,19 @@
         <item name="cornerSizeTopLeft">50dp</item>
         <item name="cornerSizeTopRight">50dp</item>
     </style>
+
+    <style name="ShapeAppearanceOverlay.MyApp.Button.Circle" parent="">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSize">50%</item>
+    </style>
+
+    <style name="MyAlertDialogStyle" parent="Theme.AppCompat.Light.Dialog.Alert">
+        <item name="colorAccent">@color/orange</item>
+    </style>
+
+
+        <style name="MyAppBarStyle" parent="">
+            <item name="android:background">@drawable/app_bar_bottom_gradient</item>
+        </style>
+
 </resources>

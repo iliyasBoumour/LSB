@@ -5,6 +5,7 @@ import android.content.Context;
 import android.os.Bundle;
 import android.os.Handler;
 import android.text.format.DateUtils;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,6 +19,8 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.facebook.drawee.view.SimpleDraweeView;
 import com.google.android.material.circularreveal.cardview.CircularRevealCardView;
+import com.inpt.Util.CurrentUserInfo;
+import com.inpt.lsb.DashboardActivity;
 import com.inpt.lsb.PostFragment;
 import com.inpt.lsb.ProfileOtherUsersFragment;
 import com.inpt.lsb.R;
@@ -134,15 +137,16 @@ public class NotificationAdapter extends RecyclerView.Adapter<NotificationAdapte
                 fragment = new PostFragment();
                 Bundle bundle = new Bundle();
                 bundle.putString("postId", notifications.get(getAdapterPosition()).getPostId());
-                bundle.putString("userName", notifications.get(getAdapterPosition()).getFromName());
-                bundle.putString("pdpUrl", notifications.get(getAdapterPosition()).getFromPdp());
-                bundle.putString("userId", notifications.get(getAdapterPosition()).getFrom());
+                bundle.putString("userName", CurrentUserInfo.getInstance().getUserName());
+                bundle.putString("pdpUrl", CurrentUserInfo.getInstance().getPdpUrl());
+                bundle.putString("userId", notifications.get(getAdapterPosition()).getTo());
                 fragment.setArguments(bundle);
 
             }
 
             fragmentManager.beginTransaction()
                     .replace(R.id.homeFragment, fragment)
+                    .addToBackStack(null)
                     .commit();
         }
     }

@@ -71,6 +71,7 @@ public class NotificationsFragment extends Fragment {
                                                         for (QueryDocumentSnapshot ds1 : documentSnapshots) {
                                                             pb.setVisibility(View.GONE);
                                                             NotificationModel model = new NotificationModel(doc.getString("from"), ds.getString("username"), ds.getString("pdp"), doc.getString("type"), doc.getString("postId"), ds1.getString("imageUrl"), doc.getTimestamp("date"));
+                                                            model.setTo(doc.getString("to"));
                                                             notificationModels.add(model);
                                                             if (notificationModels.size() == size[0] && getActivity() != null) {
                                                                 notificationAdapter = new NotificationAdapter(getActivity(), notificationModels, getActivity().getSupportFragmentManager());
@@ -83,6 +84,7 @@ public class NotificationsFragment extends Fragment {
                                         } else {
                                             pb.setVisibility(View.GONE);
                                             NotificationModel model = new NotificationModel(doc.getString("from"), ds.getString("username"), ds.getString("pdp"), doc.getTimestamp("date"), doc.getString("type"));
+                                            model.setTo(doc.getString("to"));
                                             notificationModels.add(model);
                                             if (notificationModels.size() == size[0] && getActivity() != null) {
                                                 notificationAdapter = new NotificationAdapter(getActivity(), notificationModels, getActivity().getSupportFragmentManager());

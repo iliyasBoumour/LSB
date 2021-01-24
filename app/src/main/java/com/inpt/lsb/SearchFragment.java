@@ -46,7 +46,6 @@ public class SearchFragment extends Fragment {
 
         serchRes=view.findViewById(R.id.serchRes);
         searchView=view.findViewById(R.id.searchKey);
-        backBtn=view.findViewById(R.id.backBtn);
         progressBar = view.findViewById(R.id.progressBar);
         Handler handler = new Handler();
 

@@ -14,6 +14,7 @@ import androidx.fragment.app.FragmentManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.facebook.drawee.view.SimpleDraweeView;
+import com.inpt.lsb.DashboardActivity;
 import com.inpt.lsb.PostFragment;
 import com.inpt.lsb.R;
 import com.inpt.models.Post;
@@ -96,6 +97,7 @@ public class ProfileAdapter extends RecyclerView.Adapter<ProfileAdapter.ViewHold
                     fragment.setArguments(bundle);
                     fragmentManager.beginTransaction()
                                 .replace(R.id.homeFragment, fragment)
+                            .addToBackStack(null)
                                 .commit();
 
                 }
