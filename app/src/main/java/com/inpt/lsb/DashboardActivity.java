@@ -44,7 +44,7 @@ public class DashboardActivity extends AppCompatActivity implements View.OnClick
         getWindow().setNavigationBarColor(getResources().getColor(R.color.black));
         if(currentUserInfo.getUserId() == null ||  currentUserInfo.getPdpUrl() == null || currentUserInfo.getUserName() == null) {
             Log.d("NULL", "onCreate: ");
-            FirebaseAuth mAuth= FirebaseAuth.getInstance();;
+            FirebaseAuth mAuth= FirebaseAuth.getInstance();
             FirebaseUser user = mAuth.getCurrentUser();
             String uid=user.getUid();
             CurrentUserInfo.getInstance().setUserId(uid);
