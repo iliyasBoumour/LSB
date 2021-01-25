@@ -5,6 +5,7 @@ import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
@@ -18,7 +19,10 @@ import androidx.fragment.app.FragmentManager;
 import com.google.android.material.bottomappbar.BottomAppBar;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.messaging.FirebaseMessaging;
 import com.inpt.Util.CurrentUserInfo;
 import com.inpt.Util.UploadImage;
@@ -37,24 +41,74 @@ public class DashboardActivity extends AppCompatActivity implements View.OnClick
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        fragmentManager = getSupportFragmentManager();
         getWindow().setNavigationBarColor(getResources().getColor(R.color.black));
+        if(currentUserInfo.getUserId() == null ||  currentUserInfo.getPdpUrl() == null || currentUserInfo.getUserName() == null) {
+            Log.d("NULL", "onCreate: ");
+            FirebaseAuth mAuth= FirebaseAuth.getInstance();;
+            FirebaseUser user = mAuth.getCurrentUser();
+            String uid=user.getUid();
+            CurrentUserInfo.getInstance().setUserId(uid);
+            FirebaseFirestore db = FirebaseFirestore.getInstance();
+            db.collection("users")
+                    .whereEqualTo("uid",uid)
+                    .get()
+                    .addOnSuccessListener(queryDocumentSnapshots ->{
+                        for(QueryDocumentSnapshot doc:queryDocumentSnapshots){
+                            CurrentUserInfo.getInstance().setUserName(doc.getString("username"));
+                            CurrentUserInfo.getInstance().setPdpUrl(doc.getString("pdp"));
+                        }
+                    });
+
+        }
         setContentView(R.layout.dashboard);
+        fragmentManager = getSupportFragmentManager();
         bottomNavigationView = findViewById(R.id.bottomNavView);
-        /*floatingActionButton = findViewById(R.id.add_post_btn);
-        bottomAppBar = findViewById(R.id.bottomBar);*/
         fragment = fragmentManager.findFragmentById(R.id.homeFragment);
         uploadImage=new UploadImage(this);
         UpdateToken();
         bottomNavigationView.setOnNavigationItemSelectedListener(this);
+        String menuFragment = getIntent().getStringExtra("Fragment");
+        if(menuFragment != null) {
+            Bundle bundle = new Bundle();
+            Log.d("ID", "onCreate: " + getIntent().getStringExtra("postId"));
+            Log.d("ID", "onCreate: " + menuFragment);
 
-        if(fragment == null) {
+            switch (menuFragment) {
+                case "profileOtherUsers":
+                    fragment = new ProfileOtherUsersFragment();
+                    bundle.putString("userName", getIntent().getStringExtra("userName"));
+                    bundle.putString("pdpUrl", getIntent().getStringExtra("pdpUrl"));
+                    bundle.putString("userId", getIntent().getStringExtra("userId"));
+                    fragment.setArguments(bundle);
+                    break;
+                case "post":
+                    fragment = new PostFragment();
+                    bundle.putString("postId", getIntent().getStringExtra("postId"));
+                    bundle.putString("userName", getIntent().getStringExtra("userName"));
+                    bundle.putString("pdpUrl", getIntent().getStringExtra("pdpUrl"));
+                    bundle.putString("userId", getIntent().getStringExtra("userId"));
+                    fragment.setArguments(bundle);
+                    break;
+            }
+            fragmentManager.beginTransaction()
+                    .replace(R.id.homeFragment, fragment)
+                    .commit();
+
+        } else if(fragment == null) {
             fragment = new HomeFragment();
             fragmentManager.beginTransaction()
                     .replace(R.id.homeFragment, fragment)
                     .commit();
         }
+
         Log.d("LAST LINE", "onCreate: ");
+
+    }
+
+    @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        this.setIntent(intent);
     }
 
     private void UpdateToken(){
@@ -66,7 +120,7 @@ public class DashboardActivity extends AppCompatActivity implements View.OnClick
                         }
                         String token_ = task.getResult();
                         Token token= new Token(token_);
-                        FirebaseFirestore.getInstance().collection("Tokens").document(currentUserInfo.getUserId()).set(token);
+                        FirebaseFirestore.getInstance().collection("Tokens").document("uou7XkLWPGbWBgOniOH8EKCZ8mZ2").set(token);
                 });
     }
 
