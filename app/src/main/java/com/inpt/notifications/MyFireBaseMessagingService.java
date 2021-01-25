@@ -1,5 +1,7 @@
 package com.inpt.notifications;
 
+import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
@@ -10,15 +12,20 @@ import android.graphics.BitmapFactory;
 import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.Build;
+import android.os.Bundle;
+import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
 
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
 import com.inpt.Util.CurrentUserInfo;
 import com.inpt.lsb.DashboardActivity;
+import com.inpt.lsb.ProfileOtherUsersFragment;
 import com.inpt.lsb.R;
 import com.inpt.models.NotificationModel;
 
@@ -27,6 +34,9 @@ import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
+import static android.app.PendingIntent.FLAG_CANCEL_CURRENT;
+
+@SuppressLint("MissingFirebaseInstanceTokenRefresh")
 public class MyFireBaseMessagingService extends FirebaseMessagingService {
     NotificationModel notificationModel = new NotificationModel();
     String message, title, CHANNEL_NAME, CHANNEL_ID;
@@ -36,6 +46,7 @@ public class MyFireBaseMessagingService extends FirebaseMessagingService {
     private PendingIntent pendingIntent;
     String GROUP_KEY = "LSB";
     private CurrentUserInfo currentUserInfo= CurrentUserInfo.getInstance();
+    Intent notificationIntent;
 
     @Override
     public void onMessageReceived(@NonNull RemoteMessage remoteMessage) {
@@ -59,8 +70,13 @@ public class MyFireBaseMessagingService extends FirebaseMessagingService {
                 image = getBitmapFromURL(notificationModel.getFromPdp());
 
                 //        notificationModel.getFromPdp(); notificationModel.getFromName();    notificationModel.getFrom();
-                Intent followIntent = new Intent(getApplicationContext(), DashboardActivity.class);
-                pendingIntent = PendingIntent.getActivity(getApplicationContext(), 0, followIntent, 0);
+                Intent notificationIntent = new Intent(getApplicationContext(), DashboardActivity.class);
+                notificationIntent.putExtra("Fragment", "profileOtherUsers");
+                notificationIntent.putExtra("pdpUrl", notificationModel.getFromPdp());
+                notificationIntent.putExtra("userName", notificationModel.getFromName());
+                Log.d("FOLLOW", "onMessageReceived: " + notificationModel.getFromName());
+                notificationIntent.putExtra("userId", notificationModel.getFrom());
+                pendingIntent = PendingIntent.getActivity(getApplicationContext(), 0, notificationIntent, 	PendingIntent.FLAG_UPDATE_CURRENT);
                 break;
             case NOTIF_LIKE:
 
@@ -78,10 +94,17 @@ public class MyFireBaseMessagingService extends FirebaseMessagingService {
                 image = getBitmapFromURL(notificationModel.getPostUrl());
 
                 //
-                Intent LikeIntent = new Intent(getApplicationContext(), DashboardActivity.class);
-                pendingIntent = PendingIntent.getActivity(getApplicationContext(), 0, LikeIntent, 0);
-                break;
+                Intent postNotif = new Intent(getApplicationContext(), DashboardActivity.class);
+                postNotif.putExtra("Fragment", "post");
+                postNotif.putExtra("postId", notificationModel.getPostId());
+                postNotif.putExtra("pdpUrl", notificationModel.getToPdp());
+                postNotif.putExtra("userName", notificationModel.getToUsername());
+                postNotif.putExtra("userId", notificationModel.getTo());
+                Log.d("LIKE", "onMessageReceived: " + notificationModel.getToUsername());
 
+
+                pendingIntent = PendingIntent.getActivity(getApplicationContext(), 0, postNotif, 	PendingIntent.FLAG_UPDATE_CURRENT);
+                break;
         }
 
 
