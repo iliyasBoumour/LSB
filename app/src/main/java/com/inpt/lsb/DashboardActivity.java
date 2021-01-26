@@ -5,7 +5,6 @@ import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Handler;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
@@ -16,13 +15,9 @@ import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
-import com.google.android.material.bottomappbar.BottomAppBar;
+
 import com.google.android.material.bottomnavigation.BottomNavigationView;
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.messaging.FirebaseMessaging;
 import com.inpt.Util.CurrentUserInfo;
 import com.inpt.Util.UploadImage;
@@ -42,24 +37,7 @@ public class DashboardActivity extends AppCompatActivity implements View.OnClick
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         getWindow().setNavigationBarColor(getResources().getColor(R.color.black));
-        if(currentUserInfo.getUserId() == null ||  currentUserInfo.getPdpUrl() == null || currentUserInfo.getUserName() == null) {
-            Log.d("NULL", "onCreate: ");
-            FirebaseAuth mAuth= FirebaseAuth.getInstance();
-            FirebaseUser user = mAuth.getCurrentUser();
-            String uid=user.getUid();
-            CurrentUserInfo.getInstance().setUserId(uid);
-            FirebaseFirestore db = FirebaseFirestore.getInstance();
-            db.collection("users")
-                    .whereEqualTo("uid",uid)
-                    .get()
-                    .addOnSuccessListener(queryDocumentSnapshots ->{
-                        for(QueryDocumentSnapshot doc:queryDocumentSnapshots){
-                            CurrentUserInfo.getInstance().setUserName(doc.getString("username"));
-                            CurrentUserInfo.getInstance().setPdpUrl(doc.getString("pdp"));
-                        }
-                    });
 
-        }
         setContentView(R.layout.dashboard);
         fragmentManager = getSupportFragmentManager();
         bottomNavigationView = findViewById(R.id.bottomNavView);
@@ -120,7 +98,7 @@ public class DashboardActivity extends AppCompatActivity implements View.OnClick
                         }
                         String token_ = task.getResult();
                         Token token= new Token(token_);
-                        FirebaseFirestore.getInstance().collection("Tokens").document("uou7XkLWPGbWBgOniOH8EKCZ8mZ2").set(token);
+                        FirebaseFirestore.getInstance().collection("Tokens").document(currentUserInfo.getUserId()).set(token);
                 });
     }
 

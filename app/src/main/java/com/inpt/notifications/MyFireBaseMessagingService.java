@@ -1,7 +1,6 @@
 package com.inpt.notifications;
 
 import android.annotation.SuppressLint;
-import android.app.Activity;
 import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
@@ -9,23 +8,25 @@ import android.app.PendingIntent;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
+import android.graphics.Paint;
+import android.graphics.PorterDuff;
+import android.graphics.PorterDuffXfermode;
+import android.graphics.Rect;
 import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.Build;
-import android.os.Bundle;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
-import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentManager;
 
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
 import com.inpt.Util.CurrentUserInfo;
 import com.inpt.lsb.DashboardActivity;
-import com.inpt.lsb.ProfileOtherUsersFragment;
+import com.inpt.lsb.LandingActivity;
 import com.inpt.lsb.R;
 import com.inpt.models.NotificationModel;
 
@@ -33,8 +34,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
-
-import static android.app.PendingIntent.FLAG_CANCEL_CURRENT;
 
 @SuppressLint("MissingFirebaseInstanceTokenRefresh")
 public class MyFireBaseMessagingService extends FirebaseMessagingService {
@@ -46,7 +45,6 @@ public class MyFireBaseMessagingService extends FirebaseMessagingService {
     private PendingIntent pendingIntent;
     String GROUP_KEY = "LSB";
     private CurrentUserInfo currentUserInfo= CurrentUserInfo.getInstance();
-    Intent notificationIntent;
 
     @Override
     public void onMessageReceived(@NonNull RemoteMessage remoteMessage) {
@@ -70,7 +68,9 @@ public class MyFireBaseMessagingService extends FirebaseMessagingService {
                 image = getBitmapFromURL(notificationModel.getFromPdp());
 
                 //        notificationModel.getFromPdp(); notificationModel.getFromName();    notificationModel.getFrom();
-                Intent notificationIntent = new Intent(getApplicationContext(), DashboardActivity.class);
+                Intent notificationIntent;
+                if (currentUserInfo.getUserId()!=null) notificationIntent = new Intent(getApplicationContext(), DashboardActivity.class);
+                else notificationIntent = new Intent(getApplicationContext(), LandingActivity.class);
                 notificationIntent.putExtra("Fragment", "profileOtherUsers");
                 notificationIntent.putExtra("pdpUrl", notificationModel.getFromPdp());
                 notificationIntent.putExtra("userName", notificationModel.getFromName());
@@ -93,8 +93,9 @@ public class MyFireBaseMessagingService extends FirebaseMessagingService {
                 message = notificationModel.getFromName() + " " + getString(R.string.like_post);
                 image = getBitmapFromURL(notificationModel.getPostUrl());
 
-                //
-                Intent postNotif = new Intent(getApplicationContext(), DashboardActivity.class);
+                Intent postNotif;
+                if (currentUserInfo.getUserId()!=null) postNotif = new Intent(getApplicationContext(), DashboardActivity.class);
+                else postNotif = new Intent(getApplicationContext(), LandingActivity.class);
                 postNotif.putExtra("Fragment", "post");
                 postNotif.putExtra("postId", notificationModel.getPostId());
                 postNotif.putExtra("pdpUrl", notificationModel.getToPdp());
@@ -114,7 +115,10 @@ public class MyFireBaseMessagingService extends FirebaseMessagingService {
             NotificationChannel channel = new NotificationChannel(NOTIF_FOLLOW, NOTIF_FOLLOW,
                     NotificationManager.IMPORTANCE_HIGH);
             manager.createNotificationChannel(channel);
+            image=getCircleBitmap(image);
+
         }
+
 
         Notification notification =
                 new NotificationCompat.Builder(getApplicationContext(), NOTIF_FOLLOW)
@@ -154,6 +158,41 @@ public class MyFireBaseMessagingService extends FirebaseMessagingService {
             e.printStackTrace();
             return null;
         }
+    }
+    private Bitmap getCircleBitmap(Bitmap bitmap) {
+        Bitmap output;
+        Rect srcRect, dstRect;
+        float r;
+        final int width = bitmap.getWidth();
+        final int height = bitmap.getHeight();
+
+        if (width > height){
+            output = Bitmap.createBitmap(height, height, Bitmap.Config.ARGB_8888);
+            int left = (width - height) / 2;
+            int right = left + height;
+            srcRect = new Rect(left, 0, right, height);
+            dstRect = new Rect(0, 0, height, height);
+            r = height / 2;
+        }else{
+            output = Bitmap.createBitmap(width, width, Bitmap.Config.ARGB_8888);
+            int top = (height - width)/2;
+            int bottom = top + width;
+            srcRect = new Rect(0, top, width, bottom);
+            dstRect = new Rect(0, 0, width, width);
+            r = width / 2;
+        }
+
+        Canvas canvas = new Canvas(output);
+        final Paint paint = new Paint();
+        paint.setAntiAlias(true);
+        canvas.drawARGB(0, 0, 0, 0);
+        canvas.drawCircle(r, r, r, paint);
+        paint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.SRC_IN));
+        canvas.drawBitmap(bitmap, srcRect, dstRect, paint);
+
+        bitmap.recycle();
+
+        return output;
     }
 
 }

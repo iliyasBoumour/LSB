@@ -126,7 +126,7 @@ public class LikesAdapter extends RecyclerView.Adapter<LikesAdapter.ViewHolder> 
                     fragment = new ProfileOtherUsersFragment();
                     fragment.setArguments(bundle);
                 }
-                dialog.dismiss();
+                if(dialog != null)  dialog.dismiss();
                 fragmentManager.beginTransaction()
                         .replace(R.id.homeFragment, fragment)
                         .addToBackStack(null)

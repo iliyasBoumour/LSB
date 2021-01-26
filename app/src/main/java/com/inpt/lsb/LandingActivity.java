@@ -34,6 +34,25 @@ public class LandingActivity extends AppCompatActivity {
                 return;
                 },2000);
         } else {
+            Intent intent = new Intent(this,DashboardActivity.class);
+            String menuFragment = getIntent().getStringExtra("Fragment");
+            if(menuFragment != null) {
+                switch (menuFragment) {
+                    case "profileOtherUsers":
+                        intent.putExtra("userName", getIntent().getStringExtra("userName"));
+                        intent.putExtra("pdpUrl", getIntent().getStringExtra("pdpUrl"));
+                        intent.putExtra("userId", getIntent().getStringExtra("userId"));
+                        intent.putExtra("Fragment","profileOtherUsers");
+                        break;
+                    case "post":
+                        intent.putExtra("postId", getIntent().getStringExtra("postId"));
+                        intent.putExtra("userName", getIntent().getStringExtra("userName"));
+                        intent.putExtra("pdpUrl", getIntent().getStringExtra("pdpUrl"));
+                        intent.putExtra("userId", getIntent().getStringExtra("userId"));
+                        intent.putExtra("Fragment","post");
+                        break;
+                }
+            }
             String uid=currentUser.getUid();
             currentUserInfo.setUserId(uid);
             FirebaseFirestore db = FirebaseFirestore.getInstance();
@@ -45,7 +64,7 @@ public class LandingActivity extends AppCompatActivity {
                             currentUserInfo.setUserName(doc.getString("username"));
                             currentUserInfo.setPdpUrl(doc.getString("pdp"));
                         }
-                        startActivity(new Intent(this,DashboardActivity.class));
+                        startActivity(intent);
                         finish();
                     });
 
