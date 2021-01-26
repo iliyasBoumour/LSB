@@ -14,7 +14,7 @@
         android:textColor="@color/orange"
         android:textStyle="bold"
         android:textSize="20sp"
-        android:background="@color/white"
+        android:background="?attr/colorPrimaryVariant"
         android:layout_marginBottom="15dp"
         android:elevation="10dp"
         android:layout_height="wrap_content"/>

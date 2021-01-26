@@ -115,9 +115,10 @@ public class MyFireBaseMessagingService extends FirebaseMessagingService {
             NotificationChannel channel = new NotificationChannel(NOTIF_FOLLOW, NOTIF_FOLLOW,
                     NotificationManager.IMPORTANCE_HIGH);
             manager.createNotificationChannel(channel);
+            image=getCircleBitmap(image);
+
         }
 
-        image=getCircleBitmap(image);
 
         Notification notification =
                 new NotificationCompat.Builder(getApplicationContext(), NOTIF_FOLLOW)

@@ -9,30 +9,23 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     >
 
-    <com.google.android.material.circularreveal.cardview.CircularRevealCardView
-        android:id="@+id/pdp"
+    <com.facebook.drawee.view.SimpleDraweeView
+        android:id="@+id/profile"
         android:layout_width="55dp"
         android:layout_height="55dp"
-        app:cardCornerRadius="100dp"
+        fresco:roundAsCircle="true"
+        android:layout_gravity="center"
+        android:scaleType="centerCrop"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
-
-        <com.facebook.drawee.view.SimpleDraweeView
-            android:id="@+id/profile"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_gravity="center"
-            android:scaleType="centerCrop" />
-
-    </com.google.android.material.circularreveal.cardview.CircularRevealCardView>
+        app:layout_constraintTop_toTopOf="parent"/>
 
     <TextView
         android:id="@+id/notificationText"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         app:layout_constraintEnd_toStartOf="@+id/notifiedImage"
-        app:layout_constraintStart_toEndOf="@+id/pdp"
+        app:layout_constraintStart_toEndOf="@+id/profile"
         app:layout_constraintTop_toTopOf="parent"
         android:layout_marginLeft="15dp"
         android:layout_marginTop="7dp"
@@ -45,7 +38,7 @@
         android:id="@+id/notificationDate"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:layout_constraintStart_toEndOf="@+id/pdp"
+        app:layout_constraintStart_toEndOf="@+id/profile"
         app:layout_constraintTop_toBottomOf="@+id/notificationText"
         android:layout_marginLeft="15dp"
         android:textSize="12sp" />
@@ -65,7 +58,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_gravity="center"
-            android:src="@drawable/pdp"
+            android:src="@drawable/ic_profil"
             android:scaleType="centerCrop"/>
 
     </com.google.android.material.circularreveal.cardview.CircularRevealCardView>

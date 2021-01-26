@@ -15,12 +15,17 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentPagerAdapter;
+import androidx.fragment.app.FragmentStatePagerAdapter;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.viewpager.widget.ViewPager;
 
 import com.facebook.drawee.view.SimpleDraweeView;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.material.tabs.TabLayout;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
@@ -32,6 +37,8 @@ import com.inpt.models.Post;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import static androidx.fragment.app.FragmentStatePagerAdapter.BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT;
 
 
 public class ProfileCurrentUserFragment extends Fragment {
@@ -46,6 +53,10 @@ public class ProfileCurrentUserFragment extends Fragment {
     private SimpleDraweeView pdp;
     private TextView userNameTextView;
 
+    private TabLayout tabLayout;
+    private ViewPager viewPager;
+
+
     public ProfileCurrentUserFragment() {
 
     }
@@ -55,6 +66,8 @@ public class ProfileCurrentUserFragment extends Fragment {
         super.onCreate(savedInstanceState);
         currentUserId = CurrentUserInfo.getInstance().getUserId();
 
+
+
     }
 
     @Nullable
@@ -63,50 +76,86 @@ public class ProfileCurrentUserFragment extends Fragment {
         View view = inflater.inflate(R.layout.profile_current_user_fragment, container, false);
         pdp = view.findViewById(R.id.pdp_imageView);
         userNameTextView = view.findViewById(R.id.userName);
-        recyclerView = view.findViewById(R.id.ProfilerecyclerView);
         edite_btn=view.findViewById(R.id.edite_btn);
-        userNameTextView.setText(CurrentUserInfo.getInstance().getUserName());
-        Uri uri = Uri.parse(CurrentUserInfo.getInstance().getPdpUrl());
-        pdp.setImageURI(uri);
-        posts = new ArrayList<>();
-        recyclerView.setHasFixedSize(true);
-        GridLayoutManager gridLayoutManager = new GridLayoutManager(getActivity(),2, GridLayoutManager.VERTICAL,false);
-        recyclerView.setLayoutManager(gridLayoutManager);
-        getPosts();
         edite_btn.setOnClickListener(e->startActivity(new Intent(getActivity(),EditProfileActivity.class)));
+        tabLayout = view.findViewById(R.id.tab_layout);
+        viewPager = view.findViewById(R.id.view_pager);
+
         return view;
     }
 
-    private void getPosts() {
-        Log.d("CUI", "getPosts: " + currentUserId);
-        collectionReference.whereEqualTo("userId", currentUserId)
-                .orderBy("timeAdded", Query.Direction.DESCENDING)
-                .get()
-                .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
-                    @Override
-                    public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
-                        if(!queryDocumentSnapshots.isEmpty()) {
-                            for(QueryDocumentSnapshot post_ : queryDocumentSnapshots) {
-                                Log.d("TEST", "onSuccess: ");
+    @Override
+    public void onResume() {
+        super.onResume();
+        userNameTextView.setText(CurrentUserInfo.getInstance().getUserName());
+        Uri uri = Uri.parse(CurrentUserInfo.getInstance().getPdpUrl());
+        pdp.setImageURI(uri);
 
-                                Post post = post_.toObject(Post.class);
-                                Log.d("TEST", "onSuccess: " + post.getImageUrl());
-                                posts.add(post);
-                            }
-                            Log.d("TEST111", "onSuccess: " + getActivity());
-                            if(getActivity() != null) {
-                                profileAdapter = new ProfileAdapter(getActivity(), posts, (getActivity()).getSupportFragmentManager(), CurrentUserInfo.getInstance().getUserName(), CurrentUserInfo.getInstance().getPdpUrl());
-                                recyclerView.setAdapter(profileAdapter);
-                                profileAdapter.notifyDataSetChanged();
-                            }
-                        }
-                    }
-                })
-                .addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
-                        Toast.makeText(getActivity(), "ERROR", Toast.LENGTH_LONG).show();
-                    }
-                });
+
+        //TABS
+        tabLayout.setupWithViewPager(viewPager);
+        if(getActivity() != null) {
+            Log.d("TAB", "onCreateView: ");
+
+            ViewPagerAdapter viewPagerAdapter = new ViewPagerAdapter(getChildFragmentManager(), 0, currentUserId);
+            viewPager.setAdapter(viewPagerAdapter);
+            tabLayout.getTabAt(0).setIcon(R.drawable.ic_posts);
+            tabLayout.getTabAt(1).setIcon(R.drawable.ic_follower);
+            tabLayout.getTabAt(2).setIcon(R.drawable.ic_following);
+
+        }
+    }
+
+    private class ViewPagerAdapter extends FragmentStatePagerAdapter {
+
+        private String userId;
+
+
+
+
+        public ViewPagerAdapter(@NonNull FragmentManager fm, int behavior, String userId) {
+            super(fm, behavior);
+            this.userId = userId;
+        }
+
+
+        @NonNull
+        @Override
+        public Fragment getItem(int position) {
+            switch (position) {
+                case 0:
+                    return new PostsFragment(userId, CurrentUserInfo.getInstance().getUserName(), CurrentUserInfo.getInstance().getPdpUrl());
+                case 1:
+                    return new FollowersFragment(userId) ;
+                case 2:
+                    return new FollowingFragment(userId);
+            }
+            return null;
+
+        }
+
+        @Nullable
+        @Override
+        public CharSequence getPageTitle(int position) {
+            switch (position) {
+                case 0:
+                    return "Posts";
+                case 1:
+                    return "Followers";
+                case 2:
+                    return "Following";
+            }
+            return null;
+        }
+
+        @Override
+        public int getCount() {
+            return 3;
+        }
+
+        @Override
+        public void destroyItem(@NonNull ViewGroup container, int position, @NonNull Object object) {
+            super.destroyItem(container, position, object);
+        }
     }
 }

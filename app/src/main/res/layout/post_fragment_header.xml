@@ -2,7 +2,7 @@
 <RelativeLayout
     android:padding="15dp"
     xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent"
-    android:background="@color/white"
+    android:background="?attr/colorPrimaryVariant"
     android:elevation="10dp"
     android:layout_height="wrap_content">
     <TextView

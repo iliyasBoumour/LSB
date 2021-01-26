@@ -1,6 +1,8 @@
-<resources xmlns:tools="http://schemas.android.com/tools">
-    <!-- Base application theme. -->
-    <style name="Theme.LSB" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+<?xml version="1.0" encoding="utf-8"?>
+<resources
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <style name="Theme.LSB" parent="Theme.MaterialComponents.Light.NoActionBar">
 
         <!-- Primary brand color. -->
         <item name="colorPrimary">@color/orange</item>
@@ -14,8 +16,10 @@
         <item name="scrimBackground">@color/orange</item>
         <item name="android:statusBarColor" tools:targetApi="l">@color/orange</item>
         <!-- Customize your theme here. -->
-        <item name="android:windowActivityTransitions" tools:ignore="NewApi">true</item>
+
+        <item name="android:windowActivityTransitions">true</item>
     </style>
+
     <style name="CustomCardCorners" parent="@style/Widget.MaterialComponents.CardView">
         <item name="shapeAppearanceOverlay">@style/ShapeAppearance_custom_corners</item>
     </style>
@@ -31,19 +35,4 @@
         <item name="cornerSizeTopLeft">50dp</item>
         <item name="cornerSizeTopRight">50dp</item>
     </style>
-
-    <style name="ShapeAppearanceOverlay.MyApp.Button.Circle" parent="">
-        <item name="cornerFamily">rounded</item>
-        <item name="cornerSize">50%</item>
-    </style>
-
-    <style name="MyAlertDialogStyle" parent="Theme.AppCompat.Light.Dialog.Alert">
-        <item name="colorAccent">@color/orange</item>
-    </style>
-
-
-        <style name="MyAppBarStyle" parent="">
-            <item name="android:background">@drawable/app_bar_bottom_gradient</item>
-        </style>
-
 </resources>

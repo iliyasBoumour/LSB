@@ -37,6 +37,7 @@ public class DashboardActivity extends AppCompatActivity implements View.OnClick
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         getWindow().setNavigationBarColor(getResources().getColor(R.color.black));
+
         setContentView(R.layout.dashboard);
         fragmentManager = getSupportFragmentManager();
         bottomNavigationView = findViewById(R.id.bottomNavView);

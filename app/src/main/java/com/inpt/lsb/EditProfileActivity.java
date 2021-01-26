@@ -117,6 +117,7 @@ public class EditProfileActivity extends AppCompatActivity implements View.OnCli
             collection.document(currentUserInfo.getUserId())
                     .update("username",newUserName);
             currentUserInfo.setUserName(newUserName);
+            finish();
         }
 //        if (passwordUpdated){
 //        String newPassword =textPasswordInput.getEditText().getText().toString();

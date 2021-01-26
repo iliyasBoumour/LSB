@@ -9,8 +9,8 @@
         android:id="@+id/header"/>
     <com.google.android.material.circularreveal.cardview.CircularRevealCardView
         android:id="@+id/pdp"
-        android:layout_width="120dp"
-        android:layout_height="120dp"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
         android:layout_marginTop="10dp"
         android:layout_centerHorizontal="true"
         app:strokeWidth="1dp"
@@ -35,61 +35,62 @@
         android:textColor="?attr/colorOnPrimary"
         android:textStyle="bold"
         android:textSize="20sp"
-        android:layout_marginTop="15dp"
+        android:layout_marginTop="5dp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Hamza Sajid"/>
 
-    <RelativeLayout
+    <LinearLayout
         android:id="@+id/btn_layout"
-        android:layout_centerInParent="true"
-        android:layout_marginHorizontal="25dp"
-        android:layout_below="@id/userName"
+        android:orientation="horizontal"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/message_btn"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            app:strokeColor="@color/orange"
-            android:layout_marginTop="10dp"
-            app:cornerRadius="20dp"
-            app:strokeWidth="1dp"
-            android:text="Message"
-            android:layout_marginEnd="5dp"
-            android:textColor="@color/orange"
-            android:textSize="12sp"
-            android:backgroundTint="#fff"
-            android:layout_alignParentRight="true"
-            android:paddingHorizontal="20dp" />
-
+        android:layout_height="wrap_content"
+        android:layout_below="@id/userName"
+        android:layout_centerInParent="true"
+        android:layout_marginHorizontal="10dp"
+        android:layout_marginTop="5dp">
         <com.google.android.material.button.MaterialButton
             android:id="@+id/follow_btn"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
+            android:layout_weight="0.5"
             android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
-            android:paddingHorizontal="20dp"
-            app:cornerRadius="20dp"
-            android:layout_marginStart="5dp"
-            android:text="Unfollow"
-            android:textColor="@color/orange"
-            android:layout_alignParentLeft="true"
-            app:iconTint="#fff"
-            android:textSize="12sp"
             android:backgroundTint="@color/orange"
-            app:iconSize="20dp" />
+            android:layout_marginEnd="3dp"
+            android:text=""
+            android:textColor="@color/white"
+            android:textSize="12sp"
+            app:cornerRadius="5dp"
+            app:iconSize="20dp"
+            app:iconTint="#fff" />
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/message_btn"
+            android:layout_width="0dp"
+            android:layout_weight="0.5"
+            android:layout_height="wrap_content"
+            android:backgroundTint="@android:color/transparent"
+            android:text="Message"
+            android:textColor="@color/orange"
+            android:layout_marginStart="3dp"
+            android:textSize="12sp"
+            app:cornerRadius="5dp"
+            app:strokeColor="@color/orange"
+            style="@style/Widget.MaterialComponents.Button.OutlinedButton" />
 
-    </RelativeLayout>
+    </LinearLayout>
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/ProfilerecyclerView"
-        android:layout_marginHorizontal="15dp"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="15dp"
+    <com.google.android.material.tabs.TabLayout
+        android:id="@+id/tab_layout"
         android:layout_below="@id/btn_layout"
+        app:tabTextAppearance="@style/CustomTabText"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="wrap_content">
+    </com.google.android.material.tabs.TabLayout>
+    <androidx.viewpager.widget.ViewPager
+        android:id="@+id/view_pager"
+        android:layout_below="@id/tab_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"/>
+
 
 
 </RelativeLayout>

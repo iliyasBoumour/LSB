@@ -63,7 +63,7 @@
                     android:layout_marginTop="5dp"
                     android:layout_toEndOf="@id/pdp"
                     android:text="Hamza Sajid"
-                    android:textColor="#000"
+                    android:textColor="?attr/colorOnPrimary"
                     android:textSize="12sp" />
 
                 <TextView

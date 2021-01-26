@@ -12,13 +12,17 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentStatePagerAdapter;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.viewpager.widget.ViewPager;
 
 import com.facebook.drawee.view.SimpleDraweeView;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.button.MaterialButton;
+import com.google.android.material.tabs.TabLayout;
 import com.google.firebase.Timestamp;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentSnapshot;
@@ -40,13 +44,10 @@ import java.util.Map;
 
 
 public class ProfileOtherUsersFragment extends Fragment implements View.OnClickListener {
-    private RecyclerView recyclerView;
-    private ProfileAdapter profileAdapter;
-    private List<Post> posts;
+
     private String userId;
     private String currentUserId;
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
-    private CollectionReference collectionReference = db.collection("Posts");
     private CollectionReference collectionReferenceFollow = db.collection("Relations");
     private CollectionReference collectionReferenceNotif = db.collection("Notifications");
     private SimpleDraweeView pdp;
@@ -57,6 +58,9 @@ public class ProfileOtherUsersFragment extends Fragment implements View.OnClickL
     private Boolean follow;
     private static final String NOTIF_FOLLOW = "follow";
     SendNotif sendNotif;
+
+    private TabLayout tabLayout;
+    private ViewPager viewPager;
 
     public ProfileOtherUsersFragment() {
 
@@ -77,55 +81,82 @@ public class ProfileOtherUsersFragment extends Fragment implements View.OnClickL
         followBtn = view.findViewById(R.id.follow_btn);
         followBtn.setOnClickListener(this);
         userNameTextView = view.findViewById(R.id.userName);
-        recyclerView = view.findViewById(R.id.ProfilerecyclerView);
         Bundle bundle = this.getArguments();
         pdpUrl = bundle.getString("pdpUrl");
         Uri uri = Uri.parse(pdpUrl);
         userName = bundle.getString("userName");
         userNameTextView.setText(userName);
         pdp.setImageURI(uri);
-        recyclerView = view.findViewById(R.id.ProfilerecyclerView);
-        posts = new ArrayList<>();
-        recyclerView.setHasFixedSize(true);
-        GridLayoutManager gridLayoutManager = new GridLayoutManager(getActivity(), 2, GridLayoutManager.VERTICAL, false);
-        recyclerView.setLayoutManager(gridLayoutManager);
+
         checkFollow();
-        getPosts();
+
+        //TABS
+        tabLayout = view.findViewById(R.id.tab_layout);
+        viewPager = view.findViewById(R.id.view_pager);
+        tabLayout.setupWithViewPager(viewPager);
+        if(getActivity() != null) {
+            Log.d("TAB", "onCreateView: ");
+
+            ViewPagerAdapter viewPagerAdapter = new ViewPagerAdapter(getChildFragmentManager(), 0, userId);
+            viewPager.setAdapter(viewPagerAdapter);
+            tabLayout.getTabAt(0).setIcon(R.drawable.ic_posts);
+            tabLayout.getTabAt(1).setIcon(R.drawable.ic_follower);
+            tabLayout.getTabAt(2).setIcon(R.drawable.ic_following);
+        }
         return view;
     }
 
-    private void getPosts() {
-        Log.d("CUI", "getPosts: " + userId);
-        collectionReference.whereEqualTo("userId", userId)
-                .orderBy("timeAdded", Query.Direction.DESCENDING)
-                .get()
-                .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
-                    @Override
-                    public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
-                        if (!queryDocumentSnapshots.isEmpty()) {
-                            for (QueryDocumentSnapshot post_ : queryDocumentSnapshots) {
-                                Log.d("TEST", "onSuccess: ");
+    private class ViewPagerAdapter extends FragmentStatePagerAdapter {
+       private String userId;
 
-                                Post post = post_.toObject(Post.class);
-                                Log.d("TEST", "onSuccess: " + post.getImageUrl());
-                                posts.add(post);
-                            }
-                            if (getActivity() != null) {
-                                Log.d("TEST2", "onSuccess: " + posts.size());
-                                profileAdapter = new ProfileAdapter(getActivity(), posts, (getActivity()).getSupportFragmentManager(), userName, pdpUrl);
-                                recyclerView.setAdapter(profileAdapter);
-                                profileAdapter.notifyDataSetChanged();
-                            }
-                        }
-                    }
-                })
-                .addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
-                        Toast.makeText(getActivity(), "ERROR", Toast.LENGTH_LONG).show();
-                    }
-                });
+
+
+        public ViewPagerAdapter(@NonNull FragmentManager fm, int behavior, String userId) {
+            super(fm, behavior);
+            this.userId = userId;
+        }
+
+
+        @NonNull
+        @Override
+        public Fragment getItem(int position) {
+            switch (position) {
+                case 0:
+                    return new PostsFragment(userId, userName, pdpUrl);
+                case 1:
+                    return new FollowersFragment(userId) ;
+                case 2:
+                    return new FollowingFragment(userId);
+            }
+            return null;
+
+        }
+
+        @Nullable
+        @Override
+        public CharSequence getPageTitle(int position) {
+            switch (position) {
+                case 0:
+                    return "Posts";
+                case 1:
+                    return "Followers";
+                case 2:
+                    return "Following";
+            }
+            return null;
+        }
+
+        @Override
+        public int getCount() {
+            return 3;
+        }
+
+        @Override
+        public void destroyItem(@NonNull ViewGroup container, int position, @NonNull Object object) {
+            super.destroyItem(container, position, object);
+        }
     }
+
 
     private void checkFollow() {
         collectionReferenceFollow.document(currentUserId + "_" + userId)
@@ -134,14 +165,10 @@ public class ProfileOtherUsersFragment extends Fragment implements View.OnClickL
                     @Override
                     public void onSuccess(DocumentSnapshot documentSnapshot) {
                         if(documentSnapshot.exists()) {
-                            followBtn.setWidth(followBtn.getWidth());
                             followBtn.setText("Unfollow");
-                            followBtn.setTextColor(getResources().getColor(R.color.white));
                             follow = true;
                         } else {
-                            followBtn.setWidth(followBtn.getWidth());
                             followBtn.setText("Follow");
-                            followBtn.setTextColor(getResources().getColor(R.color.white));
                             follow = false;
                         }
                     }
@@ -213,13 +240,9 @@ public class ProfileOtherUsersFragment extends Fragment implements View.OnClickL
 
     private void setFollowBtnText(Boolean follow) {
         if(follow) {
-            followBtn.setWidth(followBtn.getWidth());
             followBtn.setText("Unfollow");
-            followBtn.setTextColor(getResources().getColor(R.color.white));
         } else {
-            followBtn.setWidth(followBtn.getWidth());
             followBtn.setText("Follow");
-            followBtn.setTextColor(getResources().getColor(R.color.white));
         }
     }
 
@@ -231,4 +254,5 @@ public class ProfileOtherUsersFragment extends Fragment implements View.OnClickL
                 break;
         }
     }
+
 }
