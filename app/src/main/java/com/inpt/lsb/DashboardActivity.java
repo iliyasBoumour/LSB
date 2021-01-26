@@ -97,7 +97,7 @@ public class DashboardActivity extends AppCompatActivity implements View.OnClick
                         }
                         String token_ = task.getResult();
                         Token token= new Token(token_);
-                        FirebaseFirestore.getInstance().collection("Tokens").document("uou7XkLWPGbWBgOniOH8EKCZ8mZ2").set(token);
+                        FirebaseFirestore.getInstance().collection("Tokens").document(currentUserInfo.getUserId()).set(token);
                 });
     }
 

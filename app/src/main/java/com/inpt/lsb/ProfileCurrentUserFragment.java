@@ -1,12 +1,14 @@
 package com.inpt.lsb;
 
 
+import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -24,7 +26,6 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
-import com.google.firebase.storage.StorageReference;
 import com.inpt.Util.CurrentUserInfo;
 import com.inpt.adapters.ProfileAdapter;
 import com.inpt.models.Post;
@@ -38,7 +39,7 @@ public class ProfileCurrentUserFragment extends Fragment {
     private ProfileAdapter profileAdapter;
     private List<Post> posts;
     private String currentUserId;
-
+    private Button edite_btn;
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
     private CollectionReference collectionReference = db.collection("Posts");
 
@@ -63,6 +64,7 @@ public class ProfileCurrentUserFragment extends Fragment {
         pdp = view.findViewById(R.id.pdp_imageView);
         userNameTextView = view.findViewById(R.id.userName);
         recyclerView = view.findViewById(R.id.ProfilerecyclerView);
+        edite_btn=view.findViewById(R.id.edite_btn);
         userNameTextView.setText(CurrentUserInfo.getInstance().getUserName());
         Uri uri = Uri.parse(CurrentUserInfo.getInstance().getPdpUrl());
         pdp.setImageURI(uri);
@@ -71,6 +73,7 @@ public class ProfileCurrentUserFragment extends Fragment {
         GridLayoutManager gridLayoutManager = new GridLayoutManager(getActivity(),2, GridLayoutManager.VERTICAL,false);
         recyclerView.setLayoutManager(gridLayoutManager);
         getPosts();
+        edite_btn.setOnClickListener(e->startActivity(new Intent(getActivity(),EditProfileActivity.class)));
         return view;
     }
 

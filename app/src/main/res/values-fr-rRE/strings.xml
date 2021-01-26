@@ -1,22 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">LSB</string>
     <string name="facebook_app_id">1383050378716490</string>
     <string name="fb_login_protocol_scheme">fb1383050378716490</string>
-    <string name="sign_in">Sign In</string>
-    <string name="sign_up">Sign Up</string>
-    <string name="slogan">Let’s make it easy with BangBos</string>
-    <string name="welcome_message">Welcome To Our App !</string>
-    <string name="login">Login</string>
-    <string name="password">Password</string>
+    <string name="sign_in">Se connecter</string>
+    <string name="sign_up">S\'inscrire</string>
+    <string name="slogan">Bangboss est ici pour vous facilite la vie !</string>
+    <string name="welcome_message">Bienvenue dans votre application !</string>
+    <string name="login">Se connecter</string>
+    <string name="password">mot de passe</string>
     <string name="email">Email</string>
-    <string name="forget_password">forget password ?</string>
-    <string name="or_sign_in_with">Or sign in with :</string>
-    <string name="don_t_have_account_sign_up">don\'t have account ? sign up</string>
-    <string name="new_account">New Account</string>
-    <string name="username">username</string>
-    <string name="or_sign_up_with">Or sign up with :</string>
-    <string name="have_an_account_sign_in">you have already an account ? sign in</string>
-    <string name="email_empty">Email must not be empty</string>
+    <string name="forget_password">vous avez oubliez votre mot de passe ?</string>
+    <string name="or_sign_in_with">Ou se connecter avec :</string>
+    <string name="don_t_have_account_sign_up">vous n\'avez pas un compte ? creer le</string>
+    <string name="new_account">nouveau compte</string>
+    <string name="username">nom</string>
+    <string name="have_an_account_sign_in">vous avez deja un compte ? se connecter</string>
+    <string name="email_empty">l\'email ne doit pas etre vide</string>
     <string name="username_empty">username must not be empty</string>
     <string name="password_empty">Password must not be empty</string>
     <string name="short_password">password should have more than 8 characters</string>
@@ -56,5 +56,4 @@
     <string name="edit_profile">Edit Profile</string>
     <string name="edit_profile_photo">Edit profile photo</string>
     <string name="logout">Logout</string>
-
 </resources>
