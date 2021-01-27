@@ -7,7 +7,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <TextView
         android:id="@+id/title"
-        android:text="Edit Post"
+        android:text="@string/update_password"
         android:layout_width="match_parent"
         android:textAlignment="center"
         android:padding="12dp"
@@ -19,23 +19,43 @@
         android:elevation="10dp"
         android:layout_height="wrap_content"/>
 
-    <EditText
-        android:id="@+id/caption_field"
-        android:layout_below="@id/title"
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/pwdInput"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@drawable/add_post_shape"
-        android:layout_marginHorizontal="10dp"
-        android:minLines="5"
-        android:padding="15dp"
-        android:layout_marginBottom="15dp"
-        android:gravity="top"
-        android:hint="@string/write_a_caption"/>
+        android:layout_marginHorizontal="20dp"
+        android:layout_marginBottom="20dp"
+        android:hint="Your Password"
+        app:boxBackgroundColor="@android:color/transparent"
+        app:endIconMode="password_toggle"
+        android:layout_below="@id/title"
+        app:startIconDrawable="@drawable/key">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/pwd"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="textPassword" />
+
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <TextView
+        android:id="@+id/confirmation"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/pwdInput"
+        android:layout_marginBottom="25dp"
+        android:padding="10dp"
+        android:text="@string/sure_delete_account"
+        android:textAlignment="center"
+        android:textColor="@color/gray"
+        android:textSize="15sp"
+        />
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@id/caption_field"
+        android:layout_below="@id/confirmation"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent">

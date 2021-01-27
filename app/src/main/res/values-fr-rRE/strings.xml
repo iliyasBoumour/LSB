@@ -43,7 +43,7 @@
     <string name="email_was_sent">an email was sent to : </string>
     <string name="error_sign_fb">Authentication with facebook Failed.</string>
     <string name="hello_blank_fragment">Hello blank fragment</string>
-    <string name="search">Search ...</string>
+    <string name="search">Chercher ...</string>
     <string name="account_exists">An account already exists with the same email address</string>
     <string name="Camera">Camera</string>
     <string name="Gallery">Gallery</string>

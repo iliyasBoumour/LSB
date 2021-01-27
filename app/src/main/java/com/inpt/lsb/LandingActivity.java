@@ -1,6 +1,9 @@
 package com.inpt.lsb;
 
+import android.app.Activity;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.content.res.Configuration;
 import android.os.Bundle;
 import android.os.Handler;
 import android.view.WindowManager;
@@ -10,12 +13,15 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.app.AppCompatDelegate;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.inpt.Util.CurrentUserInfo;
+
+import java.util.Locale;
 
 public class LandingActivity extends AppCompatActivity {
 
@@ -53,6 +59,7 @@ public class LandingActivity extends AppCompatActivity {
                         break;
                 }
             }
+            loadSettings();
             String uid=currentUser.getUid();
             currentUserInfo.setUserId(uid);
             FirebaseFirestore db = FirebaseFirestore.getInstance();
@@ -75,6 +82,20 @@ public class LandingActivity extends AppCompatActivity {
         slogan=findViewById(R.id.slogan);
         animation();
 
+    }
+
+    private void loadSettings() {
+        SharedPreferences preferences=getSharedPreferences("Settings", Activity.MODE_PRIVATE);
+        if (preferences.getBoolean("dark",false)){
+            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
+        }
+        if (preferences.getString("language","Francais").equals("Francais")){
+            Locale locale=new Locale("fr");
+            Locale.setDefault(locale);
+            Configuration configuration=new Configuration();
+            configuration.locale=locale;
+            getBaseContext().getResources().updateConfiguration(configuration,getBaseContext().getResources().getDisplayMetrics());
+        }
     }
 
     private void animation() {
