@@ -1,7 +1,6 @@
 package com.inpt.lsb;
 
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -9,9 +8,9 @@ import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
@@ -30,6 +29,8 @@ public class NotificationsFragment extends Fragment {
     private CurrentUserInfo currentUserInfo = CurrentUserInfo.getInstance();
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
     ProgressBar pb;
+    private SwipeRefreshLayout refreshLayout;
+
 
 
     public NotificationsFragment() {
@@ -44,12 +45,16 @@ public class NotificationsFragment extends Fragment {
         notifRecView = view.findViewById(R.id.notifRecyclerView);
         pb = view.findViewById(R.id.pb);
         notifRecView.setLayoutManager(new LinearLayoutManager(getActivity()));
-        getList();
+        refreshLayout = view.findViewById(R.id.refresh);
+        refreshLayout.setOnRefreshListener(() -> getList(false));
+
+        getList(true);
         return view;
     }
 
-    private void getList() {
-        pb.setVisibility(View.VISIBLE);
+    private void getList(boolean showProg) {
+        if (showProg) pb.setVisibility(View.VISIBLE);
+        else refreshLayout.setRefreshing(true);
         final int[] size = {-1};
         List<NotificationModel> notificationModels = new ArrayList<>();
         db.collection("Notifications")
@@ -71,9 +76,12 @@ public class NotificationsFragment extends Fragment {
                                                     .addOnSuccessListener(documentSnapshots -> {
                                                         for (QueryDocumentSnapshot ds1 : documentSnapshots) {
                                                             pb.setVisibility(View.GONE);
+                                                            refreshLayout.setRefreshing(false);
                                                             NotificationModel model = new NotificationModel(doc.getString("from"), ds.getString("username"), ds.getString("pdp"), doc.getString("type"), doc.getString("postId"), ds1.getString("imageUrl"), doc.getTimestamp("date"));
                                                             model.setTo(doc.getString("to"));
-                                                            notificationModels.add(model);
+
+                                                            if (model.getFromName()!=null) notificationModels.add(model);
+                                                            else size[0]--;
                                                             if (notificationModels.size() == size[0] && getActivity() != null) {
                                                                 notificationAdapter = new NotificationAdapter(getActivity(), notificationModels, getActivity().getSupportFragmentManager());
                                                                 notifRecView.setAdapter(notificationAdapter);
@@ -84,9 +92,11 @@ public class NotificationsFragment extends Fragment {
                                                     });
                                         } else {
                                             pb.setVisibility(View.GONE);
+                                            refreshLayout.setRefreshing(false);
                                             NotificationModel model = new NotificationModel(doc.getString("from"), ds.getString("username"), ds.getString("pdp"), doc.getTimestamp("date"), doc.getString("type"));
                                             model.setTo(doc.getString("to"));
-                                            notificationModels.add(model);
+                                            if (model.getFromName()!=null) notificationModels.add(model);
+                                            else size[0]--;
                                             if (notificationModels.size() == size[0] && getActivity() != null) {
                                                 notificationAdapter = new NotificationAdapter(getActivity(), notificationModels, getActivity().getSupportFragmentManager());
                                                 notifRecView.setAdapter(notificationAdapter);

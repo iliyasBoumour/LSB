@@ -6,6 +6,7 @@ import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.os.Handler;
+import android.util.Log;
 import android.view.WindowManager;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
@@ -89,13 +90,30 @@ public class LandingActivity extends AppCompatActivity {
         if (preferences.getBoolean("dark",false)){
             AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
         }
-        if (preferences.getString("language","Francais").equals("Francais")){
-            Locale locale=new Locale("fr");
+
+        if (!preferences.getString("language","we").equals("we")){
+            Locale locale = null;
+            switch (preferences.getString("language","we")){
+                case "Francais":
+                    Log.d("TAG", "loadSettings: fr");
+                    locale=new Locale("fr");
+                    break;
+                case "English":
+                    Log.d("TAG", "loadSettings: en");
+                    locale=new Locale("en");
+                    break;
+            }
             Locale.setDefault(locale);
             Configuration configuration=new Configuration();
             configuration.locale=locale;
             getBaseContext().getResources().updateConfiguration(configuration,getBaseContext().getResources().getDisplayMetrics());
-        }
+        }else {
+            SharedPreferences.Editor editor=getSharedPreferences("Settings", Activity.MODE_PRIVATE).edit();
+            if ( Locale.getDefault().getLanguage().equals("fr")){
+                editor.putString("language","Francais");
+                editor.apply();
+            }
+        };
     }
 
     private void animation() {

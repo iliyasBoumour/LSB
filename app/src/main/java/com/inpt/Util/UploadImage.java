@@ -8,6 +8,7 @@ import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.provider.MediaStore;
+import android.util.Log;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -27,6 +28,7 @@ public class UploadImage  {
     private AppCompatActivity appCompatActivity;
     private static final int REQUEST_CODE = 1;
     private PickImageDialog dialog ;
+    private static int i=0;
 
     public UploadImage(AppCompatActivity appCompatActivity){
         this.appCompatActivity=appCompatActivity;
@@ -76,7 +78,7 @@ public class UploadImage  {
                     }).show(appCompatActivity);
 //
         } catch (Exception e) {
-            Toast.makeText(appCompatActivity, "Camera Permission error", Toast.LENGTH_SHORT).show();
+            Toast.makeText(appCompatActivity, "Permissions error", Toast.LENGTH_SHORT).show();
             e.printStackTrace();
         }
     }

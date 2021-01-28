@@ -1,6 +1,7 @@
 package com.inpt.lsb;
 
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Build;
@@ -8,6 +9,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -24,7 +26,6 @@ import com.inpt.Util.UploadImage;
 import com.inpt.notifications.Token;
 
 public class DashboardActivity extends AppCompatActivity implements View.OnClickListener, BottomNavigationView.OnNavigationItemSelectedListener {
-    private static final int GALLERY_CODE = 1 ;
     public static BottomNavigationView bottomNavigationView;
     FragmentManager fragmentManager;
     Fragment fragment;
@@ -117,8 +118,22 @@ public class DashboardActivity extends AppCompatActivity implements View.OnClick
         bottomNavigationView.setOnNavigationItemSelectedListener(this);
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.M)
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        for (int i = 0, len = permissions.length; i < len; i++) {
+            String permission = permissions[i];
+            if (grantResults[i] == PackageManager.PERMISSION_DENIED) {
+                boolean showRationale = shouldShowRequestPermissionRationale( permission );
+                if (! showRationale) {
+                    Toast.makeText(this, getString(R.string.permission_settings), Toast.LENGTH_SHORT).show();
+                    return;
+                } else {
+                    Toast.makeText(this, getString(R.string.need_permissions), Toast.LENGTH_SHORT).show();
+                    return;
+                }
+            }
+        }
         uploadImage.verifyPermissions();
     }
 

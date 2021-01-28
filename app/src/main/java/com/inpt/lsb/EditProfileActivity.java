@@ -4,9 +4,11 @@ import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.graphics.Bitmap;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -20,6 +22,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDelegate;
@@ -206,6 +209,8 @@ public class EditProfileActivity extends AppCompatActivity implements View.OnCli
                     progressDialog.show();
                     AuthCredential credential = GoogleAuthProvider.getCredential(acct.getIdToken(), null);
                     user.reauthenticate(credential).addOnSuccessListener(task -> {
+                        collection.document(currentUserInfo.getUserId()).delete();
+                        deletePdp();
                         user.delete()
                                 .addOnSuccessListener(t -> {
                                     dialog.dismiss();
@@ -234,6 +239,8 @@ public class EditProfileActivity extends AppCompatActivity implements View.OnCli
                         progressDialog.show();
                         AuthCredential credential = FacebookAuthProvider.getCredential(AccessToken.getCurrentAccessToken().getToken());
                         user.reauthenticate(credential).addOnSuccessListener(task -> {
+                            collection.document(currentUserInfo.getUserId()).delete();
+                            deletePdp();
                             user.delete()
                                     .addOnSuccessListener(t -> {
                                         dialog.dismiss();
@@ -271,6 +278,8 @@ public class EditProfileActivity extends AppCompatActivity implements View.OnCli
                 .getCredential(user.getEmail(), pwd);
         user.reauthenticate(credential)
                 .addOnSuccessListener(task -> {
+                    collection.document(currentUserInfo.getUserId()).delete();
+                    deletePdp();
                     user.delete()
                             .addOnSuccessListener(t -> {
                                 dialog.dismiss();
@@ -288,6 +297,15 @@ public class EditProfileActivity extends AppCompatActivity implements View.OnCli
                     pwdInput.setError(getString(R.string.wrong_password));
                     progressDialog.dismiss();
                 });
+    }
+
+    private void deletePdp() {
+        FirebaseStorage firebaseStorage = FirebaseStorage.getInstance();
+        StorageReference photoRef  = firebaseStorage.getReferenceFromUrl(currentUserInfo.getPdpUrl());
+        photoRef.delete().addOnSuccessListener(( aVoid) ->{
+            Log.d("TAG", "deleteUser: deleted");
+        })
+        .addOnFailureListener(e-> Log.d("TAG", "deleteUser: "+e.getMessage()));
     }
 
     private void showDialoEditPwd() {
@@ -356,15 +374,22 @@ public class EditProfileActivity extends AppCompatActivity implements View.OnCli
             currentUserInfo.setUserName(newUserName);
         }
         if (imageEdited) {
+
+
             StorageReference filepath = storageReference
                     .child("pdps")
                     .child(currentUserInfo.getUserId() + Timestamp.now().getSeconds());
             filepath.putFile(imageUri).addOnSuccessListener(taskSnapshot -> {
                 filepath.getDownloadUrl().addOnSuccessListener(uri -> {
-                    currentUserInfo.setPdpUrl(uri.toString());
-                    collection.document(currentUserInfo.getUserId())
-                            .update("pdp", uri.toString());
-                    finish();
+                    FirebaseStorage firebaseStorage = FirebaseStorage.getInstance();
+                    StorageReference photoRef  = firebaseStorage.getReferenceFromUrl(currentUserInfo.getPdpUrl());
+                    photoRef.delete().addOnSuccessListener(( aVoid) ->{
+                        currentUserInfo.setPdpUrl(uri.toString());
+                        collection.document(currentUserInfo.getUserId())
+                                .update("pdp", uri.toString());
+                        finish();
+                    });
+
                 });
             });
         } else {
@@ -372,8 +397,22 @@ public class EditProfileActivity extends AppCompatActivity implements View.OnCli
         }
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.M)
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        for (int i = 0, len = permissions.length; i < len; i++) {
+            String permission = permissions[i];
+            if (grantResults[i] == PackageManager.PERMISSION_DENIED) {
+                boolean showRationale = shouldShowRequestPermissionRationale( permission );
+                if (! showRationale) {
+                    Toast.makeText(this, getString(R.string.permission_settings), Toast.LENGTH_SHORT).show();
+                    return;
+                } else {
+                    Toast.makeText(this, getString(R.string.need_permissions), Toast.LENGTH_SHORT).show();
+                    return;
+                }
+            }
+        }
         uploadImage.verifyPermissions();
     }
 
