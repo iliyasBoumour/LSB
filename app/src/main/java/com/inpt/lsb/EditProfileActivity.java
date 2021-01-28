@@ -129,13 +129,14 @@ public class EditProfileActivity extends AppCompatActivity implements View.OnCli
         switch (i){
             case 0:
                 setLocal("en","English");
-                startActivity(new Intent(this,DashboardActivity.class));
                 break;
             case 1:
                 setLocal("fr","Francais");
-                startActivity(new Intent(this,DashboardActivity.class));
                 break;
         }
+        Intent intent = getIntent();
+        finish();
+        startActivity(intent);
     }
 
     private void setLocal(String lang, String language) {
@@ -353,8 +354,6 @@ public class EditProfileActivity extends AppCompatActivity implements View.OnCli
             collection.document(currentUserInfo.getUserId())
                     .update("username", newUserName);
             currentUserInfo.setUserName(newUserName);
-            Log.d("TAG", currentUserInfo.getUserName() + " " + newUserName);
-            Log.d("TAG", "username updated: ");
         }
         if (imageEdited) {
             StorageReference filepath = storageReference
@@ -365,12 +364,10 @@ public class EditProfileActivity extends AppCompatActivity implements View.OnCli
                     currentUserInfo.setPdpUrl(uri.toString());
                     collection.document(currentUserInfo.getUserId())
                             .update("pdp", uri.toString());
-                    Log.d("TAG", "image updated: ");
                     finish();
                 });
             });
         } else {
-            Log.d("TAG", "image not updated: ");
             finish();
         }
     }
