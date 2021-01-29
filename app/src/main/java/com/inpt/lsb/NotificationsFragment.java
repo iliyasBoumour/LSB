@@ -48,8 +48,14 @@ public class NotificationsFragment extends Fragment {
         refreshLayout = view.findViewById(R.id.refresh);
         refreshLayout.setOnRefreshListener(() -> getList(false));
 
-        getList(true);
+//        getList(true);
         return view;
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        getList(true);
     }
 
     private void getList(boolean showProg) {

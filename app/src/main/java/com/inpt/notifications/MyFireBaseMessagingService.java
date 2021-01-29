@@ -45,6 +45,7 @@ public class MyFireBaseMessagingService extends FirebaseMessagingService {
     private PendingIntent pendingIntent;
     String GROUP_KEY = "LSB";
     private CurrentUserInfo currentUserInfo= CurrentUserInfo.getInstance();
+    Notification notification;
 
     @Override
     public void onMessageReceived(@NonNull RemoteMessage remoteMessage) {
@@ -74,7 +75,6 @@ public class MyFireBaseMessagingService extends FirebaseMessagingService {
                 notificationIntent.putExtra("Fragment", "profileOtherUsers");
                 notificationIntent.putExtra("pdpUrl", notificationModel.getFromPdp());
                 notificationIntent.putExtra("userName", notificationModel.getFromName());
-                Log.d("FOLLOW", "onMessageReceived: " + notificationModel.getFromName());
                 notificationIntent.putExtra("userId", notificationModel.getFrom());
                 pendingIntent = PendingIntent.getActivity(getApplicationContext(), 0, notificationIntent, 	PendingIntent.FLAG_UPDATE_CURRENT);
                 break;
@@ -115,12 +115,13 @@ public class MyFireBaseMessagingService extends FirebaseMessagingService {
             NotificationChannel channel = new NotificationChannel(NOTIF_FOLLOW, NOTIF_FOLLOW,
                     NotificationManager.IMPORTANCE_HIGH);
             manager.createNotificationChannel(channel);
-            image=getCircleBitmap(image);
+//            image=getCircleBitmap(image);
 
         }
 
 
-        Notification notification =
+
+        notification =
                 new NotificationCompat.Builder(getApplicationContext(), NOTIF_FOLLOW)
                         .setContentTitle(title)
                         .setContentText(message)

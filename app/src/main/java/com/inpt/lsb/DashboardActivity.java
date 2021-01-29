@@ -30,6 +30,7 @@ public class DashboardActivity extends AppCompatActivity implements View.OnClick
     FragmentManager fragmentManager;
     Fragment fragment;
     private UploadImage uploadImage;
+    private FirebaseFirestore db = FirebaseFirestore.getInstance();
     private CurrentUserInfo currentUserInfo = CurrentUserInfo.getInstance();
     private String tagFragment;
 
@@ -59,6 +60,14 @@ public class DashboardActivity extends AppCompatActivity implements View.OnClick
                     bundle.putString("pdpUrl", getIntent().getStringExtra("pdpUrl"));
                     bundle.putString("userId", getIntent().getStringExtra("userId"));
                     fragment.setArguments(bundle);
+
+                    db.collection("users").document(getIntent().getStringExtra("userId")).get().addOnSuccessListener(
+                            documentSnapshot -> {
+                                if (!documentSnapshot.exists()){
+
+                                }
+                            }
+                    );
                     break;
                 case "post":
                     fragment = new PostFragment();

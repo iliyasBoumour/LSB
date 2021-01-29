@@ -60,7 +60,6 @@ public class LandingActivity extends AppCompatActivity {
                         break;
                 }
             }
-            loadSettings();
             String uid=currentUser.getUid();
             currentUserInfo.setUserId(uid);
             FirebaseFirestore db = FirebaseFirestore.getInstance();
@@ -77,10 +76,12 @@ public class LandingActivity extends AppCompatActivity {
                     });
 
         }
+        loadSettings();
         setContentView(R.layout.activity_landing);
         this.getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
         logo=findViewById(R.id.logo);
         slogan=findViewById(R.id.slogan);
+        Log.d("TAG", "onCreate: ");
         animation();
 
     }
@@ -92,8 +93,9 @@ public class LandingActivity extends AppCompatActivity {
         }
 
         if (!preferences.getString("language","we").equals("we")){
+            Log.d("TAG", "in preferences: "+Locale.getDefault().getLanguage());
             Locale locale = null;
-            switch (preferences.getString("language","we")){
+            switch (preferences.getString("language","English")){
                 case "Francais":
                     Log.d("TAG", "loadSettings: fr");
                     locale=new Locale("fr");
@@ -110,10 +112,11 @@ public class LandingActivity extends AppCompatActivity {
         }else {
             SharedPreferences.Editor editor=getSharedPreferences("Settings", Activity.MODE_PRIVATE).edit();
             if ( Locale.getDefault().getLanguage().equals("fr")){
+                Log.d("TAG", "loadSettings: system laguage");
                 editor.putString("language","Francais");
                 editor.apply();
             }
-        };
+        }
     }
 
     private void animation() {
