@@ -62,5 +62,6 @@
     <string name="try_later">error please try later</string>
     <string name="need_permissions">we need those permissions</string>
     <string name="permission_settings">please apply permissions from settings</string>
+    <string name="resign_in">Please resign in before doing this operation</string>
 
 </resources>

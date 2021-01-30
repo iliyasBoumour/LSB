@@ -166,6 +166,7 @@ public class SignUpActivity extends AppCompatActivity {
                             Map<String, Object> user = new HashMap<>();
                             user.put("uid",userid);
                             user.put("username", username);
+                            user.put("searchName",username.toLowerCase());
                             user.put("email", email);
                             if(imageUri != null){
                                 StorageReference filepath = storageReference

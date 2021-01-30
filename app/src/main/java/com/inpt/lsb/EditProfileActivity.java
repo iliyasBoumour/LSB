@@ -236,7 +236,7 @@ public class EditProfileActivity extends AppCompatActivity implements View.OnCli
                         deleteAll(isLocalImage());
                     })
                             .addOnFailureListener(e -> {
-                                Toast.makeText(this, getString(R.string.try_later), Toast.LENGTH_SHORT).show();
+                                Toast.makeText(this, getString(R.string.resign_in), Toast.LENGTH_SHORT).show();
                                 progressDialog.dismiss();
                                 dialog.dismiss();
                                 Log.d("TAG", "showDialogDelete: " + e.getMessage());
@@ -252,7 +252,7 @@ public class EditProfileActivity extends AppCompatActivity implements View.OnCli
                     deleteAll(isLocalImage());
                 })
                         .addOnFailureListener(e -> {
-                            Toast.makeText(this, getString(R.string.try_later), Toast.LENGTH_SHORT).show();
+                            Toast.makeText(this, getString(R.string.resign_in), Toast.LENGTH_SHORT).show();
                             progressDialog.dismiss();
                             dialog.dismiss();
                             Log.d("TAG", "showDialogDelete: " + e.getMessage());

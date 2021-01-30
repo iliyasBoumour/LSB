@@ -404,6 +404,7 @@ public class SignInActivity extends AppCompatActivity {
         newUser.put("username", user.getDisplayName());
         newUser.put("email", user.getEmail());
         newUser.put("pdp", user.getPhotoUrl().toString());
+        newUser.put("searchName",user.getDisplayName().toLowerCase());
         newUser.put("uid", user.getUid());
         Log.i("TAG", "addNew: " + user.getPhotoUrl());
         db.collection("users")
