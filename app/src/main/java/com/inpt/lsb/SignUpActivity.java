@@ -184,7 +184,7 @@ public class SignUpActivity extends AppCompatActivity {
                                     });
                                 });
                             }else{
-                                user.put("pdp","https://firebasestorage.googleapis.com/v0/b/slbdatabase.appspot.com/o/pdps%2F9nwZm99Gz6az0lZeyBnFjbRi7q431610997551?alt=media&token=fbd1d59b-e295-4754-932a-113eda60e144");
+                                user.put("pdp","https://graph.facebook.com/3559754890766919/picture");
                                 db.collection("users")
                                         .document(userid)
                                         .set(user)

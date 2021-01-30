@@ -42,11 +42,14 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.inpt.Util.CurrentUserInfo;
 import com.inpt.Util.UploadImage;
 
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
@@ -77,6 +80,9 @@ public class EditProfileActivity extends AppCompatActivity implements View.OnCli
     private FirebaseAuth mAuth;
     private CollectionReference collection = FirebaseFirestore.getInstance().collection("users");
     private StorageReference storageReference;
+    private FirebaseFirestore db = FirebaseFirestore.getInstance();
+    FirebaseUser user;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -101,15 +107,16 @@ public class EditProfileActivity extends AppCompatActivity implements View.OnCli
 
         mAuth = FirebaseAuth.getInstance();
         storageReference = FirebaseStorage.getInstance().getReference();
+        user = mAuth.getCurrentUser();
 
-        editor=getSharedPreferences("Settings", Activity.MODE_PRIVATE).edit();
-        SharedPreferences preferences=getSharedPreferences("Settings",Activity.MODE_PRIVATE);
-        darkMode.setChecked(preferences.getBoolean("dark",false));
+        editor = getSharedPreferences("Settings", Activity.MODE_PRIVATE).edit();
+        SharedPreferences preferences = getSharedPreferences("Settings", Activity.MODE_PRIVATE);
+        darkMode.setChecked(preferences.getBoolean("dark", false));
         List<String> languges = new ArrayList<>();
         languges.add("English");
         languges.add("Francais");
         ArrayAdapter<String> arrayAdapter = new ArrayAdapter<>(this, R.layout.support_simple_spinner_dropdown_item, languges);
-        autoCompleteTextView.setText(preferences.getString("language","English"));
+        autoCompleteTextView.setText(preferences.getString("language", "English"));
         autoCompleteTextView.setAdapter(arrayAdapter);
         autoCompleteTextView.setOnItemClickListener((adapterView, view, i, l) -> changeLanguge(i));
 
@@ -126,15 +133,30 @@ public class EditProfileActivity extends AppCompatActivity implements View.OnCli
         deleteAccount.setOnClickListener(this);
         logout.setOnClickListener(this);
         uploadImage = new UploadImage(this);
+
+        Log.d("TAG", "onCreate: "+isLocalImage());
+
+    }
+
+    private boolean isLocalImage(){
+        String u=currentUserInfo.getPdpUrl();
+        URL url = null;
+        try {
+            url = new URL(u);
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+        }
+        String host = url.getHost();
+        return "firebasestorage.googleapis.com".equals(host);
     }
 
     private void changeLanguge(int i) {
-        switch (i){
+        switch (i) {
             case 0:
-                setLocal("en","English");
+                setLocal("en", "English");
                 break;
             case 1:
-                setLocal("fr","Francais");
+                setLocal("fr", "Francais");
                 break;
         }
         Intent intent = getIntent();
@@ -143,23 +165,23 @@ public class EditProfileActivity extends AppCompatActivity implements View.OnCli
     }
 
     private void setLocal(String lang, String language) {
-        Locale locale=new Locale(lang);
+        Locale locale = new Locale(lang);
         Locale.setDefault(locale);
-        Configuration configuration=new Configuration();
-        configuration.locale=locale;
-        getBaseContext().getResources().updateConfiguration(configuration,getBaseContext().getResources().getDisplayMetrics());
+        Configuration configuration = new Configuration();
+        configuration.locale = locale;
+        getBaseContext().getResources().updateConfiguration(configuration, getBaseContext().getResources().getDisplayMetrics());
 
-        editor.putString("language",language);
+        editor.putString("language", language);
         editor.apply();
     }
 
     private void editTheme(boolean b) {
         if (b) {
             AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
-            editor.putBoolean("dark",true);
+            editor.putBoolean("dark", true);
         } else {
             AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
-            editor.putBoolean("dark",false);
+            editor.putBoolean("dark", false);
         }
         editor.apply();
     }
@@ -171,7 +193,7 @@ public class EditProfileActivity extends AppCompatActivity implements View.OnCli
                 finish();
                 break;
             case R.id.valid:
-                checkChanges();
+                checkChanges(isLocalImage());
                 break;
             case R.id.editImage:
                 uploadImage.verifyPermissions();
@@ -183,6 +205,7 @@ public class EditProfileActivity extends AppCompatActivity implements View.OnCli
                 showDialogDelete();
                 break;
             case R.id.logout:
+                db.collection("Tokens").document(currentUserInfo.getUserId()).delete();
                 FirebaseAuth.getInstance().signOut();
                 startActivity(new Intent(this, SignInActivity.class));
                 finishAffinity();
@@ -192,7 +215,7 @@ public class EditProfileActivity extends AppCompatActivity implements View.OnCli
 
     private void showDialogDelete() {
         builder = new AlertDialog.Builder(this);
-        FirebaseUser user = mAuth.getCurrentUser();
+//        FirebaseUser user = mAuth.getCurrentUser();
         View view = getLayoutInflater().inflate(R.layout.delete_account_popup, null);
         cancelBtn = view.findViewById(R.id.cancelBtn);
         confirmBtn = view.findViewById(R.id.confirmBtn);
@@ -201,7 +224,7 @@ public class EditProfileActivity extends AppCompatActivity implements View.OnCli
             dialog.dismiss();
         });
         pwdInput.getEditText().addTextChangedListener(createTextWatcher(pwdInput));
-        if (strProvider.equals("google.com") ) {
+        if (strProvider.equals("google.com")) {
             pwdInput.setVisibility(View.GONE);
             confirmBtn.setOnClickListener(v -> {
                 GoogleSignInAccount acct = GoogleSignIn.getLastSignedInAccount(this);
@@ -209,62 +232,36 @@ public class EditProfileActivity extends AppCompatActivity implements View.OnCli
                     progressDialog.show();
                     AuthCredential credential = GoogleAuthProvider.getCredential(acct.getIdToken(), null);
                     user.reauthenticate(credential).addOnSuccessListener(task -> {
-                        collection.document(currentUserInfo.getUserId()).delete();
-                        deletePdp();
-                        user.delete()
-                                .addOnSuccessListener(t -> {
-                                    dialog.dismiss();
-                                    FirebaseAuth.getInstance().signOut();
-                                    startActivity(new Intent(this, SignInActivity.class));
-                                    finishAffinity();
-                                })
-                                .addOnFailureListener(e -> {
-                                    Toast.makeText(this, getString(R.string.try_later), Toast.LENGTH_SHORT).show();
-                                    progressDialog.dismiss();
-                                    dialog.dismiss();
-                                });
+                        Log.d("TAG", "showDialogDelete: "+user.getPhotoUrl());
+                        deleteAll(isLocalImage());
                     })
-                    .addOnFailureListener(e-> {
-                        Toast.makeText(this, getString(R.string.try_later), Toast.LENGTH_SHORT).show();
-                        progressDialog.dismiss();
-                        dialog.dismiss();
-                        Log.d("TAG", "showDialogDelete: " + e.getMessage());
-                    });
+                            .addOnFailureListener(e -> {
+                                Toast.makeText(this, getString(R.string.try_later), Toast.LENGTH_SHORT).show();
+                                progressDialog.dismiss();
+                                dialog.dismiss();
+                                Log.d("TAG", "showDialogDelete: " + e.getMessage());
+                            });
                 }
             });
-        }else
-            if(strProvider.equals("facebook.com")) {
-                pwdInput.setVisibility(View.GONE);
-                confirmBtn.setOnClickListener(v -> {
-                        progressDialog.show();
-                        AuthCredential credential = FacebookAuthProvider.getCredential(AccessToken.getCurrentAccessToken().getToken());
-                        user.reauthenticate(credential).addOnSuccessListener(task -> {
-                            collection.document(currentUserInfo.getUserId()).delete();
-                            deletePdp();
-                            user.delete()
-                                    .addOnSuccessListener(t -> {
-                                        dialog.dismiss();
-                                        FirebaseAuth.getInstance().signOut();
-                                        startActivity(new Intent(this, SignInActivity.class));
-                                        finishAffinity();
-                                    })
-                                    .addOnFailureListener(e -> {
-                                        Toast.makeText(this, getString(R.string.try_later), Toast.LENGTH_SHORT).show();
-                                        progressDialog.dismiss();
-                                        dialog.dismiss();
-                                    });
-                        })
-                                .addOnFailureListener(e-> {
-                                    Toast.makeText(this, getString(R.string.try_later), Toast.LENGTH_SHORT).show();
-                                    progressDialog.dismiss();
-                                    dialog.dismiss();
-                                    Log.d("TAG", "showDialogDelete: " + e.getMessage());
-                                });
-                });
-        }else{
-        confirmBtn.setOnClickListener(v -> {
-            deleteAcc(dialog, pwdInput.getEditText().getText().toString());
-        });
+        } else if (strProvider.equals("facebook.com")) {
+            pwdInput.setVisibility(View.GONE);
+            confirmBtn.setOnClickListener(v -> {
+                progressDialog.show();
+                AuthCredential credential = FacebookAuthProvider.getCredential(AccessToken.getCurrentAccessToken().getToken());
+                user.reauthenticate(credential).addOnSuccessListener(task -> {
+                    deleteAll(isLocalImage());
+                })
+                        .addOnFailureListener(e -> {
+                            Toast.makeText(this, getString(R.string.try_later), Toast.LENGTH_SHORT).show();
+                            progressDialog.dismiss();
+                            dialog.dismiss();
+                            Log.d("TAG", "showDialogDelete: " + e.getMessage());
+                        });
+            });
+        } else {
+            confirmBtn.setOnClickListener(v -> {
+                deleteAcc(dialog, pwdInput.getEditText().getText().toString());
+            });
         }
         builder.setView(view);
         dialog = builder.create();
@@ -273,25 +270,12 @@ public class EditProfileActivity extends AppCompatActivity implements View.OnCli
 
     private void deleteAcc(AlertDialog dialog, String pwd) {
         progressDialog.show();
-        FirebaseUser user = mAuth.getCurrentUser();
+//        FirebaseUser user = mAuth.getCurrentUser();
         AuthCredential credential = EmailAuthProvider
                 .getCredential(user.getEmail(), pwd);
         user.reauthenticate(credential)
                 .addOnSuccessListener(task -> {
-                    collection.document(currentUserInfo.getUserId()).delete();
-                    deletePdp();
-                    user.delete()
-                            .addOnSuccessListener(t -> {
-                                dialog.dismiss();
-                                FirebaseAuth.getInstance().signOut();
-                                startActivity(new Intent(this, SignInActivity.class));
-                                finishAffinity();
-                            })
-                    .addOnFailureListener(e -> {
-                        Toast.makeText(this, "error please try later", Toast.LENGTH_SHORT).show();
-                        progressDialog.dismiss();
-                        dialog.dismiss();
-                    });
+                    deleteAll(isLocalImage());
                 })
                 .addOnFailureListener(e -> {
                     pwdInput.setError(getString(R.string.wrong_password));
@@ -301,11 +285,90 @@ public class EditProfileActivity extends AppCompatActivity implements View.OnCli
 
     private void deletePdp() {
         FirebaseStorage firebaseStorage = FirebaseStorage.getInstance();
-        StorageReference photoRef  = firebaseStorage.getReferenceFromUrl(currentUserInfo.getPdpUrl());
-        photoRef.delete().addOnSuccessListener(( aVoid) ->{
+        StorageReference photoRef = firebaseStorage.getReferenceFromUrl(currentUserInfo.getPdpUrl());
+        photoRef.delete().addOnSuccessListener((aVoid) -> {
             Log.d("TAG", "deleteUser: deleted");
         })
-        .addOnFailureListener(e-> Log.d("TAG", "deleteUser: "+e.getMessage()));
+                .addOnFailureListener(e -> Log.d("TAG", "deleteUser: " + e.getMessage()));
+    }
+
+    private void deleteAll(boolean toDelete){
+//        FirebaseUser user = mAuth.getCurrentUser();
+        collection.document(currentUserInfo.getUserId()).delete();
+        db.collection("Notifications").whereEqualTo("from", currentUserInfo.getUserId())
+                .get()
+                .addOnSuccessListener(documentSnapshots -> {
+                    for (QueryDocumentSnapshot doc : documentSnapshots) {
+                        doc.getReference().delete();
+                    }
+                    db.collection("Notifications").whereEqualTo("to", currentUserInfo.getUserId())
+                            .get()
+                            .addOnSuccessListener(documentSnapshots1 -> {
+                                for (QueryDocumentSnapshot doc1 : documentSnapshots1) {
+                                    doc1.getReference().delete();
+                                }
+                                db.collection("Likes").whereEqualTo("userId", currentUserInfo.getUserId())
+                                        .get()
+                                        .addOnSuccessListener(documentSnapshots2 -> {
+                                            for (QueryDocumentSnapshot doc2 : documentSnapshots2) {
+                                                doc2.getReference().delete();
+                                            }
+                                            db.collection("Posts").whereEqualTo("userId", currentUserInfo.getUserId())
+                                                    .get()
+                                                    .addOnSuccessListener(documentSnapshots3 -> {
+                                                        for (QueryDocumentSnapshot doc3 : documentSnapshots3) {
+                                                            doc3.getReference().delete();
+                                                        }
+                                                        db.collection("Relations").whereEqualTo("userFollowedId", currentUserInfo.getUserId())
+                                                                .get()
+                                                                .addOnSuccessListener(documentSnapshots4 -> {
+                                                                    for (QueryDocumentSnapshot doc4 : documentSnapshots4) {
+                                                                        doc4.getReference().delete();
+                                                                    }
+                                                                    db.collection("Relations").whereEqualTo("userFollowerId", currentUserInfo.getUserId())
+                                                                            .get()
+                                                                            .addOnSuccessListener(documentSnapshots5 -> {
+                                                                                for (QueryDocumentSnapshot doc5 : documentSnapshots5) {
+                                                                                    doc5.getReference().delete();
+                                                                                }
+                                                                                db.collection("Tokens").document(currentUserInfo.getUserId()).delete();
+                                                                                if(toDelete) deletePdp();
+                                                                                            user.delete()
+                                                                                                    .addOnSuccessListener(t -> {
+                                                                                                        dialog.dismiss();
+                                                                                                        FirebaseAuth.getInstance().signOut();
+                                                                                                        startActivity(new Intent(this, SignInActivity.class));
+                                                                                                        finishAffinity();
+                                                                                                    })
+                                                                                                    .addOnFailureListener(e -> {
+                                                                                                        Toast.makeText(this, "error please try later", Toast.LENGTH_SHORT).show();
+                                                                                                        progressDialog.dismiss();
+                                                                                                        dialog.dismiss();
+                                                                                                    });
+                                                                            })
+                                                                            .addOnFailureListener(e -> {
+                                                                                Log.d("TAG", "relation user follower not deleted " + e.getMessage());
+                                                                            });
+                                                                })
+                                                                .addOnFailureListener(e -> {
+                                                                    Log.d("TAG", "relation user followed not deleted " + e.getMessage());
+                                                                });
+                                                    })
+                                                    .addOnFailureListener(e -> {
+                                                        Log.d("TAG", "posts not deleted " + e.getMessage());
+                                                    });
+                                        })
+                                        .addOnFailureListener(e -> {
+                                            Log.d("TAG", "likes not deleted " + e.getMessage());
+                                        });
+                            })
+                            .addOnFailureListener(e -> {
+                                Log.d("TAG", "notifications to not deleted " + e.getMessage());
+                            });
+                })
+                .addOnFailureListener(e -> {
+                    Log.d("TAG", "notifications from not deleted " + e.getMessage());
+                });
     }
 
     private void showDialoEditPwd() {
@@ -338,7 +401,7 @@ public class EditProfileActivity extends AppCompatActivity implements View.OnCli
             newPwdInput.setError(getString(R.string.invalid_password));
         } else {
             progressDialog.show();
-            FirebaseUser user = mAuth.getCurrentUser();
+//            FirebaseUser user = mAuth.getCurrentUser();
             AuthCredential credential = EmailAuthProvider
                     .getCredential(user.getEmail(), oldP);
             user.reauthenticate(credential)
@@ -365,7 +428,7 @@ public class EditProfileActivity extends AppCompatActivity implements View.OnCli
         }
     }
 
-    private void checkChanges() {
+    private void checkChanges(boolean toDelete) {
         progressDialog.show();
         String newUserName = textNameInput.getEditText().getText().toString();
         if (!currentUserInfo.getUserName().equals(newUserName)) {
@@ -381,15 +444,20 @@ public class EditProfileActivity extends AppCompatActivity implements View.OnCli
                     .child(currentUserInfo.getUserId() + Timestamp.now().getSeconds());
             filepath.putFile(imageUri).addOnSuccessListener(taskSnapshot -> {
                 filepath.getDownloadUrl().addOnSuccessListener(uri -> {
-                    FirebaseStorage firebaseStorage = FirebaseStorage.getInstance();
-                    StorageReference photoRef  = firebaseStorage.getReferenceFromUrl(currentUserInfo.getPdpUrl());
-                    photoRef.delete().addOnSuccessListener(( aVoid) ->{
-                        currentUserInfo.setPdpUrl(uri.toString());
+                    currentUserInfo.setPdpUrl(uri.toString());
+                    if (toDelete) {
+                        FirebaseStorage firebaseStorage = FirebaseStorage.getInstance();
+                        StorageReference photoRef = firebaseStorage.getReferenceFromUrl(currentUserInfo.getPdpUrl());
+                        photoRef.delete().addOnSuccessListener((aVoid) -> {
+                            collection.document(currentUserInfo.getUserId())
+                                    .update("pdp", uri.toString());
+                            finish();
+                        });
+                    }else{
                         collection.document(currentUserInfo.getUserId())
                                 .update("pdp", uri.toString());
                         finish();
-                    });
-
+                    }
                 });
             });
         } else {
@@ -403,8 +471,8 @@ public class EditProfileActivity extends AppCompatActivity implements View.OnCli
         for (int i = 0, len = permissions.length; i < len; i++) {
             String permission = permissions[i];
             if (grantResults[i] == PackageManager.PERMISSION_DENIED) {
-                boolean showRationale = shouldShowRequestPermissionRationale( permission );
-                if (! showRationale) {
+                boolean showRationale = shouldShowRequestPermissionRationale(permission);
+                if (!showRationale) {
                     Toast.makeText(this, getString(R.string.permission_settings), Toast.LENGTH_SHORT).show();
                     return;
                 } else {
