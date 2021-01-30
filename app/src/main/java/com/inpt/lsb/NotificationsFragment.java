@@ -44,8 +44,16 @@ public class NotificationsFragment extends Fragment {
         notifRecView = view.findViewById(R.id.notifRecyclerView);
         pb = view.findViewById(R.id.pb);
         notifRecView.setLayoutManager(new LinearLayoutManager(getActivity()));
+/*
         getList();
+*/
         return view;
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        getList();
     }
 
     private void getList() {

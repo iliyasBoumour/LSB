@@ -6,10 +6,13 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <RelativeLayout
-        android:padding="15dp"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
-
+        android:layout_height="wrap_content"
+        android:padding="15dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
 
 
         <com.google.android.material.circularreveal.cardview.CircularRevealCardView
@@ -22,52 +25,50 @@
                 android:id="@+id/pdpImageView"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:scaleType="centerCrop"
                 android:layout_gravity="center"
+                android:scaleType="centerCrop"
                 fresco:placeholderImage="@drawable/pdp" />
 
         </com.google.android.material.circularreveal.cardview.CircularRevealCardView>
 
         <TextView
             android:id="@+id/userName_textView"
-            android:layout_toEndOf="@id/pdp"
-            android:textColor="?attr/colorOnPrimary"
             android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:layout_marginLeft="6dp"
             android:layout_marginTop="5dp"
-            android:textSize="12sp"
-            android:layout_height="wrap_content"
-            android:text="" />
+            android:layout_toEndOf="@id/pdp"
+            android:text=""
+            android:textColor="?attr/colorOnPrimary"
+            android:textSize="12sp" />
 
         <TextView
             android:id="@+id/timeTextView"
-            android:layout_toEndOf="@id/pdp"
-            android:layout_below="@id/userName_textView"
             android:layout_width="wrap_content"
-            android:textColor="@color/gray"
-            android:layout_marginLeft="6dp"
-            android:textSize="10sp"
             android:layout_height="wrap_content"
-            android:text="" />
+            android:layout_below="@id/userName_textView"
+            android:layout_marginLeft="6dp"
+            android:layout_toEndOf="@id/pdp"
+            android:text=""
+            android:textColor="@color/gray"
+            android:textSize="10sp" />
 
         <com.google.android.material.card.MaterialCardView
             android:id="@+id/postImage_cardView"
-            android:layout_marginVertical="9dp"
-            android:layout_below="@id/pdp"
             android:layout_width="match_parent"
-            app:cardCornerRadius="16dp"
+            android:layout_height="400dp"
+            android:layout_below="@id/pdp"
+            android:layout_marginVertical="9dp"
             android:minHeight="240dp"
-            android:layout_height="400dp">
+            app:cardCornerRadius="16dp">
 
             <com.facebook.drawee.view.SimpleDraweeView
                 android:id="@+id/postImage"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:scaleType="centerCrop"
                 android:layout_gravity="center"
-                fresco:placeholderImage="@drawable/post_image"/>
-
-
+                android:scaleType="centerCrop"
+                fresco:placeholderImage="@drawable/post_image" />
 
 
         </com.google.android.material.card.MaterialCardView>
@@ -77,24 +78,26 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_below="@id/postImage_cardView"
-            android:scaleType="centerCrop"
-            android:layout_gravity="center" />
+            android:layout_gravity="center"
+            android:scaleType="centerCrop" />
+
         <TextView
             android:id="@+id/likes_nb"
-            android:textColor="@color/orange"
-            android:textStyle="bold"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:layout_below="@id/postImage_cardView"
             android:layout_alignParentEnd="true"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"/>
+            android:textColor="@color/orange"
+            android:textStyle="bold" />
+
         <TextView
             android:id="@+id/captionTextView"
-            android:text="Best Whatsapp Status Images In English Love : I will always love and treasure you. My love for you is endless, it will never end, it will always be there."
             android:layout_width="wrap_content"
-            android:layout_marginTop="9dp"
-            android:textColor="?attr/colorOnPrimary"
             android:layout_height="wrap_content"
-            android:layout_below="@id/likes_nb"/>
+            android:layout_below="@id/likes_nb"
+            android:layout_marginTop="9dp"
+            android:text="Best Whatsapp Status Images In English Love : I will always love and treasure you. My love for you is endless, it will never end, it will always be there."
+            android:textColor="?attr/colorOnPrimary" />
 
 
     </RelativeLayout>

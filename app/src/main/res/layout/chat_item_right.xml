@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:fresco="http://schemas.android.com/tools"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <com.facebook.drawee.view.SimpleDraweeView
+        android:layout_alignParentTop="true"
+        android:id="@+id/pdp"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        app:roundAsCircle="true"
+        android:layout_centerVertical="true"
+        android:visibility="gone"
+        android:layout_marginTop="10dp"
+        android:layout_marginStart="10dp"
+        android:layout_toEndOf="@+id/back"
+        app:placeholderImage="@drawable/pdp"/>
+
+    <TextView
+        android:layout_toEndOf="@id/pdp"
+        android:id="@+id/msg_text_view"
+        android:layout_alignParentEnd="true"
+        android:textSize="15sp"
+        android:text="Hello World !"
+        android:textColor="#000"
+        android:background="@drawable/msg_right"
+        android:padding="10dp"
+        android:layout_margin="10dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"/>
+
+</RelativeLayout>
