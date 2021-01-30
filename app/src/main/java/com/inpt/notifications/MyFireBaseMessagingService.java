@@ -42,10 +42,10 @@ public class MyFireBaseMessagingService extends FirebaseMessagingService {
     private static final String NOTIF_LIKE = "like";
     private static final String NOTIF_FOLLOW = "follow";
     private static int i = 1;
+    private static int j = 1;
     private PendingIntent pendingIntent;
     String GROUP_KEY = "LSB";
     private CurrentUserInfo currentUserInfo= CurrentUserInfo.getInstance();
-    Notification notification;
 
     @Override
     public void onMessageReceived(@NonNull RemoteMessage remoteMessage) {
@@ -76,7 +76,7 @@ public class MyFireBaseMessagingService extends FirebaseMessagingService {
                 notificationIntent.putExtra("pdpUrl", notificationModel.getFromPdp());
                 notificationIntent.putExtra("userName", notificationModel.getFromName());
                 notificationIntent.putExtra("userId", notificationModel.getFrom());
-                pendingIntent = PendingIntent.getActivity(getApplicationContext(), 0, notificationIntent, 	PendingIntent.FLAG_UPDATE_CURRENT);
+                pendingIntent = PendingIntent.getActivity(getApplicationContext(), j++, notificationIntent, 	PendingIntent.FLAG_UPDATE_CURRENT);
                 break;
             case NOTIF_LIKE:
 
@@ -104,7 +104,7 @@ public class MyFireBaseMessagingService extends FirebaseMessagingService {
                 Log.d("LIKE", "onMessageReceived: " + notificationModel.getToUsername());
 
 
-                pendingIntent = PendingIntent.getActivity(getApplicationContext(), 0, postNotif, 	PendingIntent.FLAG_UPDATE_CURRENT);
+                pendingIntent = PendingIntent.getActivity(getApplicationContext(), j++, postNotif, 	PendingIntent.FLAG_UPDATE_CURRENT);
                 break;
         }
 
@@ -115,13 +115,13 @@ public class MyFireBaseMessagingService extends FirebaseMessagingService {
             NotificationChannel channel = new NotificationChannel(NOTIF_FOLLOW, NOTIF_FOLLOW,
                     NotificationManager.IMPORTANCE_HIGH);
             manager.createNotificationChannel(channel);
-//            image=getCircleBitmap(image);
+            image=getCircleBitmap(image);
 
         }
 
 
 
-        notification =
+        Notification notification =
                 new NotificationCompat.Builder(getApplicationContext(), NOTIF_FOLLOW)
                         .setContentTitle(title)
                         .setContentText(message)
@@ -140,8 +140,10 @@ public class MyFireBaseMessagingService extends FirebaseMessagingService {
                 .setGroup(GROUP_KEY)
                 .setGroupSummary(true)
                 .setAutoCancel(true)
-                .setStyle(new NotificationCompat.InboxStyle()
-                .addLine(title + " " + message));
+                .setStyle(new NotificationCompat
+                        .InboxStyle()
+                        .addLine(title + " " + message)
+                );
         manager.notify(i++, notification);
         manager.notify(0, summaryNotification.build());
     }
@@ -160,6 +162,7 @@ public class MyFireBaseMessagingService extends FirebaseMessagingService {
             return null;
         }
     }
+
     private Bitmap getCircleBitmap(Bitmap bitmap) {
         Bitmap output;
         Rect srcRect, dstRect;
