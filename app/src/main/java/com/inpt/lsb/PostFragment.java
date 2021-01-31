@@ -368,15 +368,21 @@ public class PostFragment extends Fragment implements View.OnClickListener{
                         for(QueryDocumentSnapshot postDocument : queryDocumentSnapshots) {
                             post = postDocument.toObject(Post.class);
                         }
-                        caption = post.getCaption();
-                        postImageUrl = post.getImageUrl();
-                        int nbLike = post.getNbLike();
-                        String time = (String) DateUtils.getRelativeTimeSpanString(post.getTimeAdded().getSeconds() * 1000);
-                        Uri uri = Uri.parse(postImageUrl);
-                        captionTextView.setText(caption);
-                        simpleDraweeView.setImageURI(uri);
-                        likesTextView.setText(setnbLike(nbLike));
-                        timeTextView.setText(time);
+                        try{
+                            caption = post.getCaption();
+                            postImageUrl = post.getImageUrl();
+                            int nbLike = post.getNbLike();
+                            String time = (String) DateUtils.getRelativeTimeSpanString(post.getTimeAdded().getSeconds() * 1000);
+                            Uri uri = Uri.parse(postImageUrl);
+                            captionTextView.setText(caption);
+                            simpleDraweeView.setImageURI(uri);
+                            likesTextView.setText(setnbLike(nbLike));
+                            timeTextView.setText(time);
+                        }catch (NullPointerException e){
+                            simpleDraweeView.setImageResource(R.drawable.error);
+                            like_icone.setVisibility(View.GONE);
+                            threeDotMenu.setVisibility(View.GONE);
+                        }
                     }
                 });
     }

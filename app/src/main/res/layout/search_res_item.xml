@@ -3,29 +3,36 @@
     android:id="@+id/item"
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:fresco="http://schemas.android.com/apk/res-auto"
     android:paddingVertical="10dp"
     android:duplicateParentState="true"
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
-    <com.google.android.material.circularreveal.cardview.CircularRevealCardView
-        android:id="@+id/pdp"
-        android:layout_width="55dp"
-        android:layout_height="55dp"
-        android:duplicateParentState="true"
-        android:clickable="false"
-        app:cardCornerRadius="100dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+<!--    <com.google.android.material.circularreveal.cardview.CircularRevealCardView-->
+<!--        android:id="@+id/pdp"-->
+<!--        android:layout_width="55dp"-->
+<!--        android:layout_height="55dp"-->
+<!--        android:duplicateParentState="true"-->
+<!--        android:clickable="false"-->
+<!--        app:cardCornerRadius="100dp"-->
+<!--        app:layout_constraintBottom_toBottomOf="parent"-->
+<!--        app:layout_constraintStart_toStartOf="parent"-->
+<!--        app:layout_constraintTop_toTopOf="parent">-->
 
         <com.facebook.drawee.view.SimpleDraweeView
             android:id="@+id/profile"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_gravity="center"
-            android:scaleType="centerCrop" />
+            android:layout_width="55dp"
+            android:layout_height="55dp"
 
-    </com.google.android.material.circularreveal.cardview.CircularRevealCardView>
+            fresco:roundedCornerRadius="100dp"
+
+            android:layout_gravity="center"
+            android:scaleType="centerCrop"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            />
+
 
     <TextView
         android:id="@+id/name"
@@ -39,8 +46,8 @@
         android:textColor="?attr/colorOnPrimary"
         android:textSize="14sp"
         android:textStyle="bold"
-        app:layout_constraintBottom_toBottomOf="@+id/pdp"
-        app:layout_constraintStart_toEndOf="@+id/pdp"
-        app:layout_constraintTop_toTopOf="@+id/pdp" />
+        app:layout_constraintBottom_toBottomOf="@+id/profile"
+        app:layout_constraintStart_toEndOf="@+id/profile"
+        app:layout_constraintTop_toTopOf="@+id/profile" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

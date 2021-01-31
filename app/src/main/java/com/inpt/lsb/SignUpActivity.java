@@ -2,17 +2,22 @@ package com.inpt.lsb;
 
 import android.app.ProgressDialog;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -84,8 +89,23 @@ public class SignUpActivity extends AppCompatActivity {
         passwordInput.getEditText().addTextChangedListener(createTextWatcher(passwordInput));
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.M)
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        for (int i = 0, len = permissions.length; i < len; i++) {
+            String permission = permissions[i];
+            if (grantResults[i] == PackageManager.PERMISSION_DENIED) {
+                boolean showRationale = shouldShowRequestPermissionRationale( permission );
+                if (! showRationale) {
+                    Toast.makeText(this, getString(R.string.permission_settings), Toast.LENGTH_SHORT).show();
+                    return;
+                } else {
+                    Toast.makeText(this, getString(R.string.need_permissions), Toast.LENGTH_SHORT).show();
+                    return;
+                }
+            }
+            Log.d("TAG", "onRequestPermissionsResult: had per");
+        }
         uploadImage.verifyPermissions();
     }
 
@@ -164,7 +184,7 @@ public class SignUpActivity extends AppCompatActivity {
                                     });
                                 });
                             }else{
-                                user.put("pdp","https://firebasestorage.googleapis.com/v0/b/slbdatabase.appspot.com/o/pdps%2F9nwZm99Gz6az0lZeyBnFjbRi7q431610997551?alt=media&token=fbd1d59b-e295-4754-932a-113eda60e144");
+                                user.put("pdp","https://graph.facebook.com/3559754890766919/picture");
                                 db.collection("users")
                                         .document(userid)
                                         .set(user)
