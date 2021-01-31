@@ -25,6 +25,7 @@ import androidx.core.app.NotificationManagerCompat;
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
 import com.inpt.Util.CurrentUserInfo;
+import com.inpt.lsb.ChatActivity;
 import com.inpt.lsb.DashboardActivity;
 import com.inpt.lsb.LandingActivity;
 import com.inpt.lsb.R;
@@ -118,10 +119,15 @@ public class MyFireBaseMessagingService extends FirebaseMessagingService {
                 message=notificationModel.getMessage();
                 image = getBitmapFromURL(notificationModel.getFromPdp());
 //                intent
-                showNotifMessage(image,sound);
-
-//                pendingIntent = PendingIntent.getActivity(getApplicationContext(), j++, postNotif, 	PendingIntent.FLAG_UPDATE_CURRENT);
-                return;
+                Intent chatIntent;
+                if (currentUserInfo.getUserId()!=null) chatIntent = new Intent(getApplicationContext(), ChatActivity.class);
+                else chatIntent = new Intent(getApplicationContext(), LandingActivity.class);
+                chatIntent.putExtra("Fragment", "chat");
+                chatIntent.putExtra("userId", notificationModel.getFrom());
+                chatIntent.putExtra("pdpUrl", notificationModel.getFromPdp());
+                chatIntent.putExtra("userName", notificationModel.getFromName());
+                pendingIntent = PendingIntent.getActivity(getApplicationContext(), j++, chatIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+                break;
         }
 
 
@@ -143,6 +149,10 @@ public class MyFireBaseMessagingService extends FirebaseMessagingService {
             image=getCircleBitmap(image);
         }catch (Exception e){
             Log.d("TAG", "onMessageReceived: error pdp"+e.getMessage());
+        }
+        if(notificationModel.getType().contentEquals(NOTIF_MESSAGE)) {
+            showNotifMessage(image,sound, pendingIntent);
+            return;
         }
 
         Notification notification =
@@ -172,19 +182,14 @@ public class MyFireBaseMessagingService extends FirebaseMessagingService {
         manager.notify(0, summaryNotification.build());
     }
 
-    private void showNotifMessage(Bitmap image, Uri sound) {
-        try {
-            image=getCircleBitmap(image);
-        }catch (Exception e){
-            Log.d("TAG", "onMessageReceived: error pdp"+e.getMessage());
-        }
+    private void showNotifMessage(Bitmap image, Uri sound, PendingIntent pendingIntent) {
         Notification notification =
                 new NotificationCompat.Builder(getApplicationContext(), NOTIF_FOLLOW)
                         .setContentTitle(title+": "+message)
 //                        .setContentText(title+": "+message)
                         .setLargeIcon(image)
                         .setSmallIcon(R.drawable.logo)
-//                        .setContentIntent(pendingIntent)
+                      .setContentIntent(pendingIntent)
                         .setAutoCancel(true)
                         .setSound(sound)
                         .setOnlyAlertOnce(true)

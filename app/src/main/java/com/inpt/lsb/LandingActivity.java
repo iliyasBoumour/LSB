@@ -6,6 +6,7 @@ import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.os.Handler;
+import android.util.Log;
 import android.view.WindowManager;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
@@ -57,6 +58,15 @@ public class LandingActivity extends AppCompatActivity {
                         intent.putExtra("pdpUrl", getIntent().getStringExtra("pdpUrl"));
                         intent.putExtra("userId", getIntent().getStringExtra("userId"));
                         intent.putExtra("Fragment", "post");
+                        break;
+                    case "chat":
+                        Log.d("CHAT", "onCreate: ");
+                        Bundle bundle = getIntent().getExtras();
+                        Intent chatIntent = new Intent(getApplicationContext(), ChatActivity.class);
+                        chatIntent.putExtra("userName", bundle.getString("userName"));
+                        chatIntent.putExtra("pdpUrl", bundle.getString("pdpUrl"));
+                        chatIntent.putExtra("userId", bundle.getString("userId"));
+                        startActivity(chatIntent);
                         break;
                 }
             }
