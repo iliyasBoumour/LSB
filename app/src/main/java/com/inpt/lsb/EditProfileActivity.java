@@ -236,7 +236,7 @@ public class EditProfileActivity extends AppCompatActivity implements View.OnCli
                         deleteAll(isLocalImage());
                     })
                             .addOnFailureListener(e -> {
-                                Toast.makeText(this, getString(R.string.try_later), Toast.LENGTH_SHORT).show();
+                                Toast.makeText(this, getString(R.string.resign_in), Toast.LENGTH_SHORT).show();
                                 progressDialog.dismiss();
                                 dialog.dismiss();
                                 Log.d("TAG", "showDialogDelete: " + e.getMessage());
@@ -252,7 +252,7 @@ public class EditProfileActivity extends AppCompatActivity implements View.OnCli
                     deleteAll(isLocalImage());
                 })
                         .addOnFailureListener(e -> {
-                            Toast.makeText(this, getString(R.string.try_later), Toast.LENGTH_SHORT).show();
+                            Toast.makeText(this, getString(R.string.resign_in), Toast.LENGTH_SHORT).show();
                             progressDialog.dismiss();
                             dialog.dismiss();
                             Log.d("TAG", "showDialogDelete: " + e.getMessage());
@@ -437,8 +437,6 @@ public class EditProfileActivity extends AppCompatActivity implements View.OnCli
             currentUserInfo.setUserName(newUserName);
         }
         if (imageEdited) {
-
-
             StorageReference filepath = storageReference
                     .child("pdps")
                     .child(currentUserInfo.getUserId() + Timestamp.now().getSeconds());
@@ -452,6 +450,12 @@ public class EditProfileActivity extends AppCompatActivity implements View.OnCli
                             collection.document(currentUserInfo.getUserId())
                                     .update("pdp", uri.toString());
                             currentUserInfo.setPdpUrl(uri.toString());
+
+                            finish();
+                        })
+                        .addOnFailureListener(e->{
+                            Log.d("TAG", "update pdp: "+e.getMessage());
+
                             finish();
                         });
                     }else{

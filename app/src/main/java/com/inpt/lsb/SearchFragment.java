@@ -85,7 +85,7 @@ public class SearchFragment extends Fragment {
         clearList();
         FirebaseFirestore.getInstance()
                 .collection("users")
-                .orderBy("username")
+                .orderBy("searchName")
                 .startAt(s)
                 .endAt(s + "\uf8ff")
                 .get()

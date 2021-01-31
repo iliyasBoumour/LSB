@@ -1,16 +1,16 @@
 package com.inpt.lsb;
 
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-
 import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
+
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.facebook.drawee.view.SimpleDraweeView;
 import com.google.firebase.Timestamp;
@@ -19,11 +19,11 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
-import com.google.firebase.firestore.CollectionReference;
-import com.google.firebase.firestore.FirebaseFirestore;
 import com.inpt.Util.CurrentUserInfo;
+import com.inpt.Util.SendNotif;
 import com.inpt.adapters.ChatAdapter;
 import com.inpt.models.MessageModel;
+import com.inpt.models.NotificationModel;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -40,6 +40,8 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
     List<MessageModel> messages;
     ChatAdapter chatAdapter;
     RecyclerView recyclerView;
+    SendNotif sendNotif;
+    private static final String NOTIF_MESSAGE="message";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -86,6 +88,10 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
 
     private void sendMessage(MessageModel message) {
         databaseReference.push().setValue(message);
+        CurrentUserInfo currentUserInfo=CurrentUserInfo.getInstance();
+        NotificationModel notification=new NotificationModel(currentUserInfo.getUserName(),currentUserInfo.getPdpUrl(),message.getMessage(),NOTIF_MESSAGE,userId,currentUserId);
+        sendNotif=new SendNotif(notification);
+        sendNotif.send();
     }
 
     private void getMessages() {

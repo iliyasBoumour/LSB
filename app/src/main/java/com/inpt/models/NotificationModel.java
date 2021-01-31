@@ -13,6 +13,7 @@ public class NotificationModel {
     private String postId;
     private String postUrl;
     private Timestamp date;
+    private String message;
 
     public String getImageNotified() {
         return imageNotified;
@@ -28,12 +29,13 @@ public class NotificationModel {
 
     }
 
-    public NotificationModel(String from, String to, String type, String postId, Timestamp date) {
-        this.from = from;
-        this.to = to;
-        this.type = type;
-        this.postId = postId;
-        this.date = date;
+    public NotificationModel(String fromName, String fromPdp,String message,String type,String to,String from) {
+        this.fromName = fromName;
+        this.fromPdp = fromPdp;
+        this.message= message;
+        this.from=from;
+        this.to=to;
+        this.type=type;
     }
 
     public NotificationModel(String from, String fromName, String fromPdp, String type, String postId,String imageNotified, Timestamp date) {
@@ -132,5 +134,13 @@ public class NotificationModel {
 
     public void setToUsername(String toUsername) {
         this.toUsername = toUsername;
+    }
+
+    public String getMessage() {
+        return message;
+    }
+
+    public void setMessage(String message) {
+        this.message = message;
     }
 }

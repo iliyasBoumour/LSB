@@ -22,6 +22,7 @@ public class SendNotif {
     private APIService apiService;
     private static final String NOTIF_LIKE="like";
     private static final String NOTIF_FOLLOW="follow";
+    private static final String NOTIF_MESSAGE="message";
     public SendNotif(NotificationModel notificationModel){
         this.notificationModel=notificationModel;
         switch (notificationModel.getType()){
@@ -32,6 +33,10 @@ public class SendNotif {
             case NOTIF_LIKE :
                 this.title="New Like";
                 this.message=notificationModel.getFromName()+" likes your post";
+                break;
+            case NOTIF_MESSAGE :
+                this.title=notificationModel.getFromName();
+                this.message=notificationModel.getMessage();
                 break;
         }
         this.apiService = Client.getClient("https://fcm.googleapis.com/").create(APIService.class);
@@ -49,9 +54,14 @@ public class SendNotif {
 
     public void sendNotifications(String usertoken, NotificationModel notificationModel) {
 //        (String userId, String userName, String type, String postId, String pdpUrl)
-        Data data = new Data(notificationModel.getFrom(),notificationModel.getFromName(),notificationModel.getType()
-                ,notificationModel.getImageNotified(),notificationModel.getFromPdp(),notificationModel.getPostId()
-                , notificationModel.getToUsername(),notificationModel.getToPdp(),notificationModel.getTo());
+        Data data;
+        if (!notificationModel.getType().equals(NOTIF_MESSAGE)) {
+            data = new Data(notificationModel.getFrom(), notificationModel.getFromName(), notificationModel.getType()
+                    , notificationModel.getImageNotified(), notificationModel.getFromPdp(), notificationModel.getPostId()
+                    , notificationModel.getToUsername(), notificationModel.getToPdp(), notificationModel.getTo());
+        }else{
+            data = new Data(notificationModel.getFrom(), notificationModel.getFromName(),notificationModel.getFromPdp(),notificationModel.getMessage(),notificationModel.getType(),notificationModel.getTo());
+        }
         Log.d("TAG", "sendNotifications: "+notificationModel.getFromPdp());
         NotificationSender sender = new NotificationSender(data, usertoken);
         apiService.sendNotifcation(sender).enqueue(new Callback<MyResponse>() {
