@@ -10,6 +10,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -42,6 +43,7 @@ public class HomeFragment extends Fragment {
     private List<Post> posts;
     private String currentUserId;
     private String currentUserName;
+    private ImageView messagesBtn;
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
     private CollectionReference collectionReferenceLikes = db.collection("Likes");
     private CollectionReference collectionReferencePosts = db.collection("Posts");
@@ -72,6 +74,13 @@ public class HomeFragment extends Fragment {
         View view = inflater.inflate(R.layout.home_fragment, container, false);
         recyclerView = view.findViewById(R.id.homeRecyclerView);
         swipeRefreshLayout = view.findViewById(R.id.swipeRefresh);
+        messagesBtn = view.findViewById(R.id.messages_btn);
+        messagesBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(getContext(), MessagesActivity.class));
+            }
+        });
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         getPosts();

@@ -14,13 +14,10 @@ import com.facebook.drawee.view.SimpleDraweeView;
 import com.inpt.Util.CurrentUserInfo;
 import com.inpt.lsb.R;
 import com.inpt.models.MessageModel;
-import com.inpt.models.Post;
 
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 
-public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.ViewHolder>{
+public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ViewHolder>{
 
     public static final int LEFT = 0;
     public static final int RIGHT = 1;
@@ -30,7 +27,7 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.ViewHold
 
 
 
-    public MessageAdapter(Context context,List<MessageModel> messages, String pdpUrl) {
+    public ChatAdapter(Context context, List<MessageModel> messages, String pdpUrl) {
        /* Collections.sort(messages, new Comparator<MessageModel>() {
             @Override
             public int compare(MessageModel o1, MessageModel o2) {
@@ -45,14 +42,14 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.ViewHold
 
     @NonNull
     @Override
-    public MessageAdapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+    public ChatAdapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
 
         if (viewType == RIGHT) {
-            View view = LayoutInflater.from(context).inflate(R.layout.chat_item_right, parent, false);
+            View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.chat_item_right, parent, false);
             return new ViewHolder(view, context);
 
         } else {
-            View view = LayoutInflater.from(context).inflate(R.layout.chat_item_left, parent, false);
+            View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.chat_item_left, parent, false);
             return new ViewHolder(view, context);
 
         }

@@ -7,26 +7,19 @@ public class MessageModel {
     private String senderId;
     private String receiverId;
     private String message;
-/*
-    private Timestamp time;
-*/
+    private long time;
+
+    public MessageModel() {
+    }
 
 
-  /*  public MessageModel(String senderId, String receiverId, String message, Timestamp time) {
+    public MessageModel(String senderId, String receiverId, String message, long time) {
         this.senderId = senderId;
         this.receiverId = receiverId;
         this.message = message;
         this.time = time;
-    }*/
-
-    public MessageModel(String senderId, String receiverId, String message) {
-        this.senderId = senderId;
-        this.receiverId = receiverId;
-        this.message = message;
     }
 
-    public MessageModel() {
-    }
 
     public String getSenderId() {
         return senderId;
@@ -52,11 +45,11 @@ public class MessageModel {
         this.message = message;
     }
 
-/*    public Timestamp getTime() {
+    public long getTime() {
         return time;
     }
 
-    public void setTime(Timestamp time) {
+    public void setTime(long time) {
         this.time = time;
-    }*/
+    }
 }

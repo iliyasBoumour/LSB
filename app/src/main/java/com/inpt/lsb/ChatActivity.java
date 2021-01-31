@@ -1,22 +1,18 @@
 package com.inpt.lsb;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Message;
-import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.facebook.drawee.view.SimpleDraweeView;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.Timestamp;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -24,15 +20,9 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.firestore.CollectionReference;
-import com.google.firebase.firestore.DocumentChange;
-import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.FirebaseFirestoreException;
-import com.google.firebase.firestore.Query;
-import com.google.firebase.firestore.QueryDocumentSnapshot;
-import com.google.firebase.firestore.QuerySnapshot;
 import com.inpt.Util.CurrentUserInfo;
-import com.inpt.adapters.MessageAdapter;
+import com.inpt.adapters.ChatAdapter;
 import com.inpt.models.MessageModel;
 
 import java.util.ArrayList;
@@ -46,11 +36,9 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
     private TextView userNameTextView;
     private String userName, pdpUrl, userId, currentUserId;
     private DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference("messages");
-    private FirebaseFirestore db = FirebaseFirestore.getInstance();
-    private CollectionReference collectionReferenceMsg = db.collection("Messages");
     List<String> ids = new ArrayList<>();
     List<MessageModel> messages;
-    MessageAdapter messageAdapter;
+    ChatAdapter chatAdapter;
     RecyclerView recyclerView;
 
     @Override
@@ -89,7 +77,7 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
         if(v.getId() == R.id.back) {
             finish();
         } else if(v.getId() == R.id.sendBtn) {
-            MessageModel message = new MessageModel(currentUserId, userId, msgField.getText().toString().trim());
+            MessageModel message = new MessageModel(currentUserId, userId, msgField.getText().toString().trim(), new Timestamp(new Date()).getSeconds());
             sendMessage(message);
             msgField.setText("");
         }
@@ -134,9 +122,9 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
 
                     }
                 }
-                messageAdapter = new MessageAdapter(getApplicationContext(), messages, pdpUrl);
-                recyclerView.setAdapter(messageAdapter);
-                messageAdapter.notifyDataSetChanged();
+                chatAdapter = new ChatAdapter(getApplicationContext(), messages, pdpUrl);
+                recyclerView.setAdapter(chatAdapter);
+                chatAdapter.notifyDataSetChanged();
             }
 
             @Override

@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    android:id="@+id/item"
+    android:padding="15dp"
+    xmlns:fresco="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <com.facebook.drawee.view.SimpleDraweeView
+        android:id="@+id/pdp"
+        android:layout_width="55dp"
+        android:layout_height="55dp"
+        fresco:roundAsCircle="true"
+        android:layout_gravity="center"
+        android:scaleType="centerCrop" />
+
+    <TextView
+        android:id="@+id/userName"
+        android:text="Hamza Sajid"
+        android:textColor="?attr/colorOnPrimary"
+        android:textStyle="bold"
+        android:textSize="14sp"
+        android:layout_toEndOf="@id/pdp"
+        android:layout_marginTop="6dp"
+        android:layout_marginStart="10dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"/>
+
+    <TextView
+        android:id="@+id/last_msg"
+        android:text="Salut cv ?"
+        android:textSize="13sp"
+        android:textColor="@color/gray"
+        android:layout_below="@id/userName"
+        android:layout_toEndOf="@id/pdp"
+        android:layout_marginTop="2dp"
+        android:layout_marginStart="10dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"/>
+
+    <TextView
+        android:id="@+id/time"
+        android:text="2d"
+        android:textSize="13sp"
+        android:layout_marginTop="6dp"
+        android:textColor="@color/gray"
+        android:layout_alignParentEnd="true"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"/>
+
+</RelativeLayout>
