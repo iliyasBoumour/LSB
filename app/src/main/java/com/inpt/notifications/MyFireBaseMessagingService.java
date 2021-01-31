@@ -127,6 +127,13 @@ public class MyFireBaseMessagingService extends FirebaseMessagingService {
 
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+//            String channelParams;
+//            switch (notificationModel.getType()){
+//                case NOTIF_FOLLOW:
+//                    channelParams=NOTIF_FOLLOW;
+//                    break;
+//                    case
+//            }
             NotificationChannel channel = new NotificationChannel(NOTIF_FOLLOW, NOTIF_FOLLOW,
                     NotificationManager.IMPORTANCE_HIGH);
             manager.createNotificationChannel(channel);
