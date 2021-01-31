@@ -16,7 +16,9 @@
         android:roundIcon="@mipmap/ic_launcher"
         android:supportsRtl="true"
         android:theme="@style/Theme.LSB">
-        <activity android:name=".EditProfileActivity"></activity>
+        <activity android:name=".MessagesActivity"></activity>
+        <activity android:name=".ChatActivity" />
+        <activity android:name=".EditProfileActivity" />
         <activity android:name=".AddPostActivity" />
         <activity android:name=".SignUpActivity" />
         <activity android:name=".SignInActivity" />

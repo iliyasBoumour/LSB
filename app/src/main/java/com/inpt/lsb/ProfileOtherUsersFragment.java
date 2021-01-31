@@ -1,5 +1,6 @@
 package com.inpt.lsb;
 
+import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
@@ -44,7 +45,7 @@ public class ProfileOtherUsersFragment extends Fragment implements View.OnClickL
     private TextView userNameTextView;
     private String pdpUrl;
     private String userName;
-    private MaterialButton followBtn;
+    private MaterialButton followBtn, messageBtn;
     private Boolean follow;
     private static final String NOTIF_FOLLOW = "follow";
     SendNotif sendNotif;
@@ -68,6 +69,8 @@ public class ProfileOtherUsersFragment extends Fragment implements View.OnClickL
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.profile_other_users_fragment, container, false);
         pdp = view.findViewById(R.id.pdp_imageView);
+        messageBtn = view.findViewById(R.id.message_btn);
+        messageBtn.setOnClickListener(this);
         followBtn = view.findViewById(R.id.follow_btn);
         followBtn.setOnClickListener(this);
         userNameTextView = view.findViewById(R.id.userName);
@@ -241,6 +244,15 @@ public class ProfileOtherUsersFragment extends Fragment implements View.OnClickL
         switch (v.getId()) {
             case R.id.follow_btn:
                 followUser();
+                break;
+            case R.id.message_btn:
+                if(getActivity() != null) {
+                    Intent intent = new Intent(getContext(), ChatActivity.class);
+                    intent.putExtra("pdpUrl", pdpUrl);
+                    intent.putExtra("userName", userName);
+                    intent.putExtra("userId", userId);
+                    getActivity().startActivity(intent);
+                }
                 break;
         }
     }

@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:fresco="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:padding="15dp"
+    android:elevation="5dp"
+    android:background="?attr/colorPrimaryVariant"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <ImageView
+        android:id="@+id/back"
+        android:layout_alignParentStart="true"
+        android:src="@drawable/ic_back"
+        android:layout_centerVertical="true"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"/>
+
+    <com.facebook.drawee.view.SimpleDraweeView
+        android:id="@+id/pdp"
+        android:layout_width="35dp"
+        android:layout_height="35dp"
+        app:roundAsCircle="true"
+        android:layout_centerVertical="true"
+        android:layout_marginStart="25dp"
+        android:layout_toEndOf="@+id/back"
+        app:placeholderImage="@drawable/pdp"/>
+
+    <TextView
+        android:id="@+id/userName_textView"
+        android:text="Hamza Sajid"
+        android:layout_toEndOf="@+id/pdp"
+        android:layout_width="wrap_content"
+        android:textColor="#000"
+        android:layout_marginStart="8dp"
+        android:layout_centerVertical="true"
+        android:layout_height="wrap_content"/>
+
+
+</RelativeLayout>

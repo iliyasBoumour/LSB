@@ -45,22 +45,31 @@ public class NotificationsFragment extends Fragment {
         notifRecView = view.findViewById(R.id.notifRecyclerView);
         pb = view.findViewById(R.id.pb);
         notifRecView.setLayoutManager(new LinearLayoutManager(getActivity()));
+
         refreshLayout = view.findViewById(R.id.refresh);
         refreshLayout.setOnRefreshListener(() -> getList(false));
 
-//        getList(true);
+
         return view;
     }
 
     @Override
     public void onResume() {
         super.onResume();
+
+        getList();
+    }
+
+    private void getList() {
+        pb.setVisibility(View.VISIBLE);
+
         getList(true);
     }
 
     private void getList(boolean showProg) {
         if (showProg) pb.setVisibility(View.VISIBLE);
         else refreshLayout.setRefreshing(true);
+
         final int[] size = {-1};
         List<NotificationModel> notificationModels = new ArrayList<>();
         db.collection("Notifications")

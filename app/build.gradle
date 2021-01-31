@@ -51,6 +51,7 @@ dependencies {
 
 //    show dialog camera or gallery
     implementation 'com.github.jrvansuita:PickImage:+'
+    implementation 'com.google.firebase:firebase-database:19.6.0'
 
     testImplementation 'junit:junit:4.+'
     androidTestImplementation 'androidx.test.ext:junit:1.1.2'
