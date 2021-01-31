@@ -150,7 +150,7 @@ public class MyFireBaseMessagingService extends FirebaseMessagingService {
         }catch (Exception e){
             Log.d("TAG", "onMessageReceived: error pdp"+e.getMessage());
         }
-        if(notificationModel.getType().contentEquals(NOTIF_MESSAGE)) {
+        if(notificationModel.getType().contentEquals(NOTIF_MESSAGE) ) { //add condition
             showNotifMessage(image,sound, pendingIntent);
             return;
         }

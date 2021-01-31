@@ -6,7 +6,6 @@ import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.os.Handler;
-import android.util.Log;
 import android.view.WindowManager;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
@@ -30,7 +29,7 @@ public class LandingActivity extends AppCompatActivity {
     private ImageView logo;
     private TextView slogan;
     private CurrentUserInfo currentUserInfo = CurrentUserInfo.getInstance();
-    Intent intent = null;
+    Intent intent;
 
 
     @Override
@@ -63,16 +62,17 @@ public class LandingActivity extends AppCompatActivity {
                         intent.putExtra("Fragment", "post");
                         break;
                     case "chat":
-                        Log.d("CHAT", "onCreate: ");
                         Bundle bundle = getIntent().getExtras();
                         intent = new Intent(getApplicationContext(), ChatActivity.class);
                         intent.putExtra("userName", bundle.getString("userName"));
                         intent.putExtra("pdpUrl", bundle.getString("pdpUrl"));
                         intent.putExtra("userId", bundle.getString("userId"));
-                        startActivity(intent);
                         break;
                 }
+            }else{
+                intent=new Intent(this,DashboardActivity.class);
             }
+            loadSettings();
             String uid = currentUser.getUid();
             currentUserInfo.setUserId(uid);
             FirebaseFirestore db = FirebaseFirestore.getInstance();
@@ -89,7 +89,6 @@ public class LandingActivity extends AppCompatActivity {
                     });
 
         }
-        loadSettings();
         setContentView(R.layout.activity_landing);
         this.getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
         logo = findViewById(R.id.logo);
