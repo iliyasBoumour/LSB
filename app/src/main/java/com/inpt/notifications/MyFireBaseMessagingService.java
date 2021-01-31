@@ -41,11 +41,13 @@ public class MyFireBaseMessagingService extends FirebaseMessagingService {
     String message, title, CHANNEL_NAME, CHANNEL_ID;
     private static final String NOTIF_LIKE = "like";
     private static final String NOTIF_FOLLOW = "follow";
+    private static final String NOTIF_MESSAGE="message";
     private static int i = 1;
     private static int j = 1;
     private PendingIntent pendingIntent;
     String GROUP_KEY = "LSB";
     private CurrentUserInfo currentUserInfo= CurrentUserInfo.getInstance();
+    NotificationManagerCompat manager;
 
     @Override
     public void onMessageReceived(@NonNull RemoteMessage remoteMessage) {
@@ -53,6 +55,7 @@ public class MyFireBaseMessagingService extends FirebaseMessagingService {
 
         notificationModel.setType(remoteMessage.getData().get("type"));
         notificationModel.setFromName(remoteMessage.getData().get("userName"));
+        manager= NotificationManagerCompat.from(getApplicationContext());
 
         Uri sound = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
         Bitmap image=null;
@@ -106,20 +109,34 @@ public class MyFireBaseMessagingService extends FirebaseMessagingService {
 
                 pendingIntent = PendingIntent.getActivity(getApplicationContext(), j++, postNotif, 	PendingIntent.FLAG_UPDATE_CURRENT);
                 break;
+            case NOTIF_MESSAGE:
+                notificationModel.setFromPdp(remoteMessage.getData().get("pdpUrl"));
+                notificationModel.setMessage(remoteMessage.getData().get("message"));
+                notificationModel.setFrom(remoteMessage.getData().get("userId"));
+                Log.d("TAG", "onMessageReceived: "+notificationModel.getFrom());
+                title = notificationModel.getFromName();
+                message=notificationModel.getMessage();
+                image = getBitmapFromURL(notificationModel.getFromPdp());
+//                intent
+                showNotifMessage(image,sound);
+
+//                pendingIntent = PendingIntent.getActivity(getApplicationContext(), j++, postNotif, 	PendingIntent.FLAG_UPDATE_CURRENT);
+                return;
         }
 
 
-        NotificationManagerCompat manager = NotificationManagerCompat.from(getApplicationContext());
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             NotificationChannel channel = new NotificationChannel(NOTIF_FOLLOW, NOTIF_FOLLOW,
                     NotificationManager.IMPORTANCE_HIGH);
             manager.createNotificationChannel(channel);
-            image=getCircleBitmap(image);
 
         }
-
-
+        try {
+            image=getCircleBitmap(image);
+        }catch (Exception e){
+            Log.d("TAG", "onMessageReceived: error pdp"+e.getMessage());
+        }
 
         Notification notification =
                 new NotificationCompat.Builder(getApplicationContext(), NOTIF_FOLLOW)
@@ -146,6 +163,28 @@ public class MyFireBaseMessagingService extends FirebaseMessagingService {
                 );
         manager.notify(i++, notification);
         manager.notify(0, summaryNotification.build());
+    }
+
+    private void showNotifMessage(Bitmap image, Uri sound) {
+        try {
+            image=getCircleBitmap(image);
+        }catch (Exception e){
+            Log.d("TAG", "onMessageReceived: error pdp"+e.getMessage());
+        }
+        Notification notification =
+                new NotificationCompat.Builder(getApplicationContext(), NOTIF_FOLLOW)
+                        .setContentTitle(title+": "+message)
+//                        .setContentText(title+": "+message)
+                        .setLargeIcon(image)
+                        .setSmallIcon(R.drawable.logo)
+//                        .setContentIntent(pendingIntent)
+                        .setAutoCancel(true)
+                        .setSound(sound)
+                        .setOnlyAlertOnce(true)
+                        .setPriority(NotificationCompat.PRIORITY_HIGH).build();
+//                        .setGroup(GROUP_KEY).build();
+
+        manager.notify(i++, notification);
     }
 
     Bitmap getBitmapFromURL(String strURL) {

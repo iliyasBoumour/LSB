@@ -23,8 +23,7 @@
         app:roundAsCircle="true"
         android:layout_centerVertical="true"
         android:layout_marginStart="25dp"
-        android:layout_toEndOf="@+id/back"
-        app:placeholderImage="@drawable/pdp"/>
+        android:layout_toEndOf="@+id/back"/>
 
     <TextView
         android:id="@+id/userName_textView"

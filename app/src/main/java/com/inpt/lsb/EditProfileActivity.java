@@ -437,14 +437,11 @@ public class EditProfileActivity extends AppCompatActivity implements View.OnCli
             currentUserInfo.setUserName(newUserName);
         }
         if (imageEdited) {
-//            todo:
-            Log.d("TAG", "edit image ");
             StorageReference filepath = storageReference
                     .child("pdps")
                     .child(currentUserInfo.getUserId() + Timestamp.now().getSeconds());
             filepath.putFile(imageUri).addOnSuccessListener(taskSnapshot -> {
                 filepath.getDownloadUrl().addOnSuccessListener(uri -> {
-                    Log.d("TAG", ""+currentUserInfo.getPdpUrl());
                     if (toDelete) {
                         FirebaseStorage firebaseStorage = FirebaseStorage.getInstance();
                         StorageReference photoRef = firebaseStorage.getReferenceFromUrl(currentUserInfo.getPdpUrl());
@@ -452,6 +449,10 @@ public class EditProfileActivity extends AppCompatActivity implements View.OnCli
                             collection.document(currentUserInfo.getUserId())
                                     .update("pdp", uri.toString());
                             currentUserInfo.setPdpUrl(uri.toString());
+                            finish();
+                        })
+                        .addOnFailureListener(e->{
+                            Log.d("TAG", "update pdp: "+e.getMessage());
                             finish();
                         });
                     }else{

@@ -9,6 +9,7 @@ public class Data {
     private String type;
     private String postUrl;
     private String pdpUrl;
+    private String message;
 
 
 
@@ -23,6 +24,15 @@ public class Data {
         this.postId=postId;
         this.toUsername=toUsername;
         this.toPdp=toPdp;
+        this.to=to;
+    }
+//  for messages
+    public Data(String from, String userName, String pdpUrl,String message,String type,String to) {
+        this.userId=from;
+        this.userName = userName;
+        this.pdpUrl = pdpUrl;
+        this.type=type;
+        this.message=message;
         this.to=to;
     }
 
@@ -97,5 +107,13 @@ public class Data {
 
     public void setTo(String to) {
         this.to = to;
+    }
+
+    public String getMessage() {
+        return message;
+    }
+
+    public void setMessage(String message) {
+        this.message = message;
     }
 }
