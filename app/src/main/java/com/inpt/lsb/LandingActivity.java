@@ -30,6 +30,8 @@ public class LandingActivity extends AppCompatActivity {
     private ImageView logo;
     private TextView slogan;
     private CurrentUserInfo currentUserInfo = CurrentUserInfo.getInstance();
+    Intent intent = null;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,17 +44,18 @@ public class LandingActivity extends AppCompatActivity {
                 return;
             }, 2000);
         } else {
-            Intent intent = new Intent(this, DashboardActivity.class);
             String menuFragment = getIntent().getStringExtra("Fragment");
             if (menuFragment != null) {
                 switch (menuFragment) {
                     case "profileOtherUsers":
+                        intent = new Intent(this, DashboardActivity.class);
                         intent.putExtra("userName", getIntent().getStringExtra("userName"));
                         intent.putExtra("pdpUrl", getIntent().getStringExtra("pdpUrl"));
                         intent.putExtra("userId", getIntent().getStringExtra("userId"));
                         intent.putExtra("Fragment", "profileOtherUsers");
                         break;
                     case "post":
+                        intent = new Intent(this, DashboardActivity.class);
                         intent.putExtra("postId", getIntent().getStringExtra("postId"));
                         intent.putExtra("userName", getIntent().getStringExtra("userName"));
                         intent.putExtra("pdpUrl", getIntent().getStringExtra("pdpUrl"));
@@ -62,11 +65,11 @@ public class LandingActivity extends AppCompatActivity {
                     case "chat":
                         Log.d("CHAT", "onCreate: ");
                         Bundle bundle = getIntent().getExtras();
-                        Intent chatIntent = new Intent(getApplicationContext(), ChatActivity.class);
-                        chatIntent.putExtra("userName", bundle.getString("userName"));
-                        chatIntent.putExtra("pdpUrl", bundle.getString("pdpUrl"));
-                        chatIntent.putExtra("userId", bundle.getString("userId"));
-                        startActivity(chatIntent);
+                        intent = new Intent(getApplicationContext(), ChatActivity.class);
+                        intent.putExtra("userName", bundle.getString("userName"));
+                        intent.putExtra("pdpUrl", bundle.getString("pdpUrl"));
+                        intent.putExtra("userId", bundle.getString("userId"));
+                        startActivity(intent);
                         break;
                 }
             }

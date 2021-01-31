@@ -122,11 +122,13 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
                 messages.clear();
                 for(DataSnapshot dataSnapshot : snapshot.getChildren()) {
                     MessageModel message = dataSnapshot.getValue(MessageModel.class);
-                    if((message.getReceiverId().contentEquals(currentUserId) && message.getSenderId().contentEquals(userId))
-                                || (message.getReceiverId().contentEquals(userId) && message.getSenderId().contentEquals(currentUserId))) {
-                        messages.add(message);
+                 if(message != null) {
+                     if((message.getReceiverId().contentEquals(currentUserId) && message.getSenderId().contentEquals(userId))
+                             || (message.getReceiverId().contentEquals(userId) && message.getSenderId().contentEquals(currentUserId))) {
+                         messages.add(message);
 
-                    }
+                     }
+                 }
                 }
                 chatAdapter = new ChatAdapter(getApplicationContext(), messages, pdpUrl);
                 recyclerView.setAdapter(chatAdapter);
