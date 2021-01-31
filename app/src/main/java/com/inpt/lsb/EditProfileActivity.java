@@ -444,18 +444,20 @@ public class EditProfileActivity extends AppCompatActivity implements View.OnCli
                     .child(currentUserInfo.getUserId() + Timestamp.now().getSeconds());
             filepath.putFile(imageUri).addOnSuccessListener(taskSnapshot -> {
                 filepath.getDownloadUrl().addOnSuccessListener(uri -> {
-                    currentUserInfo.setPdpUrl(uri.toString());
+
                     if (toDelete) {
                         FirebaseStorage firebaseStorage = FirebaseStorage.getInstance();
                         StorageReference photoRef = firebaseStorage.getReferenceFromUrl(currentUserInfo.getPdpUrl());
                         photoRef.delete().addOnSuccessListener((aVoid) -> {
                             collection.document(currentUserInfo.getUserId())
                                     .update("pdp", uri.toString());
+                            currentUserInfo.setPdpUrl(uri.toString());
                             finish();
                         });
                     }else{
                         collection.document(currentUserInfo.getUserId())
                                 .update("pdp", uri.toString());
+                        currentUserInfo.setPdpUrl(uri.toString());
                         finish();
                     }
                 });
