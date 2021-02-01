@@ -86,6 +86,11 @@ public class EditProfileActivity extends AppCompatActivity implements View.OnCli
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        if (isDark()) {
+            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
+        } else {
+            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
+        }
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_edit_profile);
 
@@ -175,15 +180,23 @@ public class EditProfileActivity extends AppCompatActivity implements View.OnCli
         editor.apply();
     }
 
+    private boolean isDark(){
+        SharedPreferences preferences = getSharedPreferences("Settings", Activity.MODE_PRIVATE);
+        boolean isDark=preferences.getBoolean("dark",false);
+        return isDark;
+    }
+
     private void editTheme(boolean b) {
+        Log.d("TAG", "editTheme: ");
         if (b) {
-            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
             editor.putBoolean("dark", true);
         } else {
-            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
             editor.putBoolean("dark", false);
         }
         editor.apply();
+        Intent intent = getIntent();
+        finish();
+        startActivity(intent);
     }
 
     @Override

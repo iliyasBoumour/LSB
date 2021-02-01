@@ -6,6 +6,7 @@ import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.os.Handler;
+import android.util.Log;
 import android.view.WindowManager;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
@@ -29,11 +30,13 @@ public class LandingActivity extends AppCompatActivity {
     private ImageView logo;
     private TextView slogan;
     private CurrentUserInfo currentUserInfo = CurrentUserInfo.getInstance();
-    Intent intent;
+    private Intent intent;
+    private static int i=0;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        loadSettings();
         super.onCreate(savedInstanceState);
         FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
         if (currentUser == null) {
@@ -62,6 +65,7 @@ public class LandingActivity extends AppCompatActivity {
                         intent.putExtra("Fragment", "post");
                         break;
                     case "chat":
+                        Log.d("TAG", "chat: ");
                         Bundle bundle = getIntent().getExtras();
                         intent = new Intent(getApplicationContext(), ChatActivity.class);
                         intent.putExtra("userName", bundle.getString("userName"));
@@ -72,7 +76,6 @@ public class LandingActivity extends AppCompatActivity {
             }else{
                 intent=new Intent(this,DashboardActivity.class);
             }
-            loadSettings();
             String uid = currentUser.getUid();
             currentUserInfo.setUserId(uid);
             FirebaseFirestore db = FirebaseFirestore.getInstance();
@@ -84,12 +87,14 @@ public class LandingActivity extends AppCompatActivity {
                             currentUserInfo.setUserName(doc.getString("username"));
                             currentUserInfo.setPdpUrl(doc.getString("pdp"));
                         }
+                        Log.d("TAG", "loaded: ");
                         startActivity(intent);
-                        finish();
+                        finishAffinity();
                     });
 
         }
         setContentView(R.layout.activity_landing);
+        Log.d("TAG", "content of landing: ");
         this.getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
         logo = findViewById(R.id.logo);
         slogan = findViewById(R.id.slogan);
@@ -103,8 +108,10 @@ public class LandingActivity extends AppCompatActivity {
         boolean isDark=preferences.getBoolean("dark",false);
         if (isDark) {
             AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
+            Log.d("TAG", "dark: ");
         }else{
             AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
+            Log.d("TAG", "light: ");
         }
 
 
