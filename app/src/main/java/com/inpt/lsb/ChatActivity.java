@@ -48,7 +48,7 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        sendNotification(false);
+        sendNotification(userId);
         setContentView(R.layout.activity_chat);
         currentUserId = CurrentUserInfo.getInstance().getUserId();
         recyclerView = findViewById(R.id.chat_recycler);
@@ -98,23 +98,23 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
 
     }
 
-    private void sendNotification(Boolean send) {
+    private void sendNotification(String userId_) {
         SharedPreferences.Editor editor = getSharedPreferences("NOTIF", MODE_PRIVATE).edit();
-        editor.putBoolean("send", send);
+        editor.putString("userId", userId_);
         editor.apply();
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        sendNotification(false);
+        sendNotification(userId);
 
     }
 
     @Override
     protected void onPause() {
         super.onPause();
-        sendNotification(true);
+        sendNotification("");
     }
 
 

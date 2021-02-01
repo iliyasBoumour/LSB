@@ -56,7 +56,7 @@ public class MyFireBaseMessagingService extends FirebaseMessagingService {
         super.onMessageReceived(remoteMessage);
 
         SharedPreferences preferences = getSharedPreferences("NOTIF", MODE_PRIVATE);
-        Boolean send = preferences.getBoolean("send", true);
+        String userId_ = preferences.getString("userId", "");
 
 
         notificationModel.setType(remoteMessage.getData().get("type"));
@@ -155,11 +155,10 @@ public class MyFireBaseMessagingService extends FirebaseMessagingService {
         }catch (Exception e){
             Log.d("TAG", "onMessageReceived: error pdp"+e.getMessage());
         }
-        if(notificationModel.getType().contentEquals(NOTIF_MESSAGE) && send ) { //add condition
-            Log.d("SEND", "onMessageReceived: " + send);
-/*
-            showNotifMessage(image,sound, pendingIntent);
-*/
+        if(notificationModel.getType().contentEquals(NOTIF_MESSAGE)) { //add condition
+            if(!notificationModel.getFrom().contentEquals(userId_)) {
+                showNotifMessage(image,sound, pendingIntent);
+            }
             return;
         }
 
