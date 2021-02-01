@@ -70,7 +70,7 @@ public class SearchFragment extends Fragment {
                 handler.removeCallbacksAndMessages(null);
                 handler.postDelayed(() -> {
                 if (!TextUtils.isEmpty(s.trim())) {
-                            searchUsers(s);
+                            searchUsers(s.toLowerCase());
                 }
                 else clearList();
                 }, 600);

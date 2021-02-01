@@ -65,7 +65,6 @@ public class LandingActivity extends AppCompatActivity {
                         intent.putExtra("Fragment", "post");
                         break;
                     case "chat":
-                        Log.d("TAG", "chat: ");
                         Bundle bundle = getIntent().getExtras();
                         intent = new Intent(getApplicationContext(), ChatActivity.class);
                         intent.putExtra("userName", bundle.getString("userName"));
@@ -75,6 +74,11 @@ public class LandingActivity extends AppCompatActivity {
                 }
             }else{
                 intent=new Intent(this,DashboardActivity.class);
+            }
+            if (currentUserInfo.getUserId()!=null) {
+                startActivity(intent);
+                finish();
+                return;
             }
             String uid = currentUser.getUid();
             currentUserInfo.setUserId(uid);
@@ -87,14 +91,12 @@ public class LandingActivity extends AppCompatActivity {
                             currentUserInfo.setUserName(doc.getString("username"));
                             currentUserInfo.setPdpUrl(doc.getString("pdp"));
                         }
-                        Log.d("TAG", "loaded: ");
                         startActivity(intent);
                         finishAffinity();
                     });
 
         }
         setContentView(R.layout.activity_landing);
-        Log.d("TAG", "content of landing: ");
         this.getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
         logo = findViewById(R.id.logo);
         slogan = findViewById(R.id.slogan);

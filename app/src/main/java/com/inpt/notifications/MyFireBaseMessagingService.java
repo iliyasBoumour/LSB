@@ -25,8 +25,6 @@ import androidx.core.app.NotificationManagerCompat;
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
 import com.inpt.Util.CurrentUserInfo;
-import com.inpt.lsb.ChatActivity;
-import com.inpt.lsb.DashboardActivity;
 import com.inpt.lsb.LandingActivity;
 import com.inpt.lsb.R;
 import com.inpt.models.NotificationModel;
@@ -74,8 +72,9 @@ public class MyFireBaseMessagingService extends FirebaseMessagingService {
 
                 //        notificationModel.getFromPdp(); notificationModel.getFromName();    notificationModel.getFrom();
                 Intent notificationIntent;
-                if (currentUserInfo.getUserId()!=null) notificationIntent = new Intent(getApplicationContext(), DashboardActivity.class);
-                else notificationIntent = new Intent(getApplicationContext(), LandingActivity.class);
+//                if (currentUserInfo.getUserId()!=null) notificationIntent = new Intent(getApplicationContext(), DashboardActivity.class);
+//                else
+                    notificationIntent = new Intent(getApplicationContext(), LandingActivity.class);
                 notificationIntent.putExtra("Fragment", "profileOtherUsers");
                 notificationIntent.putExtra("pdpUrl", notificationModel.getFromPdp());
                 notificationIntent.putExtra("userName", notificationModel.getFromName());
@@ -98,8 +97,9 @@ public class MyFireBaseMessagingService extends FirebaseMessagingService {
                 image = getBitmapFromURL(notificationModel.getPostUrl());
 
                 Intent postNotif;
-                if (currentUserInfo.getUserId()!=null) postNotif = new Intent(getApplicationContext(), DashboardActivity.class);
-                else postNotif = new Intent(getApplicationContext(), LandingActivity.class);
+//                if (currentUserInfo.getUserId()!=null) postNotif = new Intent(getApplicationContext(), DashboardActivity.class);
+//                else
+                    postNotif = new Intent(getApplicationContext(), LandingActivity.class);
                 postNotif.putExtra("Fragment", "post");
                 postNotif.putExtra("postId", notificationModel.getPostId());
                 postNotif.putExtra("pdpUrl", notificationModel.getToPdp());
@@ -120,8 +120,8 @@ public class MyFireBaseMessagingService extends FirebaseMessagingService {
                 image = getBitmapFromURL(notificationModel.getFromPdp());
 //                intent
                 Intent chatIntent;
-                if (currentUserInfo.getUserId()!=null) chatIntent = new Intent(getApplicationContext(), ChatActivity.class);
-                else chatIntent = new Intent(getApplicationContext(), LandingActivity.class);
+//                if (currentUserInfo.getUserId()!=null) chatIntent = new Intent(getApplicationContext(), ChatActivity.class);
+                chatIntent = new Intent(getApplicationContext(), LandingActivity.class);
                 chatIntent.putExtra("Fragment", "chat");
                 chatIntent.putExtra("userId", notificationModel.getFrom());
                 chatIntent.putExtra("pdpUrl", notificationModel.getFromPdp());
