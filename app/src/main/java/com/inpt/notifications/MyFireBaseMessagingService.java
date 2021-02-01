@@ -25,7 +25,6 @@ import androidx.core.app.NotificationManagerCompat;
 
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
-import com.inpt.Util.CurrentUserInfo;
 import com.inpt.lsb.LandingActivity;
 import com.inpt.lsb.R;
 import com.inpt.models.NotificationModel;
@@ -38,48 +37,38 @@ import java.net.URL;
 @SuppressLint("MissingFirebaseInstanceTokenRefresh")
 public class MyFireBaseMessagingService extends FirebaseMessagingService {
     NotificationModel notificationModel = new NotificationModel();
-    String message, title, CHANNEL_NAME, CHANNEL_ID;
+    String message, title;
     private static final String NOTIF_LIKE = "like";
     private static final String NOTIF_FOLLOW = "follow";
     private static final String NOTIF_MESSAGE="message";
     private static int i = 1;
     private static int j = 1;
     private PendingIntent pendingIntent;
-    String GROUP_KEY = "LSB";
-    private CurrentUserInfo currentUserInfo= CurrentUserInfo.getInstance();
-    NotificationManagerCompat manager;
-
+    private String GROUP_KEY = "LSB";
+    private NotificationManagerCompat manager;
+    private String channelParams="LSB";
+    Uri sound = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
+    Bitmap image=null;
     @Override
     public void onMessageReceived(@NonNull RemoteMessage remoteMessage) {
         super.onMessageReceived(remoteMessage);
 
         SharedPreferences preferences = getSharedPreferences("NOTIF", MODE_PRIVATE);
-        Boolean send = preferences.getBoolean("send", true);
-
+        Boolean send = preferences.getBoolean("send", false);
+        manager= NotificationManagerCompat.from(getApplicationContext());
 
         notificationModel.setType(remoteMessage.getData().get("type"));
         notificationModel.setFromName(remoteMessage.getData().get("userName"));
-        manager= NotificationManagerCompat.from(getApplicationContext());
 
-        Uri sound = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
-        Bitmap image=null;
         switch (notificationModel.getType()) {
             case NOTIF_FOLLOW:
                 notificationModel.setFromPdp(remoteMessage.getData().get("pdpUrl"));
                 notificationModel.setFrom(remoteMessage.getData().get("userId"));
-
-                CHANNEL_ID = NOTIF_FOLLOW;
-                CHANNEL_NAME = NOTIF_FOLLOW;
                 title = getString(R.string.new_follow);
                 message= notificationModel.getFromName() + " " + getString(R.string.starts_follow);
-
                 image = getBitmapFromURL(notificationModel.getFromPdp());
 
-                //        notificationModel.getFromPdp(); notificationModel.getFromName();    notificationModel.getFrom();
-                Intent notificationIntent;
-//                if (currentUserInfo.getUserId()!=null) notificationIntent = new Intent(getApplicationContext(), DashboardActivity.class);
-//                else
-                    notificationIntent = new Intent(getApplicationContext(), LandingActivity.class);
+                Intent notificationIntent = new Intent(getApplicationContext(), LandingActivity.class);
                 notificationIntent.putExtra("Fragment", "profileOtherUsers");
                 notificationIntent.putExtra("pdpUrl", notificationModel.getFromPdp());
                 notificationIntent.putExtra("userName", notificationModel.getFromName());
@@ -93,18 +82,11 @@ public class MyFireBaseMessagingService extends FirebaseMessagingService {
                 notificationModel.setToUsername(remoteMessage.getData().get("toUsername"));
                 notificationModel.setToPdp(remoteMessage.getData().get("toPdp"));
                 notificationModel.setTo(remoteMessage.getData().get("to"));
-
-//                Log.d("TAG", "onMessageReceived: "+notificationModel.getPostId()+" "+notificationModel.getToUsername()+" "+notificationModel.getTo()+" "+notificationModel.getToPdp());
-                CHANNEL_ID = NOTIF_LIKE;
-                CHANNEL_NAME = NOTIF_LIKE;
                 title = getString(R.string.new_like);
                 message = notificationModel.getFromName() + " " + getString(R.string.like_post);
                 image = getBitmapFromURL(notificationModel.getPostUrl());
 
-                Intent postNotif;
-//                if (currentUserInfo.getUserId()!=null) postNotif = new Intent(getApplicationContext(), DashboardActivity.class);
-//                else
-                    postNotif = new Intent(getApplicationContext(), LandingActivity.class);
+                Intent postNotif = new Intent(getApplicationContext(), LandingActivity.class);
                 postNotif.putExtra("Fragment", "post");
                 postNotif.putExtra("postId", notificationModel.getPostId());
                 postNotif.putExtra("pdpUrl", notificationModel.getToPdp());
@@ -119,14 +101,11 @@ public class MyFireBaseMessagingService extends FirebaseMessagingService {
                 notificationModel.setFromPdp(remoteMessage.getData().get("pdpUrl"));
                 notificationModel.setMessage(remoteMessage.getData().get("message"));
                 notificationModel.setFrom(remoteMessage.getData().get("userId"));
-                Log.d("TAG", "onMessageReceived: "+notificationModel.getFrom());
                 title = notificationModel.getFromName();
                 message=notificationModel.getMessage();
                 image = getBitmapFromURL(notificationModel.getFromPdp());
 //                intent
-                Intent chatIntent;
-//                if (currentUserInfo.getUserId()!=null) chatIntent = new Intent(getApplicationContext(), ChatActivity.class);
-                chatIntent = new Intent(getApplicationContext(), LandingActivity.class);
+                Intent chatIntent = new Intent(getApplicationContext(), LandingActivity.class);
                 chatIntent.putExtra("Fragment", "chat");
                 chatIntent.putExtra("userId", notificationModel.getFrom());
                 chatIntent.putExtra("pdpUrl", notificationModel.getFromPdp());
@@ -138,33 +117,36 @@ public class MyFireBaseMessagingService extends FirebaseMessagingService {
 
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-//            String channelParams;
-//            switch (notificationModel.getType()){
-//                case NOTIF_FOLLOW:
-//                    channelParams=NOTIF_FOLLOW;
-//                    break;
-//                    case
-//            }
-            NotificationChannel channel = new NotificationChannel(NOTIF_FOLLOW, NOTIF_FOLLOW,
+            switch (notificationModel.getType()){
+                case NOTIF_FOLLOW:
+                    channelParams=NOTIF_FOLLOW;
+                    break;
+                case NOTIF_LIKE:
+                    channelParams=NOTIF_LIKE;
+                    break;
+                case NOTIF_MESSAGE:
+                    channelParams=NOTIF_MESSAGE;
+                    break;
+            }
+            NotificationChannel channel = new NotificationChannel(channelParams, channelParams,
                     NotificationManager.IMPORTANCE_HIGH);
             manager.createNotificationChannel(channel);
 
         }
+
         try {
             image=getCircleBitmap(image);
         }catch (Exception e){
             Log.d("TAG", "onMessageReceived: error pdp"+e.getMessage());
         }
-        if(notificationModel.getType().contentEquals(NOTIF_MESSAGE) && send ) { //add condition
-            Log.d("SEND", "onMessageReceived: " + send);
-/*
-            showNotifMessage(image,sound, pendingIntent);
-*/
+
+        if(notificationModel.getType().contentEquals(NOTIF_MESSAGE) ) {
+            if (send) showNotifMessage(pendingIntent);
             return;
         }
 
         Notification notification =
-                new NotificationCompat.Builder(getApplicationContext(), NOTIF_FOLLOW)
+                new NotificationCompat.Builder(getApplicationContext(), channelParams)
                         .setContentTitle(title)
                         .setContentText(message)
                         .setLargeIcon(image)
@@ -177,7 +159,7 @@ public class MyFireBaseMessagingService extends FirebaseMessagingService {
                         .setGroup(GROUP_KEY).build();
 
 
-        NotificationCompat.Builder summaryNotification = new NotificationCompat.Builder(this, NOTIF_FOLLOW)
+        NotificationCompat.Builder summaryNotification = new NotificationCompat.Builder(this, channelParams)
                 .setSmallIcon(R.drawable.logo)
                 .setGroup(GROUP_KEY)
                 .setGroupSummary(true)
@@ -190,9 +172,9 @@ public class MyFireBaseMessagingService extends FirebaseMessagingService {
         manager.notify(0, summaryNotification.build());
     }
 
-    private void showNotifMessage(Bitmap image, Uri sound, PendingIntent pendingIntent) {
+    private void showNotifMessage(PendingIntent pendingIntent) {
         Notification notification =
-                new NotificationCompat.Builder(getApplicationContext(), NOTIF_FOLLOW)
+                new NotificationCompat.Builder(getApplicationContext(), channelParams)
                         .setContentTitle(title+": "+message)
 //                        .setContentText(title+": "+message)
                         .setLargeIcon(image)
@@ -207,7 +189,7 @@ public class MyFireBaseMessagingService extends FirebaseMessagingService {
         manager.notify(i++, notification);
     }
 
-    Bitmap getBitmapFromURL(String strURL) {
+    private Bitmap getBitmapFromURL(String strURL) {
         try {
             URL url = new URL(strURL);
             HttpURLConnection connection = (HttpURLConnection) url.openConnection();
