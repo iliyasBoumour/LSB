@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
+    android:background="?attr/colorPrimaryVariant"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
@@ -9,6 +10,7 @@
 
 
     <androidx.recyclerview.widget.RecyclerView
+        android:background="?attr/colorPrimaryVariant"
         android:id="@+id/likes_recyclerView"
         android:layout_below="@id/likes_header"
         android:layout_width="match_parent"

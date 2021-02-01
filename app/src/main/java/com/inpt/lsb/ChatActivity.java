@@ -1,5 +1,7 @@
 package com.inpt.lsb;
 
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
@@ -46,6 +48,7 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        sendNotification(false);
         setContentView(R.layout.activity_chat);
         currentUserId = CurrentUserInfo.getInstance().getUserId();
         recyclerView = findViewById(R.id.chat_recycler);
@@ -60,6 +63,8 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
         sendBtn = findViewById(R.id.sendBtn);
         backBtn = findViewById(R.id.back);
         userNameTextView = findViewById(R.id.userName_textView);
+        userNameTextView.setOnClickListener(this);
+        pdp.setOnClickListener(this);
         backBtn.setOnClickListener(this);
         sendBtn.setOnClickListener(this);
         Bundle bundle = getIntent().getExtras();
@@ -82,9 +87,36 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
             MessageModel message = new MessageModel(currentUserId, userId, msgField.getText().toString().trim(), new Timestamp(new Date()).getSeconds());
             sendMessage(message);
             msgField.setText("");
+        }else if(v.getId() == R.id.pdp || v.getId() == R.id.userName_textView) {
+            Intent intent = new Intent(getApplicationContext(), DashboardActivity.class);
+            intent.putExtra("userName", userName);
+            intent.putExtra("pdpUrl", pdpUrl);
+            intent.putExtra("userId", userId);
+            intent.putExtra("Fragment", "profileOtherUsers");
+            startActivity(intent);
         }
 
     }
+
+    private void sendNotification(Boolean send) {
+        SharedPreferences.Editor editor = getSharedPreferences("NOTIF", MODE_PRIVATE).edit();
+        editor.putBoolean("send", send);
+        editor.apply();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        sendNotification(false);
+
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        sendNotification(true);
+    }
+
 
     private void sendMessage(MessageModel message) {
         databaseReference.push().setValue(message);
@@ -130,7 +162,7 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
                      }
                  }
                 }
-                chatAdapter = new ChatAdapter(getApplicationContext(), messages, pdpUrl);
+                chatAdapter = new ChatAdapter(getApplicationContext(), messages, pdpUrl, userName, userId);
                 recyclerView.setAdapter(chatAdapter);
                 chatAdapter.notifyDataSetChanged();
             }
