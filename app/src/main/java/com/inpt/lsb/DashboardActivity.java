@@ -75,6 +75,7 @@ public class DashboardActivity extends AppCompatActivity implements View.OnClick
                     bundle.putString("userName", getIntent().getStringExtra("userName"));
                     bundle.putString("pdpUrl", getIntent().getStringExtra("pdpUrl"));
                     bundle.putString("userId", getIntent().getStringExtra("userId"));
+                    bundle.putString("From", "Dashboard");
                     fragment.setArguments(bundle);
                     break;
             }

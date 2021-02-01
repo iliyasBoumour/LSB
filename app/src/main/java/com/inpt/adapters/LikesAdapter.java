@@ -1,6 +1,7 @@
 package com.inpt.adapters;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -232,7 +233,7 @@ public class LikesAdapter extends RecyclerView.Adapter<LikesAdapter.ViewHolder> 
             if(follow) {
                 followBtn.setText("Unfollow");
                 followBtn.setTextColor(context.getResources().getColor(R.color.orange));
-                followBtn.setBackgroundColor(context.getResources().getColor(R.color.white));
+                followBtn.setBackgroundColor(Color.TRANSPARENT);
             } else {
                 followBtn.setText("Follow");
                 followBtn.setTextColor(context.getResources().getColor(R.color.white));

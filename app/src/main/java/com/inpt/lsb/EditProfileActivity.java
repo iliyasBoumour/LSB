@@ -549,7 +549,6 @@ public class EditProfileActivity extends AppCompatActivity implements View.OnCli
         super.onDestroy();
         if (progressDialog != null ) {
             progressDialog.dismiss();
-//            dialog.dismiss();
             progressDialog = null;
         }
     }
