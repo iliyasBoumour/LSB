@@ -6,6 +6,7 @@ import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
@@ -51,6 +52,10 @@ public class MyFireBaseMessagingService extends FirebaseMessagingService {
     @Override
     public void onMessageReceived(@NonNull RemoteMessage remoteMessage) {
         super.onMessageReceived(remoteMessage);
+
+        SharedPreferences preferences = getSharedPreferences("NOTIF", MODE_PRIVATE);
+        Boolean send = preferences.getBoolean("send", true);
+
 
         notificationModel.setType(remoteMessage.getData().get("type"));
         notificationModel.setFromName(remoteMessage.getData().get("userName"));
@@ -150,8 +155,11 @@ public class MyFireBaseMessagingService extends FirebaseMessagingService {
         }catch (Exception e){
             Log.d("TAG", "onMessageReceived: error pdp"+e.getMessage());
         }
-        if(notificationModel.getType().contentEquals(NOTIF_MESSAGE) ) { //add condition
+        if(notificationModel.getType().contentEquals(NOTIF_MESSAGE) && send ) { //add condition
+            Log.d("SEND", "onMessageReceived: " + send);
+/*
             showNotifMessage(image,sound, pendingIntent);
+*/
             return;
         }
 

@@ -35,6 +35,12 @@ public class MessagesAdapter extends RecyclerView.Adapter<MessagesAdapter.ViewHo
 
 
     public MessagesAdapter(Context context, List<LastMessageModel> lastMessageModels) {
+        Collections.sort(lastMessageModels, new Comparator<LastMessageModel>() {
+            @Override
+            public int compare(LastMessageModel o1, LastMessageModel o2) {
+                return Long.compare(o2.getTime(), o1.getTime());
+            }
+        });
         this.context = context;
         this.lastMessageModels = lastMessageModels;
     }

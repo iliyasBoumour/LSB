@@ -9,6 +9,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -47,6 +48,7 @@ public class ProfileCurrentUserFragment extends Fragment {
     private List<Post> posts;
     private String currentUserId;
     private Button edite_btn;
+    private ImageView messagesBtn;
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
     private CollectionReference collectionReference = db.collection("Posts");
 
@@ -76,6 +78,13 @@ public class ProfileCurrentUserFragment extends Fragment {
         View view = inflater.inflate(R.layout.profile_current_user_fragment, container, false);
         pdp = view.findViewById(R.id.pdp_imageView);
         userNameTextView = view.findViewById(R.id.userName);
+        messagesBtn = view.findViewById(R.id.messages_btn);
+        messagesBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(getContext(), MessagesActivity.class));
+            }
+        });
         edite_btn=view.findViewById(R.id.edite_btn);
         edite_btn.setOnClickListener(e->startActivity(new Intent(getActivity(),EditProfileActivity.class)));
         tabLayout = view.findViewById(R.id.tab_layout);

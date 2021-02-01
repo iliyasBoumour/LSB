@@ -7,6 +7,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -43,6 +44,7 @@ public class ProfileOtherUsersFragment extends Fragment implements View.OnClickL
     private CollectionReference collectionReferenceNotif = db.collection("Notifications");
     private SimpleDraweeView pdp;
     private TextView userNameTextView;
+    private ImageView messagesBtn;
     private String pdpUrl;
     private String userName;
     private MaterialButton followBtn, messageBtn;
@@ -72,6 +74,13 @@ public class ProfileOtherUsersFragment extends Fragment implements View.OnClickL
         messageBtn = view.findViewById(R.id.message_btn);
         messageBtn.setOnClickListener(this);
         followBtn = view.findViewById(R.id.follow_btn);
+        messagesBtn = view.findViewById(R.id.messages_btn);
+        messagesBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(getContext(), MessagesActivity.class));
+            }
+        });
         followBtn.setOnClickListener(this);
         userNameTextView = view.findViewById(R.id.userName);
         Bundle bundle = this.getArguments();
