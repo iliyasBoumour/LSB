@@ -96,6 +96,12 @@ public class HomeFragment extends Fragment {
     }
 
     @Override
+    public void onResume() {
+        super.onResume();
+        getPosts();
+    }
+
+    @Override
     public void onStart() {
         super.onStart();
 
