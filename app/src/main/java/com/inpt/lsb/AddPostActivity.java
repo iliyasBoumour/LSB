@@ -4,6 +4,7 @@ import android.app.ProgressDialog;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -13,8 +14,11 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.Timestamp;
+import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
@@ -23,6 +27,8 @@ import com.inpt.Util.UploadImage;
 import com.inpt.models.Post;
 
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 public class AddPostActivity extends AppCompatActivity implements View.OnClickListener {
     private ImageView imageView,add_btn,cancelAdd;
@@ -31,8 +37,9 @@ public class AddPostActivity extends AppCompatActivity implements View.OnClickLi
     private String currentUserId;
     private UploadImage uploadImage;
     private ProgressDialog progressDialog;
-
+    private CurrentUserInfo currentUserInfo = CurrentUserInfo.getInstance();
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
+    private CollectionReference collectionReferenceUsers = db.collection("users");
     private StorageReference storageReference;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,6 +59,34 @@ public class AddPostActivity extends AppCompatActivity implements View.OnClickLi
         imageUri = getIntent().getParcelableExtra("imageUri");
         imageView.setImageURI(imageUri);
         add_btn.setOnClickListener(this);
+    }
+
+    private void setStatus(String status) {
+        collectionReferenceUsers.whereEqualTo("uid", currentUserInfo.getUserId())
+                .get()
+                .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+                    @Override
+                    public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
+                        Map<String, Object> data = new HashMap<>();
+                        data.put("status", status);
+                        for (QueryDocumentSnapshot userDocument : queryDocumentSnapshots) {
+                            Log.d("STATUS", "onSuccess: ");
+                            userDocument.getReference().update(data);
+                        }
+                    }
+                });
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        setStatus("online");
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        setStatus("offline");
     }
 
     @Override

@@ -4,23 +4,33 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.facebook.drawee.generic.RoundingParams;
 import com.facebook.drawee.view.SimpleDraweeView;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.Timestamp;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.EventListener;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.FirebaseFirestoreException;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
 import com.inpt.Util.CurrentUserInfo;
 import com.inpt.Util.SendNotif;
 import com.inpt.adapters.ChatAdapter;
@@ -29,13 +39,15 @@ import com.inpt.models.NotificationModel;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class ChatActivity extends AppCompatActivity implements View.OnClickListener {
     private SimpleDraweeView pdp;
     private EditText msgField;
     private ImageView sendBtn, backBtn;
-    private TextView userNameTextView;
+    private TextView userNameTextView, statusTextView;
     private String userName, pdpUrl, userId, currentUserId;
     private DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference("messages");
     List<String> ids = new ArrayList<>();
@@ -43,7 +55,12 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
     ChatAdapter chatAdapter;
     RecyclerView recyclerView;
     SendNotif sendNotif;
+    private FirebaseFirestore db = FirebaseFirestore.getInstance();
+    private CurrentUserInfo currentUserInfo = CurrentUserInfo.getInstance();
+    private CollectionReference collectionReferenceUsers = db.collection("users");
     private static final String NOTIF_MESSAGE="message";
+    public static final float ONLINE = 4.0f;
+    public static final float OFFLINE = 0.0f;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,6 +68,7 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
         sendNotification(userId);
         setContentView(R.layout.activity_chat);
         currentUserId = CurrentUserInfo.getInstance().getUserId();
+        statusTextView = findViewById(R.id.status_TextView);
         recyclerView = findViewById(R.id.chat_recycler);
         recyclerView.setHasFixedSize(true);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getApplicationContext());
@@ -76,7 +94,46 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
         userNameTextView.setText(userName);
         messages = new ArrayList<>();
         getMessages();
+        collectionReferenceUsers.whereEqualTo("uid", userId)
+                .addSnapshotListener(new EventListener<QuerySnapshot>() {
+                    @Override
+                    public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error) {
+                        if(error == null && value != null) {
+                            for(QueryDocumentSnapshot userDocument : value) {
+                                if(userDocument.getString("status") != null) {
+                                    switch (userDocument.getString("status")) {
+                                        case "online":
+                                            setStatus(pdp, ONLINE);
+                                            statusTextView.setText("Online");
+                                            break;
+                                        case "offline":
+                                            setStatus(pdp, OFFLINE);
+                                            statusTextView.setText("Offline");
+                                            break;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                });
     }
+
+    private void setStatus(String status) {
+        collectionReferenceUsers.whereEqualTo("uid", currentUserInfo.getUserId())
+                .get()
+                .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+                    @Override
+                    public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
+                        Map<String, Object> data = new HashMap<>();
+                        data.put("status", status);
+                        for (QueryDocumentSnapshot userDocument : queryDocumentSnapshots) {
+                            Log.d("STATUS", "onSuccess: ");
+                            userDocument.getReference().update(data);
+                        }
+                    }
+                });
+    }
+
 
 
     @Override
@@ -108,6 +165,7 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
     protected void onResume() {
         super.onResume();
         sendNotification(userId);
+        setStatus("online");
 
     }
 
@@ -115,10 +173,15 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
     protected void onPause() {
         super.onPause();
         sendNotification("");
+        setStatus("offline");
+
     }
 
 
     private void sendMessage(MessageModel message) {
+        if(message.getMessage().trim().isEmpty()) {
+            return;
+        }
         databaseReference.push().setValue(message);
         CurrentUserInfo currentUserInfo=CurrentUserInfo.getInstance();
         NotificationModel notification=new NotificationModel(currentUserInfo.getUserName(),currentUserInfo.getPdpUrl(),message.getMessage(),NOTIF_MESSAGE,userId,currentUserId);
@@ -172,5 +235,13 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
 
             }
         });
+    }
+
+    public void setStatus(SimpleDraweeView simpleDraweeView, float width) {
+        int color = getResources().getColor(R.color.green);
+        RoundingParams roundingParams = RoundingParams.fromCornersRadius(5f);
+        roundingParams.setBorder(color, width);
+        roundingParams.setRoundAsCircle(true);
+        simpleDraweeView.getHierarchy().setRoundingParams(roundingParams);
     }
 }

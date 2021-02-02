@@ -8,7 +8,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <TextView
         android:id="@+id/title"
-        android:text="@string/update_password"
+        android:text="Delete account"
         android:layout_width="match_parent"
         android:textAlignment="center"
         android:padding="12dp"

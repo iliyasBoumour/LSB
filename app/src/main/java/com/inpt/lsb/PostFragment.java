@@ -563,8 +563,14 @@ public class PostFragment extends Fragment implements View.OnClickListener{
                     @Override
                     public void run() {
                         progressDialog.dismiss();
+                       if(getActivity() != null) {
+                           if(getArguments().getString("From") != null) {
+                               getActivity().finish();
+                           } else {
+                               getActivity().getSupportFragmentManager().popBackStack();
 
-                        getActivity().getSupportFragmentManager().popBackStack();
+                           }
+                       }
                     }
                 }, 2000);
 

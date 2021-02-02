@@ -18,12 +18,19 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.messaging.FirebaseMessaging;
 import com.inpt.Util.CurrentUserInfo;
 import com.inpt.Util.UploadImage;
 import com.inpt.notifications.Token;
+
+import java.util.HashMap;
+import java.util.Map;
 
 public class DashboardActivity extends AppCompatActivity implements View.OnClickListener, BottomNavigationView.OnNavigationItemSelectedListener {
     public static BottomNavigationView bottomNavigationView;
@@ -32,6 +39,7 @@ public class DashboardActivity extends AppCompatActivity implements View.OnClick
     private UploadImage uploadImage;
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
     private CurrentUserInfo currentUserInfo = CurrentUserInfo.getInstance();
+    private CollectionReference collectionReferenceUsers = db.collection("users");
     private String tagFragment;
 
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
@@ -100,6 +108,23 @@ public class DashboardActivity extends AppCompatActivity implements View.OnClick
         this.setIntent(intent);
     }
 
+    private void setStatus(String status) {
+        collectionReferenceUsers.whereEqualTo("uid", currentUserInfo.getUserId())
+                .get()
+                .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+                    @Override
+                    public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
+                        Map<String, Object> data = new HashMap<>();
+                        data.put("status", status);
+                        for (QueryDocumentSnapshot userDocument : queryDocumentSnapshots) {
+                            Log.d("STATUS", "onSuccess: ");
+                            userDocument.getReference().update(data);
+                        }
+                    }
+                });
+    }
+
+
     private void UpdateToken(){
         FirebaseMessaging.getInstance().getToken()
                 .addOnCompleteListener( task-> {
@@ -126,6 +151,13 @@ public class DashboardActivity extends AppCompatActivity implements View.OnClick
     protected void onResume() {
         super.onResume();
         bottomNavigationView.setOnNavigationItemSelectedListener(this);
+        setStatus("online");
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        setStatus("offline");
     }
 
     @RequiresApi(api = Build.VERSION_CODES.M)

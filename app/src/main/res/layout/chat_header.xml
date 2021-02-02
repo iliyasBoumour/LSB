@@ -22,6 +22,7 @@
         android:layout_height="35dp"
         app:roundAsCircle="true"
         android:layout_centerVertical="true"
+        app:placeholderImage="@drawable/back"
         android:layout_marginStart="25dp"
         android:layout_toEndOf="@+id/back"/>
 
@@ -30,9 +31,20 @@
         android:text="Hamza Sajid"
         android:layout_toEndOf="@+id/pdp"
         android:layout_width="wrap_content"
+        android:layout_centerVertical="true"
         android:textColor="?attr/colorOnPrimary"
         android:layout_marginStart="8dp"
+        android:layout_height="wrap_content"/>
+
+    <TextView
+        android:id="@+id/status_TextView"
+        android:text=""
+        android:textColor="@color/gray"
+        android:layout_marginStart="8dp"
+        android:textSize="12sp"
         android:layout_centerVertical="true"
+        android:layout_alignParentEnd="true"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"/>
 
 

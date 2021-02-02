@@ -174,11 +174,12 @@ public class MyFireBaseMessagingService extends FirebaseMessagingService {
         manager.notify(0, summaryNotification.build());
     }
 
+
     private void showNotifMessage(PendingIntent pendingIntent) {
         Notification notification =
                 new NotificationCompat.Builder(getApplicationContext(), channelParams)
-                        .setContentTitle(title+": "+message)
-//                        .setContentText(title+": "+message)
+                        .setContentTitle("New Message")
+                      .setContentText(title+": "+message)
                         .setLargeIcon(image)
                         .setSmallIcon(R.drawable.logo)
                       .setContentIntent(pendingIntent)

@@ -30,6 +30,7 @@ import androidx.appcompat.app.AppCompatDelegate;
 import com.facebook.AccessToken;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.switchmaterial.SwitchMaterial;
 import com.google.android.material.textfield.TextInputLayout;
@@ -43,6 +44,7 @@ import com.google.firebase.auth.GoogleAuthProvider;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.inpt.Util.CurrentUserInfo;
@@ -51,8 +53,10 @@ import com.inpt.Util.UploadImage;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.regex.Pattern;
 
 public class EditProfileActivity extends AppCompatActivity implements View.OnClickListener {
@@ -141,6 +145,34 @@ public class EditProfileActivity extends AppCompatActivity implements View.OnCli
 
         Log.d("TAG", "onCreate: "+isLocalImage());
 
+    }
+
+    private void setStatus(String status) {
+        collection.whereEqualTo("uid", currentUserInfo.getUserId())
+                .get()
+                .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+                    @Override
+                    public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
+                        Map<String, Object> data = new HashMap<>();
+                        data.put("status", status);
+                        for (QueryDocumentSnapshot userDocument : queryDocumentSnapshots) {
+                            Log.d("STATUS", "onSuccess: ");
+                            userDocument.getReference().update(data);
+                        }
+                    }
+                });
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        setStatus("online");
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        setStatus("offline");
     }
 
     private boolean isLocalImage(){
