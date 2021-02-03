@@ -114,6 +114,7 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     protected void onPause() {
         super.onPause();
+        logd
         sendNotification(true);
     }
 

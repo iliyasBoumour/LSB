@@ -552,5 +552,4 @@ public class EditProfileActivity extends AppCompatActivity implements View.OnCli
             progressDialog = null;
         }
     }
-
 }
