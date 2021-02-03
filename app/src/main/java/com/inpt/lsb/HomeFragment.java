@@ -49,6 +49,7 @@ public class HomeFragment extends Fragment {
     private CollectionReference collectionReferencePosts = db.collection("Posts");
     private CollectionReference collectionReferenceRelations = db.collection("Relations");
     private SwipeRefreshLayout swipeRefreshLayout;
+    private int size;
 
 
 
@@ -118,8 +119,10 @@ public class HomeFragment extends Fragment {
                 .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
                     @Override
                     public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
+                        size = queryDocumentSnapshots.size();
                         if(!queryDocumentSnapshots.isEmpty()) {
                             for(QueryDocumentSnapshot followedDocument : queryDocumentSnapshots) {
+                                size --;
                                 collectionReferencePosts.whereEqualTo("userId", followedDocument.getString("userFollowedId"))
                                         .get()
                                         .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
@@ -133,7 +136,7 @@ public class HomeFragment extends Fragment {
                                                     }
                                                 }
                                                 Log.d("TEST111", "onSuccess: " + getActivity());
-                                                if(getActivity() != null) {
+                                                if(getActivity() != null && size == 0) {
                                                     homeAdapter = new HomeAdapter(getActivity(), posts, (getActivity()).getSupportFragmentManager());
                                                     recyclerView.setAdapter(homeAdapter);
                                                     homeAdapter.notifyDataSetChanged();
