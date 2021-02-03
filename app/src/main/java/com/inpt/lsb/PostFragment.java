@@ -154,6 +154,8 @@ public class PostFragment extends Fragment implements View.OnClickListener{
         getPost(postId);
 
 
+
+
         return view;
     }
 
@@ -208,8 +210,13 @@ public class PostFragment extends Fragment implements View.OnClickListener{
                     createLikesPopup();
                     break;
                 case R.id.back:
-                    if(getActivity() != null)
-                        getActivity().getSupportFragmentManager().popBackStack();
+                    if(getActivity() != null) {
+                        if(this.getArguments().getString("From") != null) {
+                            getActivity().finish();
+                        } else  {
+                            getActivity().getSupportFragmentManager().popBackStack();
+                        }
+                    }
                     break;
             }
         }
@@ -556,8 +563,14 @@ public class PostFragment extends Fragment implements View.OnClickListener{
                     @Override
                     public void run() {
                         progressDialog.dismiss();
+                       if(getActivity() != null) {
+                           if(getArguments().getString("From") != null) {
+                               getActivity().finish();
+                           } else {
+                               getActivity().getSupportFragmentManager().popBackStack();
 
-                        getActivity().getSupportFragmentManager().popBackStack();
+                           }
+                       }
                     }
                 }, 2000);
 

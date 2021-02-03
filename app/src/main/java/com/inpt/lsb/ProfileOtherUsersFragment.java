@@ -108,6 +108,21 @@ public class ProfileOtherUsersFragment extends Fragment implements View.OnClickL
         return view;
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        tabLayout.setupWithViewPager(viewPager);
+        if(getActivity() != null) {
+            Log.d("TAB", "onCreateView: ");
+
+            ViewPagerAdapter viewPagerAdapter = new ViewPagerAdapter(getChildFragmentManager(), 0, userId);
+            viewPager.setAdapter(viewPagerAdapter);
+            tabLayout.getTabAt(0).setIcon(R.drawable.ic_posts);
+            tabLayout.getTabAt(1).setIcon(R.drawable.ic_follower);
+            tabLayout.getTabAt(2).setIcon(R.drawable.ic_following);
+        }
+    }
+
     private class ViewPagerAdapter extends FragmentStatePagerAdapter {
        private String userId;
 

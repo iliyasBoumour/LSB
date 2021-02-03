@@ -30,6 +30,7 @@ import androidx.appcompat.app.AppCompatDelegate;
 import com.facebook.AccessToken;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.switchmaterial.SwitchMaterial;
 import com.google.android.material.textfield.TextInputLayout;
@@ -43,6 +44,7 @@ import com.google.firebase.auth.GoogleAuthProvider;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.inpt.Util.CurrentUserInfo;
@@ -51,8 +53,10 @@ import com.inpt.Util.UploadImage;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.regex.Pattern;
 
 public class EditProfileActivity extends AppCompatActivity implements View.OnClickListener {
@@ -81,6 +85,7 @@ public class EditProfileActivity extends AppCompatActivity implements View.OnCli
     private CollectionReference collection = FirebaseFirestore.getInstance().collection("users");
     private StorageReference storageReference;
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
+
     FirebaseUser user;
 
 
@@ -143,6 +148,34 @@ public class EditProfileActivity extends AppCompatActivity implements View.OnCli
 
     }
 
+    private void setStatus(String status) {
+        collection.whereEqualTo("uid", currentUserInfo.getUserId())
+                .get()
+                .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+                    @Override
+                    public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
+                        Map<String, Object> data = new HashMap<>();
+                        data.put("status", status);
+                        for (QueryDocumentSnapshot userDocument : queryDocumentSnapshots) {
+                            Log.d("STATUS", "onSuccess: ");
+                            userDocument.getReference().update(data);
+                        }
+                    }
+                });
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        setStatus("online");
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        setStatus("offline");
+    }
+
     private boolean isLocalImage(){
         String u=currentUserInfo.getPdpUrl();
         URL url = null;
@@ -198,7 +231,7 @@ public class EditProfileActivity extends AppCompatActivity implements View.OnCli
         finish();
         startActivity(intent);
     }
-
+// todo delete (without mdps) name !empty
     @Override
     public void onClick(View view) {
         switch (view.getId()) {
@@ -218,8 +251,28 @@ public class EditProfileActivity extends AppCompatActivity implements View.OnCli
                 showDialogDelete();
                 break;
             case R.id.logout:
+                Log.d("LOGOUT", "onClick: " + FirebaseAuth.getInstance().getCurrentUser());
                 db.collection("Tokens").document(currentUserInfo.getUserId()).delete();
-                FirebaseAuth.getInstance().signOut();
+                collection.whereEqualTo("uid", currentUserInfo.getUserId())
+                        .get()
+                        .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+                            @Override
+                            public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
+                                Map<String, Object> data = new HashMap<>();
+                                data.put("status", "offline");
+                                for (QueryDocumentSnapshot userDocument : queryDocumentSnapshots) {
+                                    Log.d("STATUS", "onSuccess: ");
+                                    userDocument.getReference().update(data)
+                                            .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                @Override
+                                                public void onSuccess(Void aVoid) {
+                                                    FirebaseAuth.getInstance().signOut();
+                                                    Log.d("LOGOUT", "onClick: " + FirebaseAuth.getInstance().getCurrentUser());
+                                                }
+                                            });
+                                }
+                            }
+                        });
                 startActivity(new Intent(this, SignInActivity.class));
                 finishAffinity();
                 break;
@@ -228,7 +281,6 @@ public class EditProfileActivity extends AppCompatActivity implements View.OnCli
 
     private void showDialogDelete() {
         builder = new AlertDialog.Builder(this);
-//        FirebaseUser user = mAuth.getCurrentUser();
         View view = getLayoutInflater().inflate(R.layout.delete_account_popup, null);
         cancelBtn = view.findViewById(R.id.cancelBtn);
         confirmBtn = view.findViewById(R.id.confirmBtn);
@@ -326,6 +378,7 @@ public class EditProfileActivity extends AppCompatActivity implements View.OnCli
                                             for (QueryDocumentSnapshot doc2 : documentSnapshots2) {
                                                 doc2.getReference().delete();
                                             }
+
                                             db.collection("Posts").whereEqualTo("userId", currentUserInfo.getUserId())
                                                     .get()
                                                     .addOnSuccessListener(documentSnapshots3 -> {
@@ -346,18 +399,18 @@ public class EditProfileActivity extends AppCompatActivity implements View.OnCli
                                                                                 }
                                                                                 db.collection("Tokens").document(currentUserInfo.getUserId()).delete();
                                                                                 if(toDelete) deletePdp();
-                                                                                            user.delete()
-                                                                                                    .addOnSuccessListener(t -> {
-                                                                                                        dialog.dismiss();
-                                                                                                        FirebaseAuth.getInstance().signOut();
-                                                                                                        startActivity(new Intent(this, SignInActivity.class));
-                                                                                                        finishAffinity();
-                                                                                                    })
-                                                                                                    .addOnFailureListener(e -> {
-                                                                                                        Toast.makeText(this, "error please try later", Toast.LENGTH_SHORT).show();
-                                                                                                        progressDialog.dismiss();
-                                                                                                        dialog.dismiss();
-                                                                                                    });
+                                                                                user.delete()
+                                                                                        .addOnSuccessListener(t -> {
+                                                                                            dialog.dismiss();
+                                                                                            FirebaseAuth.getInstance().signOut();
+                                                                                            startActivity(new Intent(this, SignInActivity.class));
+                                                                                            finishAffinity();
+                                                                                        })
+                                                                                        .addOnFailureListener(e -> {
+                                                                                            Toast.makeText(this, "error please try later", Toast.LENGTH_SHORT).show();
+                                                                                            progressDialog.dismiss();
+                                                                                            dialog.dismiss();
+                                                                                        });
                                                                             })
                                                                             .addOnFailureListener(e -> {
                                                                                 Log.d("TAG", "relation user follower not deleted " + e.getMessage());
@@ -370,6 +423,8 @@ public class EditProfileActivity extends AppCompatActivity implements View.OnCli
                                                     .addOnFailureListener(e -> {
                                                         Log.d("TAG", "posts not deleted " + e.getMessage());
                                                     });
+//
+
                                         })
                                         .addOnFailureListener(e -> {
                                             Log.d("TAG", "likes not deleted " + e.getMessage());

@@ -164,6 +164,7 @@ public class SignUpActivity extends AppCompatActivity {
                         if (task.isSuccessful()) {
                             String userid = mAuth.getCurrentUser().getUid();
                             Map<String, Object> user = new HashMap<>();
+                            user.put("status","offline");
                             user.put("uid",userid);
                             user.put("username", username);
                             user.put("searchName",username.toLowerCase());

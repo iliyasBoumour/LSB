@@ -56,8 +56,9 @@ public class MyFireBaseMessagingService extends FirebaseMessagingService {
         super.onMessageReceived(remoteMessage);
 
         SharedPreferences preferences = getSharedPreferences("NOTIF", MODE_PRIVATE);
-        Boolean send = preferences.getBoolean("send", false);
-        manager = NotificationManagerCompat.from(getApplicationContext());
+        String userId_ = preferences.getString("userId", "");
+
+        manager= NotificationManagerCompat.from(getApplicationContext());
 
         notificationModel.setType(remoteMessage.getData().get("type"));
         notificationModel.setFromName(remoteMessage.getData().get("userName"));
@@ -106,7 +107,6 @@ public class MyFireBaseMessagingService extends FirebaseMessagingService {
                 postNotif.putExtra("userId", notificationModel.getTo());
                 Log.d("LIKE", "onMessageReceived: " + notificationModel.getToUsername());
                 j = toInt(k);
-
                 pendingIntent = PendingIntent.getActivity(getApplicationContext(), j, postNotif, PendingIntent.FLAG_UPDATE_CURRENT);
                 break;
             case NOTIF_MESSAGE:
@@ -154,9 +154,10 @@ public class MyFireBaseMessagingService extends FirebaseMessagingService {
         } catch (Exception e) {
             Log.d("TAG", "onMessageReceived: error pdp" + e.getMessage());
         }
-
-        if (notificationModel.getType().contentEquals(NOTIF_MESSAGE)) {
-            if (send) showNotifMessage(pendingIntent, toInt(k));
+        if(notificationModel.getType().contentEquals(NOTIF_MESSAGE)) { //add condition
+            if(!notificationModel.getFrom().contentEquals(userId_)) {
+                showNotifMessage(pendingIntent, toInt(k));
+            }
             return;
         }
 
@@ -198,6 +199,7 @@ public class MyFireBaseMessagingService extends FirebaseMessagingService {
 
     private void showNotifMessage(PendingIntent pendingIntent, int i) {
         Notification notificationMessage = new NotificationCompat.Builder(getApplicationContext(), channelParams)
+                .setContentTitle("New Message")
                 .setContentText(title + " : " + message)
                 .setSmallIcon(R.drawable.logo)
                 .setLargeIcon(image)
@@ -220,7 +222,7 @@ public class MyFireBaseMessagingService extends FirebaseMessagingService {
                 );
 
         manager.notify(i, notificationMessage);
-        manager.notify(0, summaryNotification.build());
+        manager.notify(1, summaryNotification.build());
     }
 
     private Bitmap getBitmapFromURL(String strURL) {

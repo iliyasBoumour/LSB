@@ -402,6 +402,7 @@ public class SignInActivity extends AppCompatActivity {
         FirebaseUser user = mAuth.getCurrentUser();
         Map<String, Object> newUser = new HashMap<>();
         newUser.put("username", user.getDisplayName());
+        newUser.put("status", "offline");
         newUser.put("email", user.getEmail());
         newUser.put("pdp", user.getPhotoUrl().toString());
         newUser.put("searchName",user.getDisplayName().toLowerCase());

@@ -16,13 +16,18 @@ import android.widget.TextView;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDelegate;
 
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
 import com.inpt.Util.CurrentUserInfo;
 
+import java.util.HashMap;
 import java.util.Locale;
+import java.util.Map;
 
 public class LandingActivity extends AppCompatActivity {
 
@@ -70,6 +75,7 @@ public class LandingActivity extends AppCompatActivity {
                         intent.putExtra("userName", bundle.getString("userName"));
                         intent.putExtra("pdpUrl", bundle.getString("pdpUrl"));
                         intent.putExtra("userId", bundle.getString("userId"));
+                        intent.putExtra("From", "Landing");
                         break;
                 }
             }else{
@@ -94,7 +100,6 @@ public class LandingActivity extends AppCompatActivity {
                         startActivity(intent);
                         finishAffinity();
                     });
-
         }
         setContentView(R.layout.activity_landing);
         this.getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
@@ -104,6 +109,8 @@ public class LandingActivity extends AppCompatActivity {
 
 
     }
+
+
 
     private void loadSettings() {
         SharedPreferences preferences = getSharedPreferences("Settings", Activity.MODE_PRIVATE);

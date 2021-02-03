@@ -6,6 +6,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
@@ -44,6 +45,7 @@ public class MessagesActivity extends AppCompatActivity implements View.OnClickL
     private String currentUserId;
     private ImageView back;
     private ProgressBar progressBar;
+    private CurrentUserInfo currentUserInfo = CurrentUserInfo.getInstance();
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
     private CollectionReference collectionReferenceUsers = db.collection("users");
     private DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference("messages");
@@ -170,5 +172,31 @@ public class MessagesActivity extends AppCompatActivity implements View.OnClickL
         }
     }
 
+    private void setStatus(String status) {
+        collectionReferenceUsers.whereEqualTo("uid", currentUserInfo.getUserId())
+                .get()
+                .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+                    @Override
+                    public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
+                        Map<String, Object> data = new HashMap<>();
+                        data.put("status", status);
+                        for (QueryDocumentSnapshot userDocument : queryDocumentSnapshots) {
+                            Log.d("STATUS", "onSuccess: ");
+                            userDocument.getReference().update(data);
+                        }
+                    }
+                });
+    }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        setStatus("online");
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        setStatus("offline");
+    }
 }

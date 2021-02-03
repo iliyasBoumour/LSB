@@ -3,12 +3,12 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="?attr/colorPrimaryVariant"
+    android:background="?attr/colorSecondaryVariant"
     android:paddingBottom="15dp"
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <TextView
         android:id="@+id/title"
-        android:text="@string/update_password"
+        android:text="Delete account"
         android:layout_width="match_parent"
         android:textAlignment="center"
         android:padding="12dp"
