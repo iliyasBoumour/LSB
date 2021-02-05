@@ -15,7 +15,8 @@
         android:layout_height="match_parent"/>
     <RelativeLayout
         android:id="@+id/msgLayout"
-        android:padding="10dp"
+        android:paddingHorizontal="10dp"
+        android:paddingBottom="10dp"
         android:layout_alignParentBottom="true"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
@@ -26,7 +27,8 @@
             android:layout_centerVertical="true"
             android:backgroundTint="?attr/colorPrimary"
             android:paddingStart="15dp"
-            android:paddingVertical="18dp"
+            android:paddingBottom="18dp"
+            android:maxHeight="150dp"
             android:textColor="@color/gray"
             android:paddingEnd="42dp"
             android:layout_width="match_parent"

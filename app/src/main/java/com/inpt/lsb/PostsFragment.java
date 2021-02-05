@@ -72,6 +72,7 @@ public class PostsFragment extends Fragment {
         return view;
     }
 
+
     private void getPosts() {
         collectionReference.whereEqualTo("userId", userId)
                 .orderBy("timeAdded", Query.Direction.DESCENDING)
