@@ -42,7 +42,6 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
 import com.google.firebase.firestore.CollectionReference;
-import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
@@ -133,6 +132,7 @@ public class EditProfileActivity extends AppCompatActivity implements View.OnCli
 
         strProvider = mAuth.getAccessToken(false).getResult().getSignInProvider();
         textNameInput.getEditText().setText(currentUserInfo.getUserName());
+        textNameInput.getEditText().addTextChangedListener(createTextWatcher(textNameInput));
         if (strProvider.equals("google.com") || strProvider.equals("facebook.com")) {
             editPassword.setVisibility(View.GONE);
         }
@@ -232,7 +232,7 @@ public class EditProfileActivity extends AppCompatActivity implements View.OnCli
         finish();
         startActivity(intent);
     }
-
+// todo delete (without mdps) name !empty
     @Override
     public void onClick(View view) {
         switch (view.getId()) {
@@ -282,7 +282,6 @@ public class EditProfileActivity extends AppCompatActivity implements View.OnCli
 
     private void showDialogDelete() {
         builder = new AlertDialog.Builder(this);
-//        FirebaseUser user = mAuth.getCurrentUser();
         View view = getLayoutInflater().inflate(R.layout.delete_account_popup, null);
         cancelBtn = view.findViewById(R.id.cancelBtn);
         confirmBtn = view.findViewById(R.id.confirmBtn);
@@ -327,7 +326,10 @@ public class EditProfileActivity extends AppCompatActivity implements View.OnCli
             });
         } else {
             confirmBtn.setOnClickListener(v -> {
-                deleteAcc(dialog, pwdInput.getEditText().getText().toString());
+                if (pwdInput.getEditText().getText().toString().isEmpty()) {
+                    pwdInput.setError(getString(R.string.password_empty));
+                    return;
+                }else deleteAcc(dialog, pwdInput.getEditText().getText().toString());
             });
         }
         builder.setView(view);
@@ -337,7 +339,6 @@ public class EditProfileActivity extends AppCompatActivity implements View.OnCli
 
     private void deleteAcc(AlertDialog dialog, String pwd) {
         progressDialog.show();
-//        FirebaseUser user = mAuth.getCurrentUser();
         AuthCredential credential = EmailAuthProvider
                 .getCredential(user.getEmail(), pwd);
         user.reauthenticate(credential)
@@ -380,6 +381,7 @@ public class EditProfileActivity extends AppCompatActivity implements View.OnCli
                                             for (QueryDocumentSnapshot doc2 : documentSnapshots2) {
                                                 doc2.getReference().delete();
                                             }
+
                                             db.collection("Posts").whereEqualTo("userId", currentUserInfo.getUserId())
                                                     .get()
                                                     .addOnSuccessListener(documentSnapshots3 -> {
@@ -424,6 +426,8 @@ public class EditProfileActivity extends AppCompatActivity implements View.OnCli
                                                     .addOnFailureListener(e -> {
                                                         Log.d("TAG", "posts not deleted " + e.getMessage());
                                                     });
+//
+
                                         })
                                         .addOnFailureListener(e -> {
                                             Log.d("TAG", "likes not deleted " + e.getMessage());
@@ -459,7 +463,9 @@ public class EditProfileActivity extends AppCompatActivity implements View.OnCli
     }
 
     private void updatePassword(AlertDialog dialog, String oldP, String newP) {
-        if (newP.isEmpty()) {
+        if (oldP.isEmpty()){
+            oldPwdInput.setError(getString(R.string.password_empty));
+        }else if (newP.isEmpty()) {
             newPwdInput.setError(getString(R.string.password_empty));
 
         } else if (newP.length() < 8) {
@@ -499,9 +505,15 @@ public class EditProfileActivity extends AppCompatActivity implements View.OnCli
         progressDialog.show();
         String newUserName = textNameInput.getEditText().getText().toString();
         if (!currentUserInfo.getUserName().equals(newUserName)) {
+            if (newUserName.isEmpty()){
+                textNameInput.setError(getString(R.string.username_empty));
+                progressDialog.dismiss();
+                return;
+            }else{
             collection.document(currentUserInfo.getUserId())
                     .update("username", newUserName);
             currentUserInfo.setUserName(newUserName);
+            }
         }
         if (imageEdited) {
             StorageReference filepath = storageReference
@@ -606,6 +618,4 @@ public class EditProfileActivity extends AppCompatActivity implements View.OnCli
             progressDialog = null;
         }
     }
-
-
 }

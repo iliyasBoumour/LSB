@@ -174,7 +174,6 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
         super.onPause();
         sendNotification("");
         setStatus("offline");
-
     }
 
 
