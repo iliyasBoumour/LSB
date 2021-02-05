@@ -14,8 +14,7 @@
         android:layout_centerVertical="true"
         android:visibility="gone"
         android:layout_marginTop="10dp"
-        android:layout_marginStart="10dp"
-        android:layout_toEndOf="@+id/back"/>
+        android:layout_marginStart="10dp"/>
 
     <TextView
         android:layout_toEndOf="@id/pdp"
@@ -26,7 +25,9 @@
         android:textColor="#000"
         android:background="@drawable/msg_right"
         android:padding="10dp"
-        android:layout_margin="10dp"
+        android:layout_marginStart="10dp"
+        android:layout_marginEnd="10dp"
+        android:layout_marginTop="10dp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"/>
 
