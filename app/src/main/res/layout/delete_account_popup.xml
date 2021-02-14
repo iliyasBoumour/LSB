@@ -8,7 +8,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <TextView
         android:id="@+id/title"
-        android:text="Delete account"
+        android:text="@string/delete_account"
         android:layout_width="match_parent"
         android:textAlignment="center"
         android:padding="12dp"
@@ -26,8 +26,8 @@
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="20dp"
         android:layout_marginBottom="20dp"
-        android:hint="Your Password"
-        app:boxBackgroundColor="@android:color/transparent"
+        android:hint="@string/your_password"
+        app:boxBackgroundColor="?attr/colorSecondaryVariant"
         app:endIconMode="password_toggle"
         android:layout_below="@id/title"
         app:startIconDrawable="@drawable/key">

@@ -14,7 +14,6 @@
     <string name="don_t_have_account_sign_up">don\'t have account ? sign up</string>
     <string name="new_account">New Account</string>
     <string name="username">username</string>
-    <string name="or_sign_up_with">Or sign up with :</string>
     <string name="have_an_account_sign_in">you have already an account ? sign in</string>
     <string name="email_empty">Email must not be empty</string>
     <string name="username_empty">username must not be empty</string>
@@ -50,9 +49,9 @@
     <string name="new_post">New Post</string>
     <string name="great_enjoy">Great ! enjoy your time !</string>
     <string name="new_follow">New Follow</string>
-    <string name="starts_follow"> starts following you !</string>
+    <string name="starts_follow"> starts following you</string>
     <string name="new_like">New Like</string>
-    <string name="like_post"> likes your post !</string>
+    <string name="like_post"> likes your post</string>
     <string name="edit_profile">Edit Profile</string>
     <string name="edit_profile_photo">Edit profile photo</string>
     <string name="logout">Logout</string>
@@ -63,5 +62,11 @@
     <string name="need_permissions">we need those permissions</string>
     <string name="permission_settings">please apply permissions from settings</string>
     <string name="resign_in">Please resign in before doing this operation</string>
+    <string name="old_password">Old Password</string>
+    <string name="new_password">New Password</string>
+    <string name="dark_mode">Dark mode</string>
+    <string name="edit_password">Edit password</string>
+    <string name="delete_account">Delete account</string>
+    <string name="your_password">Your Password</string>
 
 </resources>

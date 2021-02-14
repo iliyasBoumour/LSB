@@ -3,9 +3,7 @@ package com.inpt.adapters;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.os.Bundle;
-import android.os.Handler;
 import android.text.format.DateUtils;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,7 +18,6 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.facebook.drawee.view.SimpleDraweeView;
 import com.google.android.material.circularreveal.cardview.CircularRevealCardView;
 import com.inpt.Util.CurrentUserInfo;
-import com.inpt.lsb.DashboardActivity;
 import com.inpt.lsb.PostFragment;
 import com.inpt.lsb.ProfileOtherUsersFragment;
 import com.inpt.lsb.R;
@@ -36,7 +33,6 @@ public class NotificationAdapter extends RecyclerView.Adapter<NotificationAdapte
     private Context context;
     private static final String NOTIF_LIKE="like";
     private static final String NOTIF_FOLLOW="follow";
-    Handler handler = new Handler();
     private FragmentManager fragmentManager;
 
 
@@ -63,11 +59,11 @@ public class NotificationAdapter extends RecyclerView.Adapter<NotificationAdapte
         holder.pdp.setImageURI(notifications.get(position).getFromPdp());
         switch (notifications.get(position).getType()){
             case NOTIF_LIKE:
-                holder.notificationText.setText(notifications.get(position).getFromName()+" likes your post");
+                holder.notificationText.setText(notifications.get(position).getFromName()+" "+context.getString(R.string.like_post));
                 holder.notifiedImage.setImageURI(notifications.get(position).getImageNotified());
                 break;
             case NOTIF_FOLLOW:
-                holder.notificationText.setText(notifications.get(position).getFromName()+" starts following you");
+                holder.notificationText.setText(notifications.get(position).getFromName()+" "+context.getString(R.string.starts_follow));
                 holder.notifiedImage.setVisibility(View.GONE);
                 holder.notifiedImageContainer.setVisibility(View.GONE);
                 break;

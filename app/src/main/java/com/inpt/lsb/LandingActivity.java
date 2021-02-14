@@ -16,18 +16,13 @@ import android.widget.TextView;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDelegate;
 
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
-import com.google.firebase.firestore.QuerySnapshot;
 import com.inpt.Util.CurrentUserInfo;
 
-import java.util.HashMap;
 import java.util.Locale;
-import java.util.Map;
 
 public class LandingActivity extends AppCompatActivity {
 
@@ -126,11 +121,12 @@ public class LandingActivity extends AppCompatActivity {
 
         if (!preferences.getString("language", "we").equals("we")) {
             Locale locale = null;
-            switch (preferences.getString("language", "English")) {
-                case "Francais":
+            switch (preferences.getString("language", "en")) {
+                case "fr":
+                    Log.d("TAG", "loadSettings: fr");
                     locale = new Locale("fr");
                     break;
-                case "English":
+                case "en":
                     locale = new Locale("en");
                     break;
             }
@@ -141,7 +137,7 @@ public class LandingActivity extends AppCompatActivity {
         } else {
             SharedPreferences.Editor editor = getSharedPreferences("Settings", Activity.MODE_PRIVATE).edit();
             if (Locale.getDefault().getLanguage().equals("fr")) {
-                editor.putString("language", "Francais");
+                editor.putString("language", "fr");
                 editor.apply();
             }
         }

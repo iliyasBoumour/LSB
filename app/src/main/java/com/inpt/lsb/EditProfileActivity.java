@@ -126,7 +126,8 @@ public class EditProfileActivity extends AppCompatActivity implements View.OnCli
         languges.add("English");
         languges.add("Francais");
         ArrayAdapter<String> arrayAdapter = new ArrayAdapter<>(this, R.layout.support_simple_spinner_dropdown_item, languges);
-        autoCompleteTextView.setText(preferences.getString("language", "English"));
+        if (preferences.getString("language", "en").equals("en")) autoCompleteTextView.setText("English");
+        else autoCompleteTextView.setText("Francais");
         autoCompleteTextView.setAdapter(arrayAdapter);
         autoCompleteTextView.setOnItemClickListener((adapterView, view, i, l) -> changeLanguge(i));
 
@@ -192,10 +193,10 @@ public class EditProfileActivity extends AppCompatActivity implements View.OnCli
     private void changeLanguge(int i) {
         switch (i) {
             case 0:
-                setLocal("en", "English");
+                setLocal("en");
                 break;
             case 1:
-                setLocal("fr", "Francais");
+                setLocal("fr");
                 break;
         }
         Intent intent = getIntent();
@@ -203,14 +204,14 @@ public class EditProfileActivity extends AppCompatActivity implements View.OnCli
         startActivity(intent);
     }
 
-    private void setLocal(String lang, String language) {
+    private void setLocal(String lang) {
         Locale locale = new Locale(lang);
         Locale.setDefault(locale);
         Configuration configuration = new Configuration();
         configuration.locale = locale;
         getBaseContext().getResources().updateConfiguration(configuration, getBaseContext().getResources().getDisplayMetrics());
 
-        editor.putString("language", language);
+        editor.putString("language", lang);
         editor.apply();
     }
 
